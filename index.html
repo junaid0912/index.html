@@ -17,19 +17,14 @@
             "use strict";
 
             // ============================================================
-            // 🔥 PHOTO SHARING SYSTEM - PC se Phone tak
+            // 🔥 PHOTO SHARING SYSTEM
             // ============================================================
             
             function savePhotosWithCode(photosArray) {
                 try {
                     if (!photosArray || !Array.isArray(photosArray)) return { success: false };
                     
-                    const data = { 
-                        photos: photosArray, 
-                        uploaded: true, 
-                        timestamp: Date.now() 
-                    };
-                    
+                    const data = { photos: photosArray, uploaded: true, timestamp: Date.now() };
                     localStorage.setItem('gf_photos_share', JSON.stringify(data));
                     
                     const shareCode = btoa(JSON.stringify({
@@ -51,22 +46,17 @@
                 try {
                     const urlParams = new URLSearchParams(window.location.search);
                     const shareCode = urlParams.get('share');
-                    
                     if (!shareCode) return null;
                     
                     const decoded = JSON.parse(atob(decodeURIComponent(shareCode)));
                     if (decoded && decoded.photos && decoded.photos.length > 0) {
-                        console.log('📸 Loaded from share:', decoded.photos.length, 'photos');
                         localStorage.setItem('gf_photos_share', JSON.stringify({ 
-                            photos: decoded.photos, 
-                            uploaded: true, 
-                            timestamp: Date.now() 
+                            photos: decoded.photos, uploaded: true, timestamp: Date.now() 
                         }));
                         return decoded.photos;
                     }
                     return null;
                 } catch(e) {
-                    console.error('Share load error:', e);
                     return null;
                 }
             }
@@ -140,7 +130,7 @@
             }
 
             // ============================================================
-            // BUILD FULL APP
+            // BUILD APP
             // ============================================================
             function buildApp() {
                 const app = document.getElementById('app');
@@ -340,11 +330,12 @@
                     #song-file-input{display:none}
                     
                     .action-btn-group{display:flex;flex-direction:column;gap:12px;align-items:center;margin-top:15px}
-                    .explode-now-btn,.generate-link-btn{padding:12px 24px;border-radius:30px;font-family:'Georgia',serif;font-weight:bold;font-size:0.9rem;cursor:pointer;transition:transform 0.3s;width:100%;max-width:280px}
-                    .explode-now-btn{display:none;background:linear-gradient(45deg,#d4af37,#f7d070);color:#2b0512;border:none;box-shadow:0 0 20px rgba(247,208,112,0.8)}
-                    .explode-now-btn.show{display:inline-block}
-                    .generate-link-btn{display:none;background:transparent;color:var(--royal-gold);border:1px solid var(--royal-gold);box-shadow:0 0 15px rgba(212,175,55,0.3)}
-                    .generate-link-btn.show{display:inline-block}
+                    .explode-now-btn{padding:12px 24px;border-radius:30px;font-family:'Georgia',serif;font-weight:bold;font-size:0.9rem;cursor:pointer;transition:transform 0.3s;width:100%;max-width:280px;display:none;background:linear-gradient(45deg,#d4af37,#f7d070);color:#2b0512;border:none;box-shadow:0 0 20px rgba(247,208,112,0.8)}
+                    .explode-now-btn.show{display:inline-block !important}
+                    
+                    .generate-link-btn{padding:12px 24px;border-radius:30px;font-family:'Georgia',serif;font-weight:bold;font-size:0.9rem;cursor:pointer;transition:transform 0.3s;width:100%;max-width:280px;display:none;background:transparent;color:var(--royal-gold);border:1px solid var(--royal-gold);box-shadow:0 0 15px rgba(212,175,55,0.3)}
+                    .generate-link-btn.show{display:inline-block !important}
+                    
                     .explode-now-btn:hover,.generate-link-btn:hover{transform:scale(1.05)}
                     
                     .exploded-photo-card{position:absolute;width:clamp(120px,16vw,200px);background:#120a10;padding:8px 8px 20px 8px;border-radius:6px;border:1px solid rgba(212,175,55,0.4);box-shadow:0 10px 30px rgba(0,0,0,0.9),0 0 20px rgba(255,77,109,0.2);pointer-events:none;opacity:0;transform:translate(-50%,-50%) scale(0.1) rotate(0deg);z-index:8100}
@@ -524,7 +515,7 @@
                 `;
 
                 // ============================================================
-                // APP LOGIC - COMPLETE
+                // APP LOGIC
                 // ============================================================
                 function initApp() {
                     const loading = document.getElementById('loading');
@@ -536,7 +527,6 @@
 
                     // Load photos from share or storage
                     function loadAllPhotos() {
-                        // Check URL share first
                         const shared = loadPhotosFromShare();
                         if (shared && shared.length > 0) {
                             uploadedImageUrls = shared;
@@ -544,7 +534,6 @@
                             return true;
                         }
                         
-                        // Then check local storage
                         const stored = loadPhotosFromStorage();
                         if (stored && stored.length > 0) {
                             uploadedImageUrls = stored;
@@ -555,7 +544,7 @@
                         return false;
                     }
 
-                    // Update UI with photos
+                    // ✅ FIXED: Update UI with photos - EXPLODE BUTTON SHOW HOGI
                     function updateUI() {
                         const gridContainer = document.getElementById('photo-grid-container');
                         const countMsg = document.getElementById('selected-count-msg');
@@ -572,7 +561,7 @@
                         gridContainer.innerHTML = '';
                         
                         if (uploadedImageUrls.length > 0) {
-                            // Show photos in grid
+                            // ✅ Show photos in grid
                             const grid = document.createElement('div');
                             grid.className = 'photo-grid';
                             uploadedImageUrls.slice(0, 20).forEach(url => {
@@ -585,13 +574,17 @@
                             
                             countMsg.textContent = '📸 ' + uploadedImageUrls.length + ' photos loaded!';
                             
+                            // ✅ HIDE UPLOAD OPTIONS
                             if (uploadLabel) uploadLabel.style.display = 'none';
                             if (fileInput) fileInput.style.display = 'none';
                             
-                            explodeBtn.style.display = 'inline-block';
+                            // ✅ SHOW EXPLODE BUTTON
                             explodeBtn.classList.add('show');
-                            generateBtn.style.display = 'inline-block';
+                            explodeBtn.style.display = 'inline-block';
+                            
+                            // ✅ SHOW GENERATE LINK BUTTON
                             generateBtn.classList.add('show');
+                            generateBtn.style.display = 'inline-block';
                             
                             if (subtitle) subtitle.textContent = 'Your beautiful memories are ready! ✨';
                             if (title) title.textContent = '💖 Memories Gallery';
@@ -602,19 +595,15 @@
                             }
                         } else {
                             countMsg.textContent = '📸 No photos uploaded yet. Upload to begin!';
+                            explodeBtn.classList.remove('show');
                             explodeBtn.style.display = 'none';
+                            generateBtn.classList.remove('show');
                             generateBtn.style.display = 'none';
                             
                             if (uploadLabel) uploadLabel.style.display = 'inline-block';
                             if (fileInput) fileInput.style.display = 'inline-block';
                             if (songLabel) songLabel.style.display = 'inline-block';
                             if (songInput) songInput.style.display = 'inline-block';
-                        }
-                        
-                        // Hide share area if no photos
-                        const shareArea = document.getElementById('share-link-area');
-                        if (uploadedImageUrls.length === 0) {
-                            shareArea.classList.remove('visible');
                         }
                     }
 
@@ -702,10 +691,8 @@
                         document.getElementById('intro-screen').classList.add('hidden');
                         document.getElementById('main-content').classList.add('visible');
                         
-                        // Load photos after entering
                         loadAllPhotos();
                         
-                        // Load song
                         const savedSong = localStorage.getItem('gf_song_share');
                         if (savedSong) {
                             uploadedSongData = savedSong;
@@ -1151,14 +1138,14 @@
                     });
 
                     // ============================================================
-                    // PHOTO UPLOAD - WITH SHARING
+                    // ✅ PHOTO UPLOAD - FIXED
                     // ============================================================
                     document.getElementById('photo-file-input').addEventListener('change', async function(e) {
                         const files = Array.from(e.target.files);
                         if (files.length === 0) return;
 
                         if (files.length > 20) {
-                            alert('⚠️ Maximum 20 photos allowed for sharing');
+                            alert('⚠️ Maximum 20 photos allowed');
                             this.value = '';
                             return;
                         }
@@ -1195,10 +1182,11 @@
                             timestamp: Date.now() 
                         }));
                         
+                        // ✅ UPDATE UI - EXPLODE BUTTON SHOW HOGI
                         updateUI();
                         document.getElementById('selected-count-msg').textContent = 
                             '✅ ' + uploadedImageUrls.length + ' photos saved!';
-                        alert('✅ ' + uploadedImageUrls.length + ' photos saved!\n\nClick "Generate Share Link" to send to phone.');
+                        alert('✅ ' + uploadedImageUrls.length + ' photos saved!\n\nClick "Explode Memories" to see magic!');
                     });
 
                     // ============================================================
@@ -1218,7 +1206,6 @@
                             const base64Data = await fileToBase64(file);
                             uploadedSongData = base64Data;
                             
-                            // Save song
                             localStorage.setItem('gf_song_share', base64Data);
                             
                             const audio = document.getElementById('bg-music');
@@ -1273,7 +1260,7 @@
                     });
 
                     // ============================================================
-                    // EXPLODE MEMORIES
+                    // ✅ EXPLODE MEMORIES
                     // ============================================================
                     document.getElementById('explode-trigger-btn').addEventListener('click', function() {
                         if (uploadedImageUrls.length === 0) {
@@ -1332,7 +1319,6 @@
                         setTimeout(function() {
                             document.getElementById('polaroid-layer').style.visibility = 'hidden';
                             document.getElementById('photo-explosion-layer').classList.add('active');
-                            // Reload photos
                             const stored = loadPhotosFromStorage();
                             if (stored && stored.length > 0) {
                                 uploadedImageUrls = stored;
@@ -1354,10 +1340,8 @@
                     // ============================================================
                     // INIT
                     // ============================================================
-                    // Try to load photos
-                    const hasPhotos = loadAllPhotos();
+                    loadAllPhotos();
                     
-                    // Try to load song
                     const savedSong = localStorage.getItem('gf_song_share');
                     if (savedSong) {
                         uploadedSongData = savedSong;
