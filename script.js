@@ -1,3 +1,4 @@
+<script>
 /**
  * 🌸 Happy Girlfriend's Day - Standalone JavaScript Conversion
  * With Persistent Base64 Storage & Viewer Mode
@@ -1693,3 +1694,4 @@
   });
 
 })();
+<script>
