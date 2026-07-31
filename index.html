@@ -517,829 +517,176 @@
                 // ============================================================
                 // APP LOGIC
                 // ============================================================
-                function initApp() {
-                    const loading = document.getElementById('loading');
-                    if(loading) { loading.style.display = 'none'; }
+                let uploadedImageUrls = [];
+                let uploadedSongData = null;
+                let shareUrl = '';
 
-                    let uploadedImageUrls = [];
-                    let uploadedSongData = null;
-                    let shareUrl = '';
-
-                    // Load photos from share or storage
-                    function loadAllPhotos() {
-                        const shared = loadPhotosFromShare();
-                        if (shared && shared.length > 0) {
-                            uploadedImageUrls = shared;
-                            updateUI();
-                            return true;
-                        }
+                // ✅ FIXED: updateUI function - properly shows explode button
+                function updateUI() {
+                    const gridContainer = document.getElementById('photo-grid-container');
+                    const countMsg = document.getElementById('selected-count-msg');
+                    const explodeBtn = document.getElementById('explode-trigger-btn');
+                    const generateBtn = document.getElementById('generate-link-btn');
+                    const uploadLabel = document.getElementById('upload-label-btn');
+                    const fileInput = document.getElementById('photo-file-input');
+                    const subtitle = document.getElementById('layer7-subtitle-text');
+                    const title = document.getElementById('layer7-title-text');
+                    const songLabel = document.getElementById('song-upload-label');
+                    const songInput = document.getElementById('song-file-input');
+                    
+                    // Clear grid
+                    gridContainer.innerHTML = '';
+                    
+                    if (uploadedImageUrls.length > 0) {
+                        // Show photos in grid
+                        const grid = document.createElement('div');
+                        grid.className = 'photo-grid';
+                        uploadedImageUrls.slice(0, 20).forEach(url => {
+                            const img = document.createElement('img');
+                            img.src = url;
+                            img.loading = 'lazy';
+                            grid.appendChild(img);
+                        });
+                        gridContainer.appendChild(grid);
                         
-                        const stored = loadPhotosFromStorage();
-                        if (stored && stored.length > 0) {
-                            uploadedImageUrls = stored;
-                            updateUI();
-                            return true;
-                        }
+                        countMsg.textContent = '📸 ' + uploadedImageUrls.length + ' photos loaded!';
                         
-                        return false;
+                        // ✅ HIDE upload options
+                        if (uploadLabel) uploadLabel.style.display = 'none';
+                        if (fileInput) fileInput.style.display = 'none';
+                        
+                        // ✅ SHOW explode button
+                        explodeBtn.classList.add('show');
+                        explodeBtn.style.display = 'inline-block';
+                        
+                        // ✅ SHOW generate link button
+                        generateBtn.classList.add('show');
+                        generateBtn.style.display = 'inline-block';
+                        
+                        if (subtitle) subtitle.textContent = 'Your beautiful memories are ready! ✨';
+                        if (title) title.textContent = '💖 Memories Gallery';
+                        
+                        if (uploadedSongData) {
+                            if (songLabel) songLabel.style.display = 'none';
+                            if (songInput) songInput.style.display = 'none';
+                        }
+                    } else {
+                        countMsg.textContent = '📸 No photos uploaded yet. Upload to begin!';
+                        explodeBtn.classList.remove('show');
+                        explodeBtn.style.display = 'none';
+                        generateBtn.classList.remove('show');
+                        generateBtn.style.display = 'none';
+                        
+                        if (uploadLabel) uploadLabel.style.display = 'inline-block';
+                        if (fileInput) fileInput.style.display = 'inline-block';
+                        if (songLabel) songLabel.style.display = 'inline-block';
+                        if (songInput) songInput.style.display = 'inline-block';
                     }
+                }
 
-                    // ✅ FIXED: Update UI with photos - EXPLODE BUTTON SHOW HOGI
-                    function updateUI() {
-                        const gridContainer = document.getElementById('photo-grid-container');
-                        const countMsg = document.getElementById('selected-count-msg');
-                        const explodeBtn = document.getElementById('explode-trigger-btn');
-                        const generateBtn = document.getElementById('generate-link-btn');
-                        const uploadLabel = document.getElementById('upload-label-btn');
-                        const fileInput = document.getElementById('photo-file-input');
-                        const subtitle = document.getElementById('layer7-subtitle-text');
-                        const title = document.getElementById('layer7-title-text');
-                        const songLabel = document.getElementById('song-upload-label');
-                        const songInput = document.getElementById('song-file-input');
-                        
-                        // Clear grid
-                        gridContainer.innerHTML = '';
-                        
-                        if (uploadedImageUrls.length > 0) {
-                            // ✅ Show photos in grid
-                            const grid = document.createElement('div');
-                            grid.className = 'photo-grid';
-                            uploadedImageUrls.slice(0, 20).forEach(url => {
-                                const img = document.createElement('img');
-                                img.src = url;
-                                img.loading = 'lazy';
-                                grid.appendChild(img);
-                            });
-                            gridContainer.appendChild(grid);
-                            
-                            countMsg.textContent = '📸 ' + uploadedImageUrls.length + ' photos loaded!';
-                            
-                            // ✅ HIDE UPLOAD OPTIONS
-                            if (uploadLabel) uploadLabel.style.display = 'none';
-                            if (fileInput) fileInput.style.display = 'none';
-                            
-                            // ✅ SHOW EXPLODE BUTTON
-                            explodeBtn.classList.add('show');
-                            explodeBtn.style.display = 'inline-block';
-                            
-                            // ✅ SHOW GENERATE LINK BUTTON
-                            generateBtn.classList.add('show');
-                            generateBtn.style.display = 'inline-block';
-                            
-                            if (subtitle) subtitle.textContent = 'Your beautiful memories are ready! ✨';
-                            if (title) title.textContent = '💖 Memories Gallery';
-                            
-                            if (uploadedSongData) {
-                                if (songLabel) songLabel.style.display = 'none';
-                                if (songInput) songInput.style.display = 'none';
-                            }
+                // Load photos from storage
+                function loadAllPhotos() {
+                    const shared = loadPhotosFromShare();
+                    if (shared && shared.length > 0) {
+                        uploadedImageUrls = shared;
+                        updateUI();
+                        return true;
+                    }
+                    
+                    const stored = loadPhotosFromStorage();
+                    if (stored && stored.length > 0) {
+                        uploadedImageUrls = stored;
+                        updateUI();
+                        return true;
+                    }
+                    
+                    return false;
+                }
+
+                // ============================================================
+                // TITLE ANIMATION
+                // ============================================================
+                const textLines = ["HAPPY", "GIRLFRIEND'S", "DAY BABY"];
+                const titleContainer = document.getElementById('title-container');
+                const royalFrame = document.getElementById('royal-frame');
+                const bombWrapper = document.getElementById('bomb-wrapper');
+
+                let letterDelay = 0.1;
+
+                function getRandomDirection() {
+                    const angle = Math.random() * Math.PI * 2;
+                    const distance = 700 + Math.random() * 500;
+                    return { rx: (Math.cos(angle) * distance) + 'px', ry: (Math.sin(angle) * distance) + 'px', rot: ((Math.random() - 0.5) * 360) + 'deg' };
+                }
+
+                textLines.forEach(function(lineText) {
+                    const lineDiv = document.createElement('div');
+                    lineDiv.className = 'title-line';
+                    for (let i = 0; i < lineText.length; i++) {
+                        const char = lineText[i];
+                        if (char === ' ') {
+                            const spaceSpan = document.createElement('span');
+                            spaceSpan.className = 'space';
+                            lineDiv.appendChild(spaceSpan);
                         } else {
-                            countMsg.textContent = '📸 No photos uploaded yet. Upload to begin!';
-                            explodeBtn.classList.remove('show');
-                            explodeBtn.style.display = 'none';
-                            generateBtn.classList.remove('show');
-                            generateBtn.style.display = 'none';
-                            
-                            if (uploadLabel) uploadLabel.style.display = 'inline-block';
-                            if (fileInput) fileInput.style.display = 'inline-block';
-                            if (songLabel) songLabel.style.display = 'inline-block';
-                            if (songInput) songInput.style.display = 'inline-block';
+                            const letterSpan = document.createElement('span');
+                            letterSpan.className = 'letter';
+                            letterSpan.textContent = char;
+                            const dir = getRandomDirection();
+                            letterSpan.style.setProperty('--rx', dir.rx);
+                            letterSpan.style.setProperty('--ry', dir.ry);
+                            letterSpan.style.setProperty('--rot', dir.rot);
+                            letterSpan.style.animationDelay = letterDelay + 's';
+                            lineDiv.appendChild(letterSpan);
+                            letterDelay += 0.08;
                         }
                     }
+                    titleContainer.appendChild(lineDiv);
+                });
 
-                    // ============================================================
-                    // TITLE ANIMATION
-                    // ============================================================
-                    const textLines = ["HAPPY", "GIRLFRIEND'S", "DAY BABY"];
-                    const titleContainer = document.getElementById('title-container');
-                    const royalFrame = document.getElementById('royal-frame');
-                    const bombWrapper = document.getElementById('bomb-wrapper');
+                setTimeout(function() {
+                    royalFrame.classList.add('frame-active');
+                    setTimeout(function() { bombWrapper.classList.add('drop-down'); }, 400);
+                }, (letterDelay + 1.2) * 1000);
 
-                    let letterDelay = 0.1;
+                // ============================================================
+                // BOMB CLICK
+                // ============================================================
+                document.getElementById('bomb-action-btn').addEventListener('click', function() {
+                    bombWrapper.style.opacity = '0';
+                    bombWrapper.style.pointerEvents = 'none';
 
-                    function getRandomDirection() {
-                        const angle = Math.random() * Math.PI * 2;
-                        const distance = 700 + Math.random() * 500;
-                        return { rx: (Math.cos(angle) * distance) + 'px', ry: (Math.sin(angle) * distance) + 'px', rot: ((Math.random() - 0.5) * 360) + 'deg' };
+                    const overlay = document.getElementById('explosion-overlay');
+                    const loveTexts = ["I LOVE YOU", "MY EVERYTHING", "FOREVER & ALWAYS", "YOU ARE MY WORLD"];
+                    const colors = ["#d4af37", "#f3e5ab", "#ffffff", "#c9b080", "#ffb3c6"];
+
+                    for (let i = 0; i < 90; i++) {
+                        const textNode = document.createElement('div');
+                        textNode.className = 'exploding-text';
+                        textNode.textContent = loveTexts[Math.floor(Math.random() * loveTexts.length)];
+                        textNode.style.left = (window.innerWidth / 2) + 'px';
+                        textNode.style.top = (window.innerHeight / 2) + 'px';
+                        textNode.style.color = colors[Math.floor(Math.random() * colors.length)];
+                        textNode.style.setProperty('--ex', ((Math.random() - 0.5) * window.innerWidth * 2.2) + 'px');
+                        textNode.style.setProperty('--ey', ((Math.random() - 0.5) * window.innerHeight * 2.2) + 'px');
+                        textNode.style.setProperty('--erot', ((Math.random() - 0.5) * 120) + 'deg');
+                        textNode.style.animationDelay = (Math.random() * 1.5) + 's';
+                        overlay.appendChild(textNode);
                     }
-
-                    textLines.forEach(function(lineText) {
-                        const lineDiv = document.createElement('div');
-                        lineDiv.className = 'title-line';
-                        for (let i = 0; i < lineText.length; i++) {
-                            const char = lineText[i];
-                            if (char === ' ') {
-                                const spaceSpan = document.createElement('span');
-                                spaceSpan.className = 'space';
-                                lineDiv.appendChild(spaceSpan);
-                            } else {
-                                const letterSpan = document.createElement('span');
-                                letterSpan.className = 'letter';
-                                letterSpan.textContent = char;
-                                const dir = getRandomDirection();
-                                letterSpan.style.setProperty('--rx', dir.rx);
-                                letterSpan.style.setProperty('--ry', dir.ry);
-                                letterSpan.style.setProperty('--rot', dir.rot);
-                                letterSpan.style.animationDelay = letterDelay + 's';
-                                lineDiv.appendChild(letterSpan);
-                                letterDelay += 0.08;
-                            }
-                        }
-                        titleContainer.appendChild(lineDiv);
-                    });
 
                     setTimeout(function() {
-                        royalFrame.classList.add('frame-active');
-                        setTimeout(function() { bombWrapper.classList.add('drop-down'); }, 400);
-                    }, (letterDelay + 1.2) * 1000);
-
-                    // ============================================================
-                    // BOMB CLICK
-                    // ============================================================
-                    document.getElementById('bomb-action-btn').addEventListener('click', function() {
-                        bombWrapper.style.opacity = '0';
-                        bombWrapper.style.pointerEvents = 'none';
-
-                        const overlay = document.getElementById('explosion-overlay');
-                        const loveTexts = ["I LOVE YOU", "MY EVERYTHING", "FOREVER & ALWAYS", "YOU ARE MY WORLD"];
-                        const colors = ["#d4af37", "#f3e5ab", "#ffffff", "#c9b080", "#ffb3c6"];
-
-                        for (let i = 0; i < 90; i++) {
-                            const textNode = document.createElement('div');
-                            textNode.className = 'exploding-text';
-                            textNode.textContent = loveTexts[Math.floor(Math.random() * loveTexts.length)];
-                            textNode.style.left = (window.innerWidth / 2) + 'px';
-                            textNode.style.top = (window.innerHeight / 2) + 'px';
-                            textNode.style.color = colors[Math.floor(Math.random() * colors.length)];
-                            textNode.style.setProperty('--ex', ((Math.random() - 0.5) * window.innerWidth * 2.2) + 'px');
-                            textNode.style.setProperty('--ey', ((Math.random() - 0.5) * window.innerHeight * 2.2) + 'px');
-                            textNode.style.setProperty('--erot', ((Math.random() - 0.5) * 120) + 'deg');
-                            textNode.style.animationDelay = (Math.random() * 1.5) + 's';
-                            overlay.appendChild(textNode);
-                        }
-
-                        setTimeout(function() {
-                            document.getElementById('next-btn-wrapper').classList.add('visible');
-                        }, 4500);
-                    });
-
-                    // ============================================================
-                    // ENTER EXPERIENCE
-                    // ============================================================
-                    const music = document.getElementById('bg-music');
-                    document.getElementById('enter-exp-btn').addEventListener('click', function() {
-                        document.getElementById('intro-screen').classList.add('hidden');
-                        document.getElementById('main-content').classList.add('visible');
-                        
-                        loadAllPhotos();
-                        
-                        const savedSong = localStorage.getItem('gf_song_share');
-                        if (savedSong) {
-                            uploadedSongData = savedSong;
-                            music.src = savedSong;
-                            music.load();
-                            document.getElementById('song-status').textContent = '🎵 Song loaded!';
-                        }
-                    });
-
-                    // ============================================================
-                    // VINYL PLAYER
-                    // ============================================================
-                    document.getElementById('vinyl-trigger').addEventListener('click', toggleVinylPlayer);
-                    function toggleVinylPlayer() {
-                        const turntable = document.getElementById('turntable');
-                        const status = document.getElementById('player-status');
-                        if (music.paused) {
-                            if (!music.src) {
-                                status.textContent = 'Please upload a song first! 🎵';
-                                return;
-                            }
-                            music.volume = 0.6;
-                            music.play().catch(function() { 
-                                status.textContent = 'Please upload a song first! 🎵';
-                            });
-                            turntable.classList.add('playing');
-                            status.textContent = 'Playing your song';
-                        } else {
-                            music.pause();
-                            turntable.classList.remove('playing');
-                            status.textContent = 'Paused. Tap to spin again';
-                        }
-                    }
-
-                    // ============================================================
-                    // WAX SEAL
-                    // ============================================================
-                    document.getElementById('wax-seal').addEventListener('click', function() {
-                        document.getElementById('wax-seal').classList.add('broken');
-                        setTimeout(function() {
-                            document.getElementById('envelope').classList.add('open');
-                        }, 400);
-                    });
-
-                    // ============================================================
-                    // SKY TRANSITION
-                    // ============================================================
-                    document.getElementById('sky-trans-btn').addEventListener('click', function() {
-                        document.getElementById('main-content').classList.add('fade-out');
-                        setTimeout(function() {
-                            document.getElementById('sky-layer').classList.add('active');
-                        }, 1000);
-                    });
-
-                    // ============================================================
-                    // SKY PROMISES
-                    // ============================================================
-                    const promises = [
-                        "I promise to love you every single day",
-                        "I promise to hold your hand through everything",
-                        "I promise to protect your heart as carefully as my own"
-                    ];
-                    let promiseIndex = 0;
-
-                    document.getElementById('sky-layer').addEventListener('click', function(event) {
-                        if (event.target.id === 'open-note-modal-btn') return;
-                        const sky = document.getElementById('sky-layer');
-                        const lantern = document.createElement('div');
-                        lantern.className = 'lantern';
-                        lantern.style.left = (event.clientX - 22) + 'px';
-                        lantern.style.top = (event.clientY - 30) + 'px';
-
-                        const promiseText = document.createElement('div');
-                        promiseText.className = 'promise-label';
-                        promiseText.textContent = promises[promiseIndex];
-                        promiseText.style.left = (event.clientX + 35) + 'px';
-                        promiseText.style.top = (event.clientY - 15) + 'px';
-
-                        promiseIndex = (promiseIndex + 1) % promises.length;
-                        sky.appendChild(lantern);
-                        sky.appendChild(promiseText);
-
-                        setTimeout(function() {
-                            if (lantern.parentNode) lantern.remove();
-                            if (promiseText.parentNode) promiseText.remove();
-                        }, 12000);
-                    });
-
-                    // ============================================================
-                    // NOTE MODAL
-                    // ============================================================
-                    document.getElementById('open-note-modal-btn').addEventListener('click', function(e) {
-                        e.stopPropagation();
-                        document.getElementById('note-modal').classList.add('active');
-                    });
-
-                    // ============================================================
-                    // GO TO MAP
-                    // ============================================================
-                    document.getElementById('go-map-btn').addEventListener('click', function() {
-                        document.getElementById('note-modal').classList.remove('active');
-                        document.getElementById('sky-layer').style.opacity = '0';
-                        setTimeout(function() {
-                            document.getElementById('sky-layer').style.visibility = 'hidden';
-                            document.getElementById('map-layer').classList.add('active');
-                            initOrbitMechanic();
-                        }, 1000);
-                    });
-
-                    // ============================================================
-                    // ORBIT MECHANIC
-                    // ============================================================
-                    let isFused = false;
-
-                    function initOrbitMechanic() {
-                        const pHis = document.getElementById('planet-his');
-                        const pHers = document.getElementById('planet-hers');
-                        const badge = document.getElementById('distance-badge');
-                        const orbitTitle = document.getElementById('orbit-title');
-                        const flashOverlay = document.getElementById('white-glow-flash');
-
-                        function makeDraggable(element) {
-                            let isDragging = false;
-                            let offsetX = 0, offsetY = 0;
-
-                            element.addEventListener('pointerdown', function(e) {
-                                if (isFused) return;
-                                isDragging = true;
-                                element.setPointerCapture(e.pointerId);
-                                const rect = element.getBoundingClientRect();
-                                offsetX = e.clientX - rect.left - rect.width / 2;
-                                offsetY = e.clientY - rect.top - rect.height / 2;
-                            });
-
-                            element.addEventListener('pointermove', function(e) {
-                                if (!isDragging || isFused) return;
-                                const parentRect = document.getElementById('space-canvas').getBoundingClientRect();
-                                let x = e.clientX - parentRect.left - offsetX;
-                                let y = e.clientY - parentRect.top - offsetY;
-
-                                element.style.left = x + 'px';
-                                element.style.top = y + 'px';
-
-                                checkDistance();
-                            });
-
-                            element.addEventListener('pointerup', function() { isDragging = false; });
-                        }
-
-                        makeDraggable(pHis);
-                        makeDraggable(pHers);
-
-                        function checkDistance() {
-                            const r1 = pHis.getBoundingClientRect();
-                            const r2 = pHers.getBoundingClientRect();
-                            const dist = Math.hypot(
-                                (r2.left + r2.width / 2) - (r1.left + r1.width / 2),
-                                (r2.top + r2.height / 2) - (r1.top + r1.height / 2)
-                            );
-                            const kmDistance = Math.max(0, Math.round(dist - 110));
-
-                            badge.textContent = 'Distance: ' + kmDistance + ' km';
-                            if (kmDistance <= 15 && !isFused) triggerFusion();
-                        }
-
-                        function triggerFusion() {
-                            isFused = true;
-                            pHis.style.transition = 'all 0.6s ease';
-                            pHers.style.transition = 'all 0.6s ease';
-                            pHis.style.opacity = '0';
-                            pHers.style.opacity = '0';
-                            badge.style.opacity = '0';
-                            orbitTitle.style.opacity = '0';
-                            flashOverlay.classList.add('active');
-
-                            for (let i = 0; i < 40; i++) {
-                                (function(index) {
-                                    setTimeout(function() {
-                                        const petal = document.createElement('div');
-                                        petal.className = 'petal';
-                                        petal.style.left = (Math.random() * 100) + 'vw';
-                                        document.body.appendChild(petal);
-                                        setTimeout(function() { if (petal.parentNode) petal.remove(); }, 6000);
-                                    }, index * 100);
-                                })(i);
-                            }
-
-                            setTimeout(function() {
-                                document.getElementById('royal-scroll-modal').classList.add('active');
-                                setTimeout(function() { flashOverlay.classList.remove('active'); }, 800);
-                            }, 1200);
-                        }
-                    }
-
-                    // ============================================================
-                    // ENTER SANCTUARY
-                    // ============================================================
-                    document.getElementById('enter-sanctuary-btn').addEventListener('click', function() {
-                        document.getElementById('royal-scroll-modal').classList.remove('active');
-                        document.getElementById('map-layer').style.opacity = '0';
-                        setTimeout(function() {
-                            document.getElementById('map-layer').style.visibility = 'hidden';
-                            document.getElementById('sanctuary-layer').classList.add('active');
-                            initCandleSanctuary();
-                        }, 1200);
-                    });
-
-                    // ============================================================
-                    // CANDLE SANCTUARY
-                    // ============================================================
-                    let openedCandleCount = 0;
-                    let sanctuaryLit = false;
-                    let centerFlame, centerLight, centerTaperMesh;
-                    let floatingCandles = [];
-                    let sanctuaryRaycaster, sanctuaryCamera;
-
-                    function initCandleSanctuary() {
-                        const container = document.getElementById('candle-webgl-container');
-                        if (container.children.length > 0) return;
-
-                        if (typeof THREE === 'undefined') {
-                            container.innerHTML = `
-                                <div style="display:flex;justify-content:center;align-items:center;height:100%;color:#d4af37;font-family:Georgia,serif;font-size:1.2rem;text-align:center;padding:20px;">
-                                    <div>
-                                        <p style="font-size:3rem;">🕯️</p>
-                                        <p style="margin-top:10px;">Candle Sanctuary</p>
-                                        <p style="font-size:0.9rem;color:#f7d070;margin-top:5px;">Tap the center to ignite magical candles</p>
-                                    </div>
-                                </div>
-                            `;
-                            return;
-                        }
-
-                        try {
-                            const scene = new THREE.Scene();
-                            scene.fog = new THREE.FogExp2(0x020104, 0.015);
-
-                            const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-                            camera.position.set(0, 0, 10);
-
-                            const renderer = new THREE.WebGLRenderer({ antialias: true });
-                            renderer.setSize(window.innerWidth, window.innerHeight);
-                            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-                            container.appendChild(renderer.domElement);
-
-                            const ambLight = new THREE.AmbientLight(0x221133, 0.6);
-                            scene.add(ambLight);
-
-                            const waxMat = new THREE.MeshStandardMaterial({ color: 0xfffae6, roughness: 0.5 });
-                            const taperGeo = new THREE.CylinderGeometry(0.2, 0.25, 3, 32);
-                            centerTaperMesh = new THREE.Mesh(taperGeo, waxMat);
-                            centerTaperMesh.position.y = -0.3;
-                            scene.add(centerTaperMesh);
-
-                            const flameGeo = new THREE.ConeGeometry(0.12, 0.4, 16);
-                            const flameMat = new THREE.MeshBasicMaterial({ color: 0xffaa33, transparent: true, opacity: 0 });
-                            centerFlame = new THREE.Mesh(flameGeo, flameMat);
-                            centerFlame.position.y = 1.45;
-                            scene.add(centerFlame);
-
-                            centerLight = new THREE.PointLight(0xffaa44, 0, 15);
-                            centerLight.position.y = 1.5;
-                            scene.add(centerLight);
-
-                            const candleGeometry = new THREE.CylinderGeometry(0.14, 0.14, 0.55, 16);
-                            const floatingCount = 180;
-
-                            for (let i = 0; i < floatingCount; i++) {
-                                const candleContainer = new THREE.Group();
-                                const radius = 3.2 + Math.random() * 22;
-                                const theta = Math.random() * Math.PI * 2;
-                                const phi = (Math.random() - 0.5) * Math.PI * 0.85;
-
-                                candleContainer.position.x = radius * Math.cos(theta) * Math.cos(phi);
-                                candleContainer.position.y = radius * Math.sin(phi);
-                                candleContainer.position.z = -1.5 - Math.random() * 25;
-
-                                const body = new THREE.Mesh(candleGeometry, waxMat);
-                                candleContainer.add(body);
-
-                                const fGeo = new THREE.ConeGeometry(0.08, 0.25, 12);
-                                const fMat = new THREE.MeshBasicMaterial({ color: 0xffaa33, transparent: true, opacity: 0 });
-                                const flame = new THREE.Mesh(fGeo, fMat);
-                                flame.position.y = 0.38;
-                                candleContainer.add(flame);
-
-                                const light = new THREE.PointLight(0xff8822, 0, 7);
-                                light.position.y = 0.4;
-                                candleContainer.add(light);
-
-                                scene.add(candleContainer);
-
-                                floatingCandles.push({
-                                    group: candleContainer, flame: flame, light: light, body: body,
-                                    baseY: candleContainer.position.y,
-                                    baseX: candleContainer.position.x,
-                                    floatSpeedY: 0.5 + Math.random() * 1.0,
-                                    floatSpeedX: 0.3 + Math.random() * 0.7,
-                                    floatSpeedRot: 0.2 + Math.random() * 0.5,
-                                    floatOffset: Math.random() * Math.PI * 2,
-                                    lit: false,
-                                    igniteDelay: radius * 0.08 + Math.random() * 0.5
-                                });
-                            }
-
-                            sanctuaryRaycaster = new THREE.Raycaster();
-                            sanctuaryCamera = camera;
-
-                            window.addEventListener('pointerdown', function(e) {
-                                const sLayer = document.getElementById('sanctuary-layer');
-                                if (!sLayer.classList.contains('active') || e.target.classList.contains('polaroid-layer-trigger')) return;
-
-                                if (!sanctuaryLit) {
-                                    sanctuaryLit = true;
-                                    let op = 0;
-                                    const interval = setInterval(function() {
-                                        op += 0.05;
-                                        if (centerFlame) {
-                                            centerFlame.material.opacity = op;
-                                            centerLight.intensity = op * 2.5;
-                                        }
-                                        if (op >= 1) {
-                                            clearInterval(interval);
-                                            document.getElementById('sanctuary-hint').innerText = "Tap any floating candle to reveal a secret note";
-                                        }
-                                    }, 30);
-                                } else if (sanctuaryRaycaster && sanctuaryCamera) {
-                                    const mouse = new THREE.Vector2();
-                                    mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
-                                    mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
-                                    sanctuaryRaycaster.setFromCamera(mouse, sanctuaryCamera);
-
-                                    const objects = floatingCandles.map(function(c) { return c.body; });
-                                    const intersects = sanctuaryRaycaster.intersectObjects(objects);
-                                    if (intersects.length > 0) {
-                                        const candle = floatingCandles.find(function(c) { return c.body === intersects[0].object; });
-                                        if (candle && candle.lit) {
-                                            openedCandleCount++;
-                                            document.getElementById('secret-note-text').innerText = '"' + Array(openedCandleCount).fill("I love you").join(" ") + '"';
-                                            document.getElementById('secret-note-modal').classList.add('active');
-                                        }
-                                    }
-                                }
-                            });
-
-                            const clock = new THREE.Clock();
-
-                            function animateSanctuary() {
-                                requestAnimationFrame(animateSanctuary);
-                                const elapsedTime = clock.getElapsedTime();
-
-                                if (sanctuaryLit) centerLight.intensity = 2.2 + Math.sin(elapsedTime * 12) * 0.2;
-                                if (centerTaperMesh) centerTaperMesh.position.y = -0.3 + Math.sin(elapsedTime * 0.8) * 0.15;
-                                if (centerFlame) centerFlame.position.y = centerTaperMesh.position.y + 1.75;
-                                if (centerLight) centerLight.position.y = centerTaperMesh.position.y + 1.8;
-
-                                floatingCandles.forEach(function(c) {
-                                    c.group.position.y = c.baseY + Math.sin(elapsedTime * c.floatSpeedY + c.floatOffset) * 0.45;
-                                    c.group.position.x = c.baseX + Math.cos(elapsedTime * c.floatSpeedX + c.floatOffset) * 0.25;
-                                    c.group.rotation.z = Math.sin(elapsedTime * c.floatSpeedRot + c.floatOffset) * 0.08;
-
-                                    if (sanctuaryLit && !c.lit && elapsedTime > c.igniteDelay) c.lit = true;
-                                    if (c.lit && c.flame.material.opacity < 1) {
-                                        c.flame.material.opacity += 0.03;
-                                        c.light.intensity = c.flame.material.opacity * 1.5;
-                                    }
-                                });
-
-                                renderer.render(scene, camera);
-                            }
-                            animateSanctuary();
-                        } catch (e) {
-                            console.warn('Three.js error:', e);
-                        }
-                    }
-
-                    // ============================================================
-                    // CLOSE SECRET MODAL
-                    // ============================================================
-                    document.getElementById('close-secret-modal-btn').addEventListener('click', function() {
-                        document.getElementById('secret-note-modal').classList.remove('active');
-                    });
-
-                    // ============================================================
-                    // GO TO POLAROID
-                    // ============================================================
-                    document.getElementById('goto-polaroid-btn').addEventListener('click', function() {
-                        document.getElementById('sanctuary-layer').style.opacity = '0';
-                        setTimeout(function() {
-                            document.getElementById('sanctuary-layer').style.visibility = 'hidden';
-                            document.getElementById('polaroid-layer').classList.add('active');
-                            initLayer6Camera();
-                        }, 1500);
-                    });
-
-                    // ============================================================
-                    // POLAROID CAMERA
-                    // ============================================================
-                    const video = document.getElementById('webcam');
-                    const canvas = document.getElementById('polaroid-canvas');
-                    const polaroidResult = document.getElementById('polaroid-result');
-                    const retakeBtn = document.getElementById('retake-btn');
-                    const nextLayer7Btn = document.getElementById('next-layer7-btn');
-                    let mediaStream = null;
-
-                    async function initLayer6Camera() {
-                        try {
-                            mediaStream = await navigator.mediaDevices.getUserMedia({
-                                video: { facingMode: "user", width: { ideal: 720 }, height: { ideal: 720 } },
-                                audio: false
-                            });
-                            video.srcObject = mediaStream;
-                        } catch (err) {
-                            console.log('Camera not available');
-                        }
-                    }
-
-                    document.getElementById('shutter-action-btn').addEventListener('click', function() {
-                        const flashOverlay = document.getElementById('camera-flash-overlay');
-                        const context = canvas.getContext('2d');
-                        flashOverlay.classList.add('flash');
-
-                        setTimeout(function() {
-                            canvas.width = 600;
-                            canvas.height = 600;
-                            context.translate(canvas.width, 0);
-                            context.scale(-1, 1);
-                            context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-                            if (mediaStream) mediaStream.getTracks().forEach(function(track) { track.stop(); });
-                            flashOverlay.classList.remove('flash');
-                            polaroidResult.classList.add('ejected');
-                            retakeBtn.style.display = 'block';
-                            nextLayer7Btn.style.display = 'block';
-                        }, 150);
-                    });
-
-                    retakeBtn.addEventListener('click', function() {
-                        polaroidResult.classList.remove('ejected');
-                        retakeBtn.style.display = 'none';
-                        nextLayer7Btn.style.display = 'none';
-                        initLayer6Camera();
-                    });
-
-                    // ============================================================
-                    // ✅ PHOTO UPLOAD - FIXED
-                    // ============================================================
-                    document.getElementById('photo-file-input').addEventListener('change', async function(e) {
-                        const files = Array.from(e.target.files);
-                        if (files.length === 0) return;
-
-                        if (files.length > 20) {
-                            alert('⚠️ Maximum 20 photos allowed');
-                            this.value = '';
-                            return;
-                        }
-
-                        const newPhotos = [];
-                        let processed = 0;
-
-                        document.getElementById('selected-count-msg').textContent = 
-                            '📸 Processing 0/' + files.length + ' photos...';
-
-                        for (let i = 0; i < files.length; i++) {
-                            try {
-                                const compressed = await compressImage(files[i], 250, 250, 0.4);
-                                newPhotos.push(compressed);
-                                processed++;
-                                document.getElementById('selected-count-msg').textContent = 
-                                    '📸 Processing ' + processed + '/' + files.length + ' photos...';
-                            } catch (err) {
-                                console.warn('Failed to convert:', err);
-                            }
-                        }
-
-                        if (newPhotos.length === 0) {
-                            alert('❌ No valid images found. Please try again.');
-                            return;
-                        }
-
-                        uploadedImageUrls = uploadedImageUrls.concat(newPhotos);
-                        
-                        // Save to storage
-                        localStorage.setItem('gf_photos_share', JSON.stringify({ 
-                            photos: uploadedImageUrls, 
-                            uploaded: true, 
-                            timestamp: Date.now() 
-                        }));
-                        
-                        // ✅ UPDATE UI - EXPLODE BUTTON SHOW HOGI
-                        updateUI();
-                        document.getElementById('selected-count-msg').textContent = 
-                            '✅ ' + uploadedImageUrls.length + ' photos saved!';
-                        alert('✅ ' + uploadedImageUrls.length + ' photos saved!\n\nClick "Explode Memories" to see magic!');
-                    });
-
-                    // ============================================================
-                    // SONG UPLOAD
-                    // ============================================================
-                    document.getElementById('song-file-input').addEventListener('change', async function(e) {
-                        const file = e.target.files[0];
-                        if (!file) return;
-
-                        try {
-                            if (file.size > 5 * 1024 * 1024) {
-                                alert('❌ File too large! Max 5MB.');
-                                this.value = '';
-                                return;
-                            }
-
-                            const base64Data = await fileToBase64(file);
-                            uploadedSongData = base64Data;
-                            
-                            localStorage.setItem('gf_song_share', base64Data);
-                            
-                            const audio = document.getElementById('bg-music');
-                            audio.src = base64Data;
-                            audio.load();
-                            
-                            document.getElementById('song-status').textContent = '🎵 "' + file.name + '" loaded!';
-                            document.getElementById('song-upload-label').style.display = 'none';
-                            document.getElementById('song-file-input').style.display = 'none';
-                            
-                            alert('✅ Song uploaded successfully!\n\nTap the vinyl to play your song!');
-                        } catch (err) {
-                            console.error('Song upload error:', err);
-                            alert('❌ Error uploading song: ' + err.message);
-                        }
-                    });
-
-                    // ============================================================
-                    // GENERATE SHARE LINK
-                    // ============================================================
-                    document.getElementById('generate-link-btn').addEventListener('click', function() {
-                        if (uploadedImageUrls.length === 0) {
-                            alert('Please upload photos first!');
-                            return;
-                        }
-                        
-                        const result = savePhotosWithCode(uploadedImageUrls);
-                        if (result.success) {
-                            shareUrl = result.shareUrl;
-                            document.getElementById('shareLinkInput').value = shareUrl;
-                            document.getElementById('share-link-area').classList.add('visible');
-                            document.getElementById('selected-count-msg').textContent = 
-                                '✅ Share link generated! Copy it to send to phone.';
-                        } else {
-                            alert('❌ Error generating link: ' + (result.error || 'Unknown error'));
-                        }
-                    });
-
-                    // ============================================================
-                    // COPY LINK
-                    // ============================================================
-                    document.getElementById('copyLinkBtn').addEventListener('click', function() {
-                        const input = document.getElementById('shareLinkInput');
-                        input.select();
-                        navigator.clipboard.writeText(input.value).then(function() {
-                            alert('✅ Link copied!\n\nSend this link to your phone via WhatsApp or email.');
-                        }).catch(function() {
-                            input.select();
-                            document.execCommand('copy');
-                            alert('✅ Link copied!');
-                        });
-                    });
-
-                    // ============================================================
-                    // ✅ EXPLODE MEMORIES
-                    // ============================================================
-                    document.getElementById('explode-trigger-btn').addEventListener('click', function() {
-                        if (uploadedImageUrls.length === 0) {
-                            alert('Please upload photos first!');
-                            return;
-                        }
-                        
-                        document.getElementById('layer7-upload-box').classList.add('fade-out');
-                        const explosionContainer = document.getElementById('photo-explosion-layer');
-                        const activeImages = uploadedImageUrls;
-                        
-                        const totalExplosions = Math.max(40, activeImages.length * 6);
-
-                        for (let j = 0; j < totalExplosions; j++) {
-                            (function(index) {
-                                setTimeout(function() {
-                                    const card = document.createElement('div');
-                                    card.className = 'exploded-photo-card';
-                                    const img = document.createElement('img');
-                                    img.src = activeImages[index % activeImages.length];
-                                    card.appendChild(img);
-
-                                    const screenWidth = window.innerWidth;
-                                    const screenHeight = window.innerHeight;
-                                    
-                                    card.style.left = '50%';
-                                    card.style.top = '50%';
-                                    card.style.setProperty('--tx', ((Math.random() - 0.5) * screenWidth * 1.6) + 'px');
-                                    card.style.setProperty('--ty', ((Math.random() - 0.5) * screenHeight * 1.6) + 'px');
-                                    card.style.setProperty('--rot', ((Math.random() - 0.5) * 360) + 'deg');
-                                    card.style.setProperty('--scl', (0.5 + Math.random() * 0.9).toFixed(2));
-
-                                    explosionContainer.appendChild(card);
-                                    requestAnimationFrame(function() { 
-                                        card.classList.add('animate-explosion'); 
-                                    });
-                                }, index * 70);
-                            })(j);
-                        }
-
-                        setTimeout(function() {
-                            const glowScreen = document.getElementById('shiny-glow-screen');
-                            glowScreen.classList.add('active');
-                            setTimeout(function() {
-                                glowScreen.classList.remove('active');
-                                document.getElementById('romantic-desc-card').classList.add('visible');
-                            }, 1800);
-                        }, totalExplosions * 70 + 1200);
-                    });
-
-                    // ============================================================
-                    // NEXT LAYER 7
-                    // ============================================================
-                    nextLayer7Btn.addEventListener('click', function() {
-                        document.getElementById('polaroid-layer').style.opacity = '0';
-                        setTimeout(function() {
-                            document.getElementById('polaroid-layer').style.visibility = 'hidden';
-                            document.getElementById('photo-explosion-layer').classList.add('active');
-                            const stored = loadPhotosFromStorage();
-                            if (stored && stored.length > 0) {
-                                uploadedImageUrls = stored;
-                                updateUI();
-                            }
-                        }, 1500);
-                    });
-
-                    // ============================================================
-                    // THE END
-                    // ============================================================
-                    document.getElementById('the-end-action-btn').addEventListener('click', function() {
-                        document.getElementById('romantic-desc-card').style.opacity = '0';
-                        setTimeout(function() {
-                            document.getElementById('final-outro-screen').classList.add('active');
-                        }, 800);
-                    });
-
-                    // ============================================================
-                    // INIT
-                    // ============================================================
+                        document.getElementById('next-btn-wrapper').classList.add('visible');
+                    }, 4500);
+                });
+
+                // ============================================================
+                // ENTER EXPERIENCE
+                // ============================================================
+                const music = document.getElementById('bg-music');
+                document.getElementById('enter-exp-btn').addEventListener('click', function() {
+                    document.getElementById('intro-screen').classList.add('hidden');
+                    document.getElementById('main-content').classList.add('visible');
+                    
                     loadAllPhotos();
                     
                     const savedSong = localStorage.getItem('gf_song_share');
@@ -1349,13 +696,659 @@
                         music.load();
                         document.getElementById('song-status').textContent = '🎵 Song loaded!';
                     }
+                });
 
-                    console.log('💖 App Loaded!');
-                    console.log('📸 Photos:', uploadedImageUrls.length);
-                    console.log('🎵 Song:', !!uploadedSongData);
+                // ============================================================
+                // VINYL PLAYER
+                // ============================================================
+                document.getElementById('vinyl-trigger').addEventListener('click', toggleVinylPlayer);
+                function toggleVinylPlayer() {
+                    const turntable = document.getElementById('turntable');
+                    const status = document.getElementById('player-status');
+                    if (music.paused) {
+                        if (!music.src) {
+                            status.textContent = 'Please upload a song first! 🎵';
+                            return;
+                        }
+                        music.volume = 0.6;
+                        music.play().catch(function() { 
+                            status.textContent = 'Please upload a song first! 🎵';
+                        });
+                        turntable.classList.add('playing');
+                        status.textContent = 'Playing your song';
+                    } else {
+                        music.pause();
+                        turntable.classList.remove('playing');
+                        status.textContent = 'Paused. Tap to spin again';
+                    }
                 }
 
-                setTimeout(initApp, 500);
+                // ============================================================
+                // WAX SEAL
+                // ============================================================
+                document.getElementById('wax-seal').addEventListener('click', function() {
+                    document.getElementById('wax-seal').classList.add('broken');
+                    setTimeout(function() {
+                        document.getElementById('envelope').classList.add('open');
+                    }, 400);
+                });
+
+                // ============================================================
+                // SKY TRANSITION
+                // ============================================================
+                document.getElementById('sky-trans-btn').addEventListener('click', function() {
+                    document.getElementById('main-content').classList.add('fade-out');
+                    setTimeout(function() {
+                        document.getElementById('sky-layer').classList.add('active');
+                    }, 1000);
+                });
+
+                // ============================================================
+                // SKY PROMISES
+                // ============================================================
+                const promises = [
+                    "I promise to love you every single day",
+                    "I promise to hold your hand through everything",
+                    "I promise to protect your heart as carefully as my own"
+                ];
+                let promiseIndex = 0;
+
+                document.getElementById('sky-layer').addEventListener('click', function(event) {
+                    if (event.target.id === 'open-note-modal-btn') return;
+                    const sky = document.getElementById('sky-layer');
+                    const lantern = document.createElement('div');
+                    lantern.className = 'lantern';
+                    lantern.style.left = (event.clientX - 22) + 'px';
+                    lantern.style.top = (event.clientY - 30) + 'px';
+
+                    const promiseText = document.createElement('div');
+                    promiseText.className = 'promise-label';
+                    promiseText.textContent = promises[promiseIndex];
+                    promiseText.style.left = (event.clientX + 35) + 'px';
+                    promiseText.style.top = (event.clientY - 15) + 'px';
+
+                    promiseIndex = (promiseIndex + 1) % promises.length;
+                    sky.appendChild(lantern);
+                    sky.appendChild(promiseText);
+
+                    setTimeout(function() {
+                        if (lantern.parentNode) lantern.remove();
+                        if (promiseText.parentNode) promiseText.remove();
+                    }, 12000);
+                });
+
+                // ============================================================
+                // NOTE MODAL
+                // ============================================================
+                document.getElementById('open-note-modal-btn').addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    document.getElementById('note-modal').classList.add('active');
+                });
+
+                // ============================================================
+                // GO TO MAP
+                // ============================================================
+                document.getElementById('go-map-btn').addEventListener('click', function() {
+                    document.getElementById('note-modal').classList.remove('active');
+                    document.getElementById('sky-layer').style.opacity = '0';
+                    setTimeout(function() {
+                        document.getElementById('sky-layer').style.visibility = 'hidden';
+                        document.getElementById('map-layer').classList.add('active');
+                        initOrbitMechanic();
+                    }, 1000);
+                });
+
+                // ============================================================
+                // ORBIT MECHANIC
+                // ============================================================
+                let isFused = false;
+
+                function initOrbitMechanic() {
+                    const pHis = document.getElementById('planet-his');
+                    const pHers = document.getElementById('planet-hers');
+                    const badge = document.getElementById('distance-badge');
+                    const orbitTitle = document.getElementById('orbit-title');
+                    const flashOverlay = document.getElementById('white-glow-flash');
+
+                    function makeDraggable(element) {
+                        let isDragging = false;
+                        let offsetX = 0, offsetY = 0;
+
+                        element.addEventListener('pointerdown', function(e) {
+                            if (isFused) return;
+                            isDragging = true;
+                            element.setPointerCapture(e.pointerId);
+                            const rect = element.getBoundingClientRect();
+                            offsetX = e.clientX - rect.left - rect.width / 2;
+                            offsetY = e.clientY - rect.top - rect.height / 2;
+                        });
+
+                        element.addEventListener('pointermove', function(e) {
+                            if (!isDragging || isFused) return;
+                            const parentRect = document.getElementById('space-canvas').getBoundingClientRect();
+                            let x = e.clientX - parentRect.left - offsetX;
+                            let y = e.clientY - parentRect.top - offsetY;
+
+                            element.style.left = x + 'px';
+                            element.style.top = y + 'px';
+
+                            checkDistance();
+                        });
+
+                        element.addEventListener('pointerup', function() { isDragging = false; });
+                    }
+
+                    makeDraggable(pHis);
+                    makeDraggable(pHers);
+
+                    function checkDistance() {
+                        const r1 = pHis.getBoundingClientRect();
+                        const r2 = pHers.getBoundingClientRect();
+                        const dist = Math.hypot(
+                            (r2.left + r2.width / 2) - (r1.left + r1.width / 2),
+                            (r2.top + r2.height / 2) - (r1.top + r1.height / 2)
+                        );
+                        const kmDistance = Math.max(0, Math.round(dist - 110));
+
+                        badge.textContent = 'Distance: ' + kmDistance + ' km';
+                        if (kmDistance <= 15 && !isFused) triggerFusion();
+                    }
+
+                    function triggerFusion() {
+                        isFused = true;
+                        pHis.style.transition = 'all 0.6s ease';
+                        pHers.style.transition = 'all 0.6s ease';
+                        pHis.style.opacity = '0';
+                        pHers.style.opacity = '0';
+                        badge.style.opacity = '0';
+                        orbitTitle.style.opacity = '0';
+                        flashOverlay.classList.add('active');
+
+                        for (let i = 0; i < 40; i++) {
+                            (function(index) {
+                                setTimeout(function() {
+                                    const petal = document.createElement('div');
+                                    petal.className = 'petal';
+                                    petal.style.left = (Math.random() * 100) + 'vw';
+                                    document.body.appendChild(petal);
+                                    setTimeout(function() { if (petal.parentNode) petal.remove(); }, 6000);
+                                }, index * 100);
+                            })(i);
+                        }
+
+                        setTimeout(function() {
+                            document.getElementById('royal-scroll-modal').classList.add('active');
+                            setTimeout(function() { flashOverlay.classList.remove('active'); }, 800);
+                        }, 1200);
+                    }
+                }
+
+                // ============================================================
+                // ENTER SANCTUARY
+                // ============================================================
+                document.getElementById('enter-sanctuary-btn').addEventListener('click', function() {
+                    document.getElementById('royal-scroll-modal').classList.remove('active');
+                    document.getElementById('map-layer').style.opacity = '0';
+                    setTimeout(function() {
+                        document.getElementById('map-layer').style.visibility = 'hidden';
+                        document.getElementById('sanctuary-layer').classList.add('active');
+                        initCandleSanctuary();
+                    }, 1200);
+                });
+
+                // ============================================================
+                // CANDLE SANCTUARY
+                // ============================================================
+                let openedCandleCount = 0;
+                let sanctuaryLit = false;
+                let centerFlame, centerLight, centerTaperMesh;
+                let floatingCandles = [];
+                let sanctuaryRaycaster, sanctuaryCamera;
+
+                function initCandleSanctuary() {
+                    const container = document.getElementById('candle-webgl-container');
+                    if (container.children.length > 0) return;
+
+                    if (typeof THREE === 'undefined') {
+                        container.innerHTML = `
+                            <div style="display:flex;justify-content:center;align-items:center;height:100%;color:#d4af37;font-family:Georgia,serif;font-size:1.2rem;text-align:center;padding:20px;">
+                                <div>
+                                    <p style="font-size:3rem;">🕯️</p>
+                                    <p style="margin-top:10px;">Candle Sanctuary</p>
+                                    <p style="font-size:0.9rem;color:#f7d070;margin-top:5px;">Tap the center to ignite magical candles</p>
+                                </div>
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    try {
+                        const scene = new THREE.Scene();
+                        scene.fog = new THREE.FogExp2(0x020104, 0.015);
+
+                        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+                        camera.position.set(0, 0, 10);
+
+                        const renderer = new THREE.WebGLRenderer({ antialias: true });
+                        renderer.setSize(window.innerWidth, window.innerHeight);
+                        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+                        container.appendChild(renderer.domElement);
+
+                        const ambLight = new THREE.AmbientLight(0x221133, 0.6);
+                        scene.add(ambLight);
+
+                        const waxMat = new THREE.MeshStandardMaterial({ color: 0xfffae6, roughness: 0.5 });
+                        const taperGeo = new THREE.CylinderGeometry(0.2, 0.25, 3, 32);
+                        centerTaperMesh = new THREE.Mesh(taperGeo, waxMat);
+                        centerTaperMesh.position.y = -0.3;
+                        scene.add(centerTaperMesh);
+
+                        const flameGeo = new THREE.ConeGeometry(0.12, 0.4, 16);
+                        const flameMat = new THREE.MeshBasicMaterial({ color: 0xffaa33, transparent: true, opacity: 0 });
+                        centerFlame = new THREE.Mesh(flameGeo, flameMat);
+                        centerFlame.position.y = 1.45;
+                        scene.add(centerFlame);
+
+                        centerLight = new THREE.PointLight(0xffaa44, 0, 15);
+                        centerLight.position.y = 1.5;
+                        scene.add(centerLight);
+
+                        const candleGeometry = new THREE.CylinderGeometry(0.14, 0.14, 0.55, 16);
+                        const floatingCount = 180;
+
+                        for (let i = 0; i < floatingCount; i++) {
+                            const candleContainer = new THREE.Group();
+                            const radius = 3.2 + Math.random() * 22;
+                            const theta = Math.random() * Math.PI * 2;
+                            const phi = (Math.random() - 0.5) * Math.PI * 0.85;
+
+                            candleContainer.position.x = radius * Math.cos(theta) * Math.cos(phi);
+                            candleContainer.position.y = radius * Math.sin(phi);
+                            candleContainer.position.z = -1.5 - Math.random() * 25;
+
+                            const body = new THREE.Mesh(candleGeometry, waxMat);
+                            candleContainer.add(body);
+
+                            const fGeo = new THREE.ConeGeometry(0.08, 0.25, 12);
+                            const fMat = new THREE.MeshBasicMaterial({ color: 0xffaa33, transparent: true, opacity: 0 });
+                            const flame = new THREE.Mesh(fGeo, fMat);
+                            flame.position.y = 0.38;
+                            candleContainer.add(flame);
+
+                            const light = new THREE.PointLight(0xff8822, 0, 7);
+                            light.position.y = 0.4;
+                            candleContainer.add(light);
+
+                            scene.add(candleContainer);
+
+                            floatingCandles.push({
+                                group: candleContainer, flame: flame, light: light, body: body,
+                                baseY: candleContainer.position.y,
+                                baseX: candleContainer.position.x,
+                                floatSpeedY: 0.5 + Math.random() * 1.0,
+                                floatSpeedX: 0.3 + Math.random() * 0.7,
+                                floatSpeedRot: 0.2 + Math.random() * 0.5,
+                                floatOffset: Math.random() * Math.PI * 2,
+                                lit: false,
+                                igniteDelay: radius * 0.08 + Math.random() * 0.5
+                            });
+                        }
+
+                        sanctuaryRaycaster = new THREE.Raycaster();
+                        sanctuaryCamera = camera;
+
+                        window.addEventListener('pointerdown', function(e) {
+                            const sLayer = document.getElementById('sanctuary-layer');
+                            if (!sLayer.classList.contains('active') || e.target.classList.contains('polaroid-layer-trigger')) return;
+
+                            if (!sanctuaryLit) {
+                                sanctuaryLit = true;
+                                let op = 0;
+                                const interval = setInterval(function() {
+                                    op += 0.05;
+                                    if (centerFlame) {
+                                        centerFlame.material.opacity = op;
+                                        centerLight.intensity = op * 2.5;
+                                    }
+                                    if (op >= 1) {
+                                        clearInterval(interval);
+                                        document.getElementById('sanctuary-hint').innerText = "Tap any floating candle to reveal a secret note";
+                                    }
+                                }, 30);
+                            } else if (sanctuaryRaycaster && sanctuaryCamera) {
+                                const mouse = new THREE.Vector2();
+                                mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+                                mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+                                sanctuaryRaycaster.setFromCamera(mouse, sanctuaryCamera);
+
+                                const objects = floatingCandles.map(function(c) { return c.body; });
+                                const intersects = sanctuaryRaycaster.intersectObjects(objects);
+                                if (intersects.length > 0) {
+                                    const candle = floatingCandles.find(function(c) { return c.body === intersects[0].object; });
+                                    if (candle && candle.lit) {
+                                        openedCandleCount++;
+                                        document.getElementById('secret-note-text').innerHTML = '"' + Array(openedCandleCount).fill("I love you").join(" ") + '"';
+                                        document.getElementById('secret-note-modal').classList.add('active');
+                                    }
+                                }
+                            }
+                        });
+
+                        const clock = new THREE.Clock();
+
+                        function animateSanctuary() {
+                            requestAnimationFrame(animateSanctuary);
+                            const elapsedTime = clock.getElapsedTime();
+
+                            if (sanctuaryLit) centerLight.intensity = 2.2 + Math.sin(elapsedTime * 12) * 0.2;
+                            if (centerTaperMesh) centerTaperMesh.position.y = -0.3 + Math.sin(elapsedTime * 0.8) * 0.15;
+                            if (centerFlame) centerFlame.position.y = centerTaperMesh.position.y + 1.75;
+                            if (centerLight) centerLight.position.y = centerTaperMesh.position.y + 1.8;
+
+                            floatingCandles.forEach(function(c) {
+                                c.group.position.y = c.baseY + Math.sin(elapsedTime * c.floatSpeedY + c.floatOffset) * 0.45;
+                                c.group.position.x = c.baseX + Math.cos(elapsedTime * c.floatSpeedX + c.floatOffset) * 0.25;
+                                c.group.rotation.z = Math.sin(elapsedTime * c.floatSpeedRot + c.floatOffset) * 0.08;
+
+                                if (sanctuaryLit && !c.lit && elapsedTime > c.igniteDelay) c.lit = true;
+                                if (c.lit && c.flame.material.opacity < 1) {
+                                    c.flame.material.opacity += 0.03;
+                                    c.light.intensity = c.flame.material.opacity * 1.5;
+                                }
+                            });
+
+                            renderer.render(scene, camera);
+                        }
+                        animateSanctuary();
+                    } catch (e) {
+                        console.warn('Three.js error:', e);
+                    }
+                }
+
+                // ============================================================
+                // CLOSE SECRET MODAL
+                // ============================================================
+                document.getElementById('close-secret-modal-btn').addEventListener('click', function() {
+                    document.getElementById('secret-note-modal').classList.remove('active');
+                });
+
+                // ============================================================
+                // GO TO POLAROID
+                // ============================================================
+                document.getElementById('goto-polaroid-btn').addEventListener('click', function() {
+                    document.getElementById('sanctuary-layer').style.opacity = '0';
+                    setTimeout(function() {
+                        document.getElementById('sanctuary-layer').style.visibility = 'hidden';
+                        document.getElementById('polaroid-layer').classList.add('active');
+                        initLayer6Camera();
+                    }, 1500);
+                });
+
+                // ============================================================
+                // POLAROID CAMERA
+                // ============================================================
+                const video = document.getElementById('webcam');
+                const canvas = document.getElementById('polaroid-canvas');
+                const polaroidResult = document.getElementById('polaroid-result');
+                const retakeBtn = document.getElementById('retake-btn');
+                const nextLayer7Btn = document.getElementById('next-layer7-btn');
+                let mediaStream = null;
+
+                async function initLayer6Camera() {
+                    try {
+                        mediaStream = await navigator.mediaDevices.getUserMedia({
+                            video: { facingMode: "user", width: { ideal: 720 }, height: { ideal: 720 } },
+                            audio: false
+                        });
+                        video.srcObject = mediaStream;
+                    } catch (err) {
+                        console.log('Camera not available');
+                    }
+                }
+
+                document.getElementById('shutter-action-btn').addEventListener('click', function() {
+                    const flashOverlay = document.getElementById('camera-flash-overlay');
+                    const context = canvas.getContext('2d');
+                    flashOverlay.classList.add('flash');
+
+                    setTimeout(function() {
+                        canvas.width = 600;
+                        canvas.height = 600;
+                        context.translate(canvas.width, 0);
+                        context.scale(-1, 1);
+                        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                        if (mediaStream) mediaStream.getTracks().forEach(function(track) { track.stop(); });
+                        flashOverlay.classList.remove('flash');
+                        polaroidResult.classList.add('ejected');
+                        retakeBtn.style.display = 'block';
+                        nextLayer7Btn.style.display = 'block';
+                    }, 150);
+                });
+
+                retakeBtn.addEventListener('click', function() {
+                    polaroidResult.classList.remove('ejected');
+                    retakeBtn.style.display = 'none';
+                    nextLayer7Btn.style.display = 'none';
+                    initLayer6Camera();
+                });
+
+                // ============================================================
+                // ✅ PHOTO UPLOAD - FIXED
+                // ============================================================
+                document.getElementById('photo-file-input').addEventListener('change', async function(e) {
+                    const files = Array.from(e.target.files);
+                    if (files.length === 0) return;
+
+                    if (files.length > 20) {
+                        alert('⚠️ Maximum 20 photos allowed');
+                        this.value = '';
+                        return;
+                    }
+
+                    const newPhotos = [];
+                    let processed = 0;
+
+                    document.getElementById('selected-count-msg').textContent = 
+                        '📸 Processing 0/' + files.length + ' photos...';
+
+                    for (let i = 0; i < files.length; i++) {
+                        try {
+                            const compressed = await compressImage(files[i], 250, 250, 0.4);
+                            newPhotos.push(compressed);
+                            processed++;
+                            document.getElementById('selected-count-msg').textContent = 
+                                '📸 Processing ' + processed + '/' + files.length + ' photos...';
+                        } catch (err) {
+                            console.warn('Failed to convert:', err);
+                        }
+                    }
+
+                    if (newPhotos.length === 0) {
+                        alert('❌ No valid images found. Please try again.');
+                        return;
+                    }
+
+                    uploadedImageUrls = uploadedImageUrls.concat(newPhotos);
+                    
+                    // Save to storage
+                    localStorage.setItem('gf_photos_share', JSON.stringify({ 
+                        photos: uploadedImageUrls, 
+                        uploaded: true, 
+                        timestamp: Date.now() 
+                    }));
+                    
+                    // ✅ UPDATE UI - EXPLODE BUTTON SHOW HOGI
+                    updateUI();
+                    document.getElementById('selected-count-msg').textContent = 
+                        '✅ ' + uploadedImageUrls.length + ' photos saved!';
+                    alert('✅ ' + uploadedImageUrls.length + ' photos saved!\n\nClick "Explode Memories" to see magic!');
+                });
+
+                // ============================================================
+                // SONG UPLOAD
+                // ============================================================
+                document.getElementById('song-file-input').addEventListener('change', async function(e) {
+                    const file = e.target.files[0];
+                    if (!file) return;
+
+                    try {
+                        if (file.size > 5 * 1024 * 1024) {
+                            alert('❌ File too large! Max 5MB.');
+                            this.value = '';
+                            return;
+                        }
+
+                        const base64Data = await fileToBase64(file);
+                        uploadedSongData = base64Data;
+                        
+                        localStorage.setItem('gf_song_share', base64Data);
+                        
+                        const audio = document.getElementById('bg-music');
+                        audio.src = base64Data;
+                        audio.load();
+                        
+                        document.getElementById('song-status').textContent = '🎵 "' + file.name + '" loaded!';
+                        document.getElementById('song-upload-label').style.display = 'none';
+                        document.getElementById('song-file-input').style.display = 'none';
+                        
+                        alert('✅ Song uploaded successfully!\n\nTap the vinyl to play your song!');
+                    } catch (err) {
+                        console.error('Song upload error:', err);
+                        alert('❌ Error uploading song: ' + err.message);
+                    }
+                });
+
+                // ============================================================
+                // GENERATE SHARE LINK
+                // ============================================================
+                document.getElementById('generate-link-btn').addEventListener('click', function() {
+                    if (uploadedImageUrls.length === 0) {
+                        alert('Please upload photos first!');
+                        return;
+                    }
+                    
+                    const result = savePhotosWithCode(uploadedImageUrls);
+                    if (result.success) {
+                        shareUrl = result.shareUrl;
+                        document.getElementById('shareLinkInput').value = shareUrl;
+                        document.getElementById('share-link-area').classList.add('visible');
+                        document.getElementById('selected-count-msg').textContent = 
+                            '✅ Share link generated! Copy it to send to phone.';
+                    } else {
+                        alert('❌ Error generating link: ' + (result.error || 'Unknown error'));
+                    }
+                });
+
+                // ============================================================
+                // COPY LINK
+                // ============================================================
+                document.getElementById('copyLinkBtn').addEventListener('click', function() {
+                    const input = document.getElementById('shareLinkInput');
+                    input.select();
+                    navigator.clipboard.writeText(input.value).then(function() {
+                        alert('✅ Link copied!\n\nSend this link to your phone via WhatsApp or email.');
+                    }).catch(function() {
+                        input.select();
+                        document.execCommand('copy');
+                        alert('✅ Link copied!');
+                    });
+                });
+
+                // ============================================================
+                // ✅ EXPLODE MEMORIES
+                // ============================================================
+                document.getElementById('explode-trigger-btn').addEventListener('click', function() {
+                    if (uploadedImageUrls.length === 0) {
+                        alert('Please upload photos first!');
+                        return;
+                    }
+                    
+                    document.getElementById('layer7-upload-box').classList.add('fade-out');
+                    const explosionContainer = document.getElementById('photo-explosion-layer');
+                    const activeImages = uploadedImageUrls;
+                    
+                    const totalExplosions = Math.max(40, activeImages.length * 6);
+
+                    for (let j = 0; j < totalExplosions; j++) {
+                        (function(index) {
+                            setTimeout(function() {
+                                const card = document.createElement('div');
+                                card.className = 'exploded-photo-card';
+                                const img = document.createElement('img');
+                                img.src = activeImages[index % activeImages.length];
+                                card.appendChild(img);
+
+                                const screenWidth = window.innerWidth;
+                                const screenHeight = window.innerHeight;
+                                
+                                card.style.left = '50%';
+                                card.style.top = '50%';
+                                card.style.setProperty('--tx', ((Math.random() - 0.5) * screenWidth * 1.6) + 'px');
+                                card.style.setProperty('--ty', ((Math.random() - 0.5) * screenHeight * 1.6) + 'px');
+                                card.style.setProperty('--rot', ((Math.random() - 0.5) * 360) + 'deg');
+                                card.style.setProperty('--scl', (0.5 + Math.random() * 0.9).toFixed(2));
+
+                                explosionContainer.appendChild(card);
+                                requestAnimationFrame(function() { 
+                                    card.classList.add('animate-explosion'); 
+                                });
+                            }, index * 70);
+                        })(j);
+                    }
+
+                    setTimeout(function() {
+                        const glowScreen = document.getElementById('shiny-glow-screen');
+                        glowScreen.classList.add('active');
+                        setTimeout(function() {
+                            glowScreen.classList.remove('active');
+                            document.getElementById('romantic-desc-card').classList.add('visible');
+                        }, 1800);
+                    }, totalExplosions * 70 + 1200);
+                });
+
+                // ============================================================
+                // NEXT LAYER 7
+                // ============================================================
+                nextLayer7Btn.addEventListener('click', function() {
+                    document.getElementById('polaroid-layer').style.opacity = '0';
+                    setTimeout(function() {
+                        document.getElementById('polaroid-layer').style.visibility = 'hidden';
+                        document.getElementById('photo-explosion-layer').classList.add('active');
+                        const stored = loadPhotosFromStorage();
+                        if (stored && stored.length > 0) {
+                            uploadedImageUrls = stored;
+                            updateUI();
+                        }
+                    }, 1500);
+                });
+
+                // ============================================================
+                // THE END
+                // ============================================================
+                document.getElementById('the-end-action-btn').addEventListener('click', function() {
+                    document.getElementById('romantic-desc-card').style.opacity = '0';
+                    setTimeout(function() {
+                        document.getElementById('final-outro-screen').classList.add('active');
+                    }, 800);
+                });
+
+                // ============================================================
+                // INIT
+                // ============================================================
+                loadAllPhotos();
+                
+                const savedSong = localStorage.getItem('gf_song_share');
+                if (savedSong) {
+                    uploadedSongData = savedSong;
+                    music.src = savedSong;
+                    music.load();
+                    document.getElementById('song-status').textContent = '🎵 Song loaded!';
+                }
+
+                console.log('💖 App Loaded!');
+                console.log('📸 Photos:', uploadedImageUrls.length);
+                console.log('🎵 Song:', !!uploadedSongData);
             }
 
             // ============================================================
