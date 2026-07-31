@@ -19,7 +19,8 @@
             // ============================================================
             // 1. PERMANENT STORAGE - localStorage with Base64
             // ============================================================
-            const STORAGE_KEY = 'gf_photos_permanent_v3';
+            const STORAGE_KEY = 'gf_photos_permanent_v4';
+            const SONG_KEY = 'gf_song_permanent';
             const isViewerMode = window.location.search.includes('viewerMode=true');
 
             // Save photos to localStorage
@@ -57,6 +58,35 @@
                 }
             }
 
+            // Save song to localStorage
+            function saveSong(songData) {
+                try {
+                    if (!songData) {
+                        localStorage.removeItem(SONG_KEY);
+                        return true;
+                    }
+                    localStorage.setItem(SONG_KEY, songData);
+                    console.log('🎵 Song saved');
+                    return true;
+                } catch(e) {
+                    console.error('Song save error:', e);
+                    return false;
+                }
+            }
+
+            // Load song from localStorage
+            function loadSong() {
+                try {
+                    const raw = localStorage.getItem(SONG_KEY);
+                    if (!raw) return null;
+                    console.log('🎵 Song loaded');
+                    return raw;
+                } catch(e) {
+                    console.error('Song load error:', e);
+                    return null;
+                }
+            }
+
             // Check if photos exist
             function hasPhotos() {
                 const data = loadPhotos();
@@ -71,12 +101,6 @@
                     reader.onerror = function(e) { reject(e); };
                     reader.readAsDataURL(file);
                 });
-            }
-
-            // Clear all photos
-            function clearPhotos() {
-                localStorage.removeItem(STORAGE_KEY);
-                console.log('🗑️ Cleared all photos');
             }
 
             // ============================================================
@@ -292,7 +316,7 @@
                     #photo-explosion-layer{position:fixed;inset:0;background:radial-gradient(circle at center,#150510 0%,#050106 100%);opacity:0;visibility:hidden;transition:opacity 2s ease,visibility 2s;z-index:8000;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center}
                     #photo-explosion-layer.active{opacity:1;visibility:visible}
                     
-                    .layer7-upload-container{position:absolute;z-index:8200;text-align:center;background:rgba(15,5,12,0.75);padding:35px 30px;border-radius:20px;border:1px solid rgba(212,175,55,0.3);backdrop-filter:blur(15px);box-shadow:0 20px 50px rgba(0,0,0,0.8),0 0 30px rgba(212,175,55,0.15);max-width:480px;width:90%;transition:all 0.8s ease}
+                    .layer7-upload-container{position:absolute;z-index:8200;text-align:center;background:rgba(15,5,12,0.75);padding:35px 30px;border-radius:20px;border:1px solid rgba(212,175,55,0.3);backdrop-filter:blur(15px);box-shadow:0 20px 50px rgba(0,0,0,0.8),0 0 30px rgba(212,175,55,0.15);max-width:480px;width:90%;transition:all 0.8s ease;max-height:90vh;overflow-y:auto}
                     .layer7-upload-container.fade-out{opacity:0;transform:scale(0.8);pointer-events:none}
                     .layer7-title{font-family:'Playfair Display','Georgia',serif;font-size:2.2rem;color:var(--royal-gold);margin-bottom:10px;text-shadow:0 0 15px rgba(212,175,55,0.4)}
                     .layer7-subtitle{font-family:'Georgia',serif;font-size:0.95rem;color:#e0b0c0;font-style:italic;margin-bottom:25px}
@@ -301,7 +325,13 @@
                     .upload-btn-label:hover{transform:scale(1.05);box-shadow:0 0 25px rgba(212,175,55,0.5)}
                     .upload-btn-label.show{display:inline-block}
                     
+                    .song-upload-btn-label{display:none;padding:14px 32px;background:linear-gradient(135deg,#1a0b12 0%,#3d0f1d 100%);color:var(--royal-gold);border:1px solid var(--royal-gold);border-radius:30px;font-family:'Georgia',serif;font-size:1rem;cursor:pointer;box-shadow:0 0 20px rgba(128,15,47,0.6);transition:all 0.3s ease;margin-top:10px}
+                    .song-upload-btn-label:hover{transform:scale(1.05);box-shadow:0 0 25px rgba(212,175,55,0.5)}
+                    .song-upload-btn-label.show{display:inline-block}
+                    
                     #photo-file-input{display:none}
+                    #song-file-input{display:none}
+                    
                     .action-btn-group{display:flex;flex-direction:column;gap:12px;align-items:center;margin-top:20px}
                     .explode-now-btn,.generate-link-btn{padding:12px 28px;border-radius:30px;font-family:'Georgia',serif;font-weight:bold;font-size:0.95rem;cursor:pointer;transition:transform 0.3s;width:100%;max-width:280px}
                     .explode-now-btn{display:none;background:linear-gradient(45deg,#d4af37,#f7d070);color:#2b0512;border:none;box-shadow:0 0 20px rgba(247,208,112,0.8)}
@@ -310,12 +340,8 @@
                     .generate-link-btn.show{display:inline-block}
                     .explode-now-btn:hover,.generate-link-btn:hover{transform:scale(1.05)}
                     
-                    /* Viewer mode - hide upload completely */
-                    .viewer-mode .upload-btn-label,
-                    .viewer-mode #photo-file-input,
-                    .viewer-mode .generate-link-btn {
-                        display: none !important;
-                    }
+                    .viewer-mode .upload-btn-label,.viewer-mode #photo-file-input,.viewer-mode .generate-link-btn,
+                    .viewer-mode .song-upload-btn-label,.viewer-mode #song-file-input{display:none !important}
                     
                     .exploded-photo-card{position:absolute;width:clamp(140px,18vw,220px);background:#120a10;padding:10px 10px 25px 10px;border-radius:6px;border:1px solid rgba(212,175,55,0.4);box-shadow:0 10px 30px rgba(0,0,0,0.9),0 0 20px rgba(255,77,109,0.2);pointer-events:none;opacity:0;transform:translate(-50%,-50%) scale(0.1) rotate(0deg);z-index:8100}
                     .exploded-photo-card img{width:100%;height:clamp(140px,18vw,220px);object-fit:cover;border-radius:4px;filter:contrast(1.05) brightness(0.95)}
@@ -344,7 +370,10 @@
 
                 app.innerHTML = `
                     <style>${styles}</style>
-                    <audio id="bg-music" loop preload="none"><source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=romantic-acoustic-112163.mp3" type="audio/mpeg"></audio>
+                    
+                    <!-- Audio element with dynamic source -->
+                    <audio id="bg-music" loop preload="none"></audio>
+                    
                     <div id="explosion-overlay"></div>
                     <div id="intro-screen">
                         <div class="royal-frame-wrapper" id="royal-frame"><div class="title-container" id="title-container"></div></div>
@@ -450,6 +479,11 @@
                             <div id="upload-section">
                                 <label for="photo-file-input" class="upload-btn-label" id="upload-label-btn">📸 Select Girlfriend's Photos</label>
                                 <input type="file" id="photo-file-input" multiple accept="image/*">
+                                
+                                <br><br>
+                                <label for="song-file-input" class="song-upload-btn-label" id="song-upload-label">🎵 Upload Your Special Song</label>
+                                <input type="file" id="song-file-input" accept="audio/*">
+                                <div id="song-status" style="color:#f7d070;font-size:0.9rem;margin-top:8px;"></div>
                             </div>
                             
                             <div id="selected-count-msg" style="margin-top:15px;color:var(--gold-accent);font-size:0.9rem;"></div>
@@ -477,11 +511,11 @@
                     if(loading) { loading.style.display = 'none'; }
 
                     // ============================================================
-                    // CHECK PHOTOS - CRITICAL FOR VIEWER MODE
+                    // LOAD PHOTOS AND SONG FROM STORAGE
                     // ============================================================
                     let uploadedImageUrls = [];
+                    let uploadedSongData = null;
                     
-                    // Load photos from storage FIRST
                     function loadPhotosFromStorage() {
                         const saved = loadPhotos();
                         if (saved.photos && saved.photos.length > 0) {
@@ -490,6 +524,22 @@
                             return true;
                         }
                         console.log('📭 No photos in storage');
+                        return false;
+                    }
+
+                    function loadSongFromStorage() {
+                        const saved = loadSong();
+                        if (saved) {
+                            uploadedSongData = saved;
+                            console.log('🎵 Song loaded from storage');
+                            // Set the audio source
+                            const audio = document.getElementById('bg-music');
+                            audio.src = saved;
+                            audio.load();
+                            document.getElementById('song-status').textContent = '🎵 Song loaded!';
+                            return true;
+                        }
+                        console.log('🎵 No song in storage');
                         return false;
                     }
 
@@ -504,6 +554,8 @@
                         const countMsg = document.getElementById('selected-count-msg');
                         const subtitle = document.getElementById('layer7-subtitle-text');
                         const title = document.getElementById('layer7-title-text');
+                        const songLabel = document.getElementById('song-upload-label');
+                        const songInput = document.getElementById('song-file-input');
                         
                         if (hasSaved) {
                             // HIDE UPLOAD - SHOW EXPLODE
@@ -530,6 +582,12 @@
                             if (subtitle) subtitle.textContent = 'Your beautiful memories are ready! ✨';
                             if (title) title.textContent = '💖 Memories Gallery';
                             
+                            // Hide song upload if song exists
+                            if (uploadedSongData) {
+                                if (songLabel) songLabel.style.display = 'none';
+                                if (songInput) songInput.style.display = 'none';
+                            }
+                            
                             console.log('✅ UI Updated: Photos loaded, upload hidden');
                             return true;
                         } else {
@@ -546,6 +604,13 @@
                                 countMsg.style.display = 'block';
                             }
                             
+                            // Show song upload
+                            if (songLabel) {
+                                songLabel.classList.add('show');
+                                songLabel.style.display = 'inline-block';
+                            }
+                            if (songInput) songInput.style.display = 'inline-block';
+                            
                             // Viewer mode - special message
                             if (isViewerMode) {
                                 if (title) title.textContent = '💔 No Memories Found';
@@ -554,6 +619,8 @@
                                 if (uploadLabel) uploadLabel.style.display = 'none';
                                 if (fileInput) fileInput.style.display = 'none';
                                 if (explodeBtn) explodeBtn.style.display = 'none';
+                                if (songLabel) songLabel.style.display = 'none';
+                                if (songInput) songInput.style.display = 'none';
                             }
                             
                             console.log('📭 No photos found');
@@ -655,7 +722,9 @@
                         const status = document.getElementById('player-status');
                         if (music.paused) {
                             music.volume = 0.6;
-                            music.play().catch(function() {});
+                            music.play().catch(function() { 
+                                status.textContent = 'Please upload a song first! 🎵';
+                            });
                             turntable.classList.add('playing');
                             status.textContent = 'Playing your song';
                         } else {
@@ -1079,7 +1148,7 @@
                     // PHOTO UPLOAD - FIXED
                     // ============================================================
                     
-                    // Handle file upload
+                    // Handle photo upload
                     document.getElementById('photo-file-input').addEventListener('change', async function(e) {
                         const files = Array.from(e.target.files);
                         if (files.length === 0) return;
@@ -1111,10 +1180,52 @@
                         if (saved) {
                             // Update UI
                             updateUI();
+                            document.getElementById('selected-count-msg').textContent = '✅ ' + uploadedImageUrls.length + ' photos saved!';
                             alert('✅ ' + uploadedImageUrls.length + ' photos saved permanently!\n\nRefresh karein toh bhi rahengi.');
                             console.log('✅ Saved and UI updated');
                         } else {
                             alert('❌ Error saving photos. Please try again.');
+                        }
+                    });
+
+                    // ============================================================
+                    // SONG UPLOAD - NEW FEATURE
+                    // ============================================================
+                    document.getElementById('song-file-input').addEventListener('change', async function(e) {
+                        const file = e.target.files[0];
+                        if (!file) return;
+
+                        try {
+                            // Check file size (max 10MB)
+                            if (file.size > 10 * 1024 * 1024) {
+                                alert('Song file is too large! Please use a file under 10MB.');
+                                return;
+                            }
+
+                            const base64Data = await fileToBase64(file);
+                            uploadedSongData = base64Data;
+                            
+                            // Save to localStorage
+                            const saved = saveSong(base64Data);
+                            
+                            if (saved) {
+                                // Set audio source
+                                const audio = document.getElementById('bg-music');
+                                audio.src = base64Data;
+                                audio.load();
+                                
+                                document.getElementById('song-status').textContent = '🎵 "' + file.name + '" loaded successfully!';
+                                document.getElementById('song-upload-label').style.display = 'none';
+                                document.getElementById('song-file-input').style.display = 'none';
+                                
+                                alert('✅ Song uploaded successfully!\n\nTap the vinyl to play your song!');
+                                console.log('🎵 Song saved:', file.name);
+                            } else {
+                                alert('❌ Error saving song. Please try again.');
+                            }
+                        } catch (err) {
+                            console.error('Song upload error:', err);
+                            alert('Error uploading song. Please try again.');
                         }
                     });
 
@@ -1209,10 +1320,13 @@
                     });
 
                     // ============================================================
-                    // INIT - LOAD PHOTOS FIRST
+                    // INIT - LOAD EVERYTHING
                     // ============================================================
                     // Load photos from storage
                     const hasSaved = loadPhotosFromStorage();
+                    
+                    // Load song from storage
+                    const hasSong = loadSongFromStorage();
                     
                     // Update UI
                     updateUI();
@@ -1226,11 +1340,15 @@
                         const generateBtn = document.getElementById('generate-link-btn');
                         const uploadLabel = document.getElementById('upload-label-btn');
                         const fileInput = document.getElementById('photo-file-input');
+                        const songLabel = document.getElementById('song-upload-label');
+                        const songInput = document.getElementById('song-file-input');
                         
                         // Hide upload and generate in viewer mode
                         if (uploadLabel) uploadLabel.style.display = 'none';
                         if (fileInput) fileInput.style.display = 'none';
                         if (generateBtn) generateBtn.style.display = 'none';
+                        if (songLabel) songLabel.style.display = 'none';
+                        if (songInput) songInput.style.display = 'none';
                         
                         if (!hasSaved) {
                             // No photos - show message
@@ -1255,6 +1373,7 @@
                     console.log('💾 Storage Key:', STORAGE_KEY);
                     console.log('📸 Viewer Mode:', isViewerMode);
                     console.log('📸 Photos Loaded:', uploadedImageUrls.length);
+                    console.log('🎵 Song Loaded:', !!uploadedSongData);
                 }
 
                 // Start after a small delay
