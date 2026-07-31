@@ -73,7 +73,7 @@
                 }
             }
 
-            function compressImage(file, maxWidth = 250, maxHeight = 250, quality = 0.4) {
+            function compressImage(file, maxWidth = 200, maxHeight = 200, quality = 0.3) {
                 return new Promise((resolve) => {
                     const reader = new FileReader();
                     reader.onload = function(e) {
@@ -107,7 +107,7 @@
             // LOAD THREE.JS
             // ============================================================
             function loadThreeJS() {
-                return new Promise(function(resolve, reject) {
+                return new Promise(function(resolve) {
                     if (typeof THREE !== 'undefined') { resolve(); return; }
                     
                     let loaded = false;
@@ -347,7 +347,7 @@
                     #photo-explosion-layer{position:fixed;inset:0;background:radial-gradient(circle at center,#150510 0%,#050106 100%);opacity:0;visibility:hidden;transition:opacity 2s ease,visibility 2s;z-index:8000;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center}
                     #photo-explosion-layer.active{opacity:1;visibility:visible}
                     
-                    .layer7-upload-container{position:relative;z-index:8200;text-align:center;background:rgba(15,5,12,0.75);padding:25px 20px;border-radius:20px;border:1px solid rgba(212,175,55,0.3);backdrop-filter:blur(15px);box-shadow:0 20px 50px rgba(0,0,0,0.8),0 0 30px rgba(212,175,55,0.15);max-width:480px;width:92%;transition:all 0.8s ease;max-height:92vh;overflow-y:auto;margin:20px auto;}
+                    .layer7-upload-container{position:relative;z-index:8200;text-align:center;background:rgba(15,5,12,0.85);padding:25px 20px;border-radius:20px;border:1px solid rgba(212,175,55,0.3);backdrop-filter:blur(15px);box-shadow:0 20px 50px rgba(0,0,0,0.8),0 0 30px rgba(212,175,55,0.15);max-width:480px;width:92%;transition:all 0.8s ease;max-height:92vh;overflow-y:auto;margin:20px auto;}
                     .layer7-upload-container.fade-out{opacity:0;transform:scale(0.8);pointer-events:none}
                     .layer7-title{font-family:'Playfair Display','Georgia',serif;font-size:1.8rem;color:var(--royal-gold);margin-bottom:8px;text-shadow:0 0 15px rgba(212,175,55,0.4)}
                     .layer7-subtitle{font-family:'Georgia',serif;font-size:0.85rem;color:#e0b0c0;font-style:italic;margin-bottom:20px}
@@ -361,14 +361,36 @@
                     #photo-file-input{display:none}
                     #song-file-input{display:none}
                     
-                    .action-btn-group{display:flex;flex-direction:column;gap:12px;align-items:center;margin-top:15px}
-                    .explode-now-btn{padding:14px 28px;border-radius:30px;font-family:'Georgia',serif;font-weight:bold;font-size:1rem;cursor:pointer;transition:all 0.3s ease;width:100%;max-width:280px;display:none;background:linear-gradient(45deg,#d4af37,#f7d070);color:#2b0512;border:none;box-shadow:0 0 20px rgba(247,208,112,0.8)}
-                    .explode-now-btn.show{display:inline-block !important}
-                    .explode-now-btn:hover{transform:scale(1.05);box-shadow:0 0 30px rgba(247,208,112,0.9)}
+                    .action-btn-group{display:flex;flex-direction:column;gap:12px;align-items:center;margin-top:15px;width:100%;}
                     
-                    .generate-link-btn{padding:12px 24px;border-radius:30px;font-family:'Georgia',serif;font-weight:bold;font-size:0.9rem;cursor:pointer;transition:transform 0.3s;width:100%;max-width:280px;display:none;background:transparent;color:var(--royal-gold);border:1px solid var(--royal-gold);box-shadow:0 0 15px rgba(212,175,55,0.3)}
+                    /* FIXED: Explode button styles */
+                    .explode-now-btn {
+                        padding: 16px 32px;
+                        border-radius: 30px;
+                        font-family: 'Georgia', serif;
+                        font-weight: bold;
+                        font-size: 1.1rem;
+                        cursor: pointer;
+                        transition: all 0.3s ease;
+                        width: 100%;
+                        max-width: 280px;
+                        display: none !important;
+                        background: linear-gradient(45deg, #d4af37, #f7d070);
+                        color: #2b0512;
+                        border: none;
+                        box-shadow: 0 0 25px rgba(247, 208, 112, 0.6);
+                        margin: 5px auto;
+                    }
+                    .explode-now-btn.show {
+                        display: inline-block !important;
+                    }
+                    .explode-now-btn:hover {
+                        transform: scale(1.05);
+                        box-shadow: 0 0 40px rgba(247, 208, 112, 0.8);
+                    }
+                    
+                    .generate-link-btn{padding:12px 24px;border-radius:30px;font-family:'Georgia',serif;font-weight:bold;font-size:0.9rem;cursor:pointer;transition:transform 0.3s;width:100%;max-width:280px;display:none !important;background:transparent;color:var(--royal-gold);border:1px solid var(--royal-gold);box-shadow:0 0 15px rgba(212,175,55,0.3)}
                     .generate-link-btn.show{display:inline-block !important}
-                    
                     .generate-link-btn:hover{transform:scale(1.05)}
                     
                     .exploded-photo-card{position:absolute;width:clamp(120px,16vw,200px);background:#120a10;padding:8px 8px 20px 8px;border-radius:6px;border:1px solid rgba(212,175,55,0.4);box-shadow:0 10px 30px rgba(0,0,0,0.9),0 0 20px rgba(255,77,109,0.2);pointer-events:none;opacity:0;transform:translate(-50%,-50%) scale(0.1) rotate(0deg);z-index:8100}
@@ -525,7 +547,7 @@
                             
                             <div id="photo-grid-container" style="margin:10px 0;"></div>
                             
-                            <div id="selected-count-msg" style="margin-top:12px;color:var(--gold-accent);font-size:0.85rem;"></div>
+                            <div id="selected-count-msg" style="margin-top:12px;color:var(--gold-accent);font-size:0.85rem;font-weight:bold;"></div>
                             <div class="action-btn-group">
                                 <button class="explode-now-btn" id="explode-trigger-btn">🎆 Explode Memories</button>
                                 <button class="generate-link-btn" id="generate-link-btn">🔗 Generate Share Link</button>
@@ -568,6 +590,7 @@
                     const title = document.getElementById('layer7-title-text');
                     const songLabel = document.getElementById('song-upload-label');
                     const songInput = document.getElementById('song-file-input');
+                    const uploadSection = document.getElementById('upload-section');
                     
                     // Clear grid
                     gridContainer.innerHTML = '';
@@ -578,24 +601,25 @@
                         // Show photos in grid
                         const grid = document.createElement('div');
                         grid.className = 'photo-grid';
-                        uploadedImageUrls.slice(0, 20).forEach(url => {
+                        const displayCount = Math.min(uploadedImageUrls.length, 20);
+                        for (let i = 0; i < displayCount; i++) {
                             const img = document.createElement('img');
-                            img.src = url;
+                            img.src = uploadedImageUrls[i];
                             img.loading = 'lazy';
                             grid.appendChild(img);
-                        });
+                        }
                         gridContainer.appendChild(grid);
                         
                         countMsg.textContent = '📸 ' + uploadedImageUrls.length + ' photos loaded!';
+                        countMsg.style.color = '#f7d070';
                         
-                        // ✅ HIDE upload options
-                        if (uploadLabel) { uploadLabel.style.display = 'none'; }
-                        if (fileInput) { fileInput.style.display = 'none'; }
+                        // ✅ HIDE upload section
+                        if (uploadSection) { uploadSection.style.display = 'none'; }
                         
                         // ✅ SHOW explode button - CRITICAL FIX
                         if (explodeBtn) {
                             explodeBtn.classList.add('show');
-                            explodeBtn.style.display = 'inline-block';
+                            explodeBtn.style.display = 'inline-block !important';
                             explodeBtn.style.visibility = 'visible';
                             explodeBtn.style.opacity = '1';
                             console.log('✅ Explode button shown');
@@ -604,7 +628,7 @@
                         // ✅ SHOW generate link button
                         if (generateBtn) {
                             generateBtn.classList.add('show');
-                            generateBtn.style.display = 'inline-block';
+                            generateBtn.style.display = 'inline-block !important';
                             generateBtn.style.visibility = 'visible';
                             generateBtn.style.opacity = '1';
                         }
@@ -619,18 +643,20 @@
                     } else {
                         console.log('❌ No photos, hiding buttons');
                         countMsg.textContent = '📸 No photos uploaded yet. Upload to begin!';
+                        countMsg.style.color = '#e0b0c0';
                         
                         if (explodeBtn) {
                             explodeBtn.classList.remove('show');
-                            explodeBtn.style.display = 'none';
+                            explodeBtn.style.display = 'none !important';
                             explodeBtn.style.visibility = 'hidden';
                         }
                         if (generateBtn) {
                             generateBtn.classList.remove('show');
-                            generateBtn.style.display = 'none';
+                            generateBtn.style.display = 'none !important';
                             generateBtn.style.visibility = 'hidden';
                         }
                         
+                        if (uploadSection) { uploadSection.style.display = 'block'; }
                         if (uploadLabel) uploadLabel.style.display = 'inline-block';
                         if (fileInput) fileInput.style.display = 'inline-block';
                         if (songLabel) songLabel.style.display = 'inline-block';
@@ -1215,16 +1241,16 @@
                     const newPhotos = [];
                     let processed = 0;
 
-                    document.getElementById('selected-count-msg').textContent = 
-                        '📸 Processing 0/' + files.length + ' photos...';
+                    const countMsg = document.getElementById('selected-count-msg');
+                    countMsg.textContent = '📸 Processing 0/' + files.length + ' photos...';
+                    countMsg.style.color = '#ffb3c6';
 
                     for (let i = 0; i < files.length; i++) {
                         try {
-                            const compressed = await compressImage(files[i], 250, 250, 0.4);
+                            const compressed = await compressImage(files[i], 200, 200, 0.3);
                             newPhotos.push(compressed);
                             processed++;
-                            document.getElementById('selected-count-msg').textContent = 
-                                '📸 Processing ' + processed + '/' + files.length + ' photos...';
+                            countMsg.textContent = '📸 Processing ' + processed + '/' + files.length + ' photos...';
                         } catch (err) {
                             console.warn('Failed to convert:', err);
                         }
@@ -1248,8 +1274,8 @@
                     // ✅ UPDATE UI - This will show the explode button
                     updateUI();
                     
-                    document.getElementById('selected-count-msg').textContent = 
-                        '✅ ' + uploadedImageUrls.length + ' photos saved!';
+                    countMsg.textContent = '✅ ' + uploadedImageUrls.length + ' photos saved!';
+                    countMsg.style.color = '#f7d070';
                     
                     alert('✅ ' + uploadedImageUrls.length + ' photos saved!\n\nClick "Explode Memories" to see magic!');
                     
