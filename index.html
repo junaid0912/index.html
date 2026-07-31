@@ -5,13 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Happy Girlfriend's Day 🌸</title>
   
-  <!-- Cursive Fonts for Aesthetic Polaroid Caption & Notes -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 
   <style>
-    /* --- CSS STYLES & ROYAL THEMING --- */
     :root {
       --bg-color: #fcf0f5;
       --pastel-pink: #ffd1dc;
@@ -39,7 +37,7 @@
       -webkit-user-select: none;
     }
 
-    /* --- LAYER 1: AESTHETIC DARK INTRO SCREEN --- */
+    /* --- LAYER 1 --- */
     #intro-screen {
       position: fixed;
       inset: 0;
@@ -244,7 +242,7 @@
       background: linear-gradient(135deg, #3d0f1d 0%, #63162b 100%);
     }
 
-    /* --- LAYER 2: UNBOXED ROYAL ATMOSPHERE --- */
+    /* --- LAYER 2 --- */
     .main-container {
       min-height: 100vh;
       padding: 50px 20px;
@@ -272,7 +270,6 @@
       margin-top: 30px;
     }
 
-    /* TURNTABLE */
     .turntable-wrapper {
       display: flex;
       flex-direction: column;
@@ -372,7 +369,6 @@
     .turntable-wrapper.playing .tonearm { transform: rotate(5deg); }
     .player-hint { margin-top: 25px; font-size: 0.95rem; color: #ffb3c6; text-align: center; }
 
-    /* REALISTIC 3D ROYAL ENVELOPE */
     .envelope-area {
       position: relative;
       width: 380px;
@@ -458,7 +454,7 @@
     .envelope-3d.open .sky-transition-btn { opacity: 1; transform: translateY(0); pointer-events: auto; }
     .sky-transition-btn:hover { transform: scale(1.05); }
 
-    /* --- LAYER 3: STARRY NIGHT & LANTERNS PROMISE SKY --- */
+    /* --- LAYER 3 --- */
     #sky-layer {
       position: fixed; inset: 0;
       background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
@@ -516,7 +512,7 @@
       box-shadow: 0 0 20px rgba(247, 208, 112, 0.8); z-index: 100;
     }
 
-    /* --- NIKAHNAMA NOTE MODAL (BEFORE LAYER 4) --- */
+    /* --- NIKAHNAMA MODAL --- */
     #note-modal {
       position: fixed; inset: 0;
       background: rgba(8, 2, 6, 0.92); backdrop-filter: blur(10px);
@@ -545,7 +541,7 @@
 
     .proceed-btn:hover { transform: scale(1.05); }
 
-    /* --- LAYER 4: ORBITING WORLDS (DUAL PLANETARY SYSTEM) --- */
+    /* --- LAYER 4 --- */
     #map-layer {
       position: fixed; inset: 0;
       background: radial-gradient(circle at 50% 50%, #150022 0%, #05000a 100%);
@@ -649,7 +645,7 @@
       100% { transform: translateY(-90vh) scale(0.4); opacity: 0; }
     }
 
-    /* --- LAYER 5: SANCTUARY OF 1,000 FLOATING CANDLES --- */
+    /* --- LAYER 5 --- */
     #sanctuary-layer {
       position: fixed; inset: 0; background: #020104; opacity: 0; visibility: hidden; transition: opacity 2s ease, visibility 2s; z-index: 5000; overflow: hidden;
     }
@@ -684,7 +680,7 @@
     }
     .close-note-btn:hover { transform: scale(1.05); box-shadow: 0 0 15px rgba(212, 175, 55, 0.5); }
 
-    /* --- LAYER 6: REALISTIC VINTAGE INSTANT POLAROID CAMERA --- */
+    /* --- LAYER 6 --- */
     #polaroid-layer {
       position: fixed; inset: 0; background: radial-gradient(circle at center, #23121f 0%, #080309 100%); opacity: 0; visibility: hidden; transition: opacity 1.8s ease, visibility 1.8s; z-index: 6000; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow-y: auto; padding: 30px 20px;
     }
@@ -735,7 +731,7 @@
     @keyframes cameraFlash { 0% { opacity: 0; } 50% { opacity: 1; } 100% { opacity: 0; } }
 
     /* ========================================================
-       --- LAYER 7: DARK AESTHETIC MULTI-PHOTO EXPLOSION ---
+       --- LAYER 7: ULTRA-SMOOTH PHOTO EXPLOSION REWORK ---
        ======================================================== */
     #photo-explosion-layer {
       position: fixed;
@@ -743,13 +739,14 @@
       background: radial-gradient(circle at center, #150510 0%, #050106 100%);
       opacity: 0;
       visibility: hidden;
-      transition: opacity 2s ease, visibility 2s;
+      transition: opacity 1.8s cubic-bezier(0.16, 1, 0.3, 1), visibility 1.8s;
       z-index: 8000;
       overflow: hidden;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      perspective: 1200px;
     }
 
     #photo-explosion-layer.active {
@@ -759,26 +756,25 @@
 
     .layer7-upload-container {
       position: absolute;
-      z-index: 8200;
+      z-index: 8400;
       text-align: center;
-      background: rgba(15, 5, 12, 0.75);
+      background: rgba(15, 5, 12, 0.82);
       padding: 35px 30px;
       border-radius: 20px;
-      border: 1px solid rgba(212, 175, 55, 0.3);
-      backdrop-filter: blur(15px);
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(212, 175, 55, 0.15);
+      border: 1px solid rgba(212, 175, 55, 0.35);
+      backdrop-filter: blur(16px);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9), 0 0 30px rgba(212, 175, 55, 0.2);
       max-width: 480px;
       width: 90%;
-      transition: all 0.8s ease;
+      transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .layer7-upload-container.fade-out {
       opacity: 0;
-      transform: scale(0.8);
+      transform: scale(0.85);
       pointer-events: none;
     }
 
-    /* VIEWER MODE: HIDE UPLOADER COMPLETELY */
     body.is-viewer-mode .layer7-upload-container {
       display: none !important;
     }
@@ -810,7 +806,7 @@
       font-size: 1rem;
       cursor: pointer;
       box-shadow: 0 0 20px rgba(128, 15, 47, 0.6);
-      transition: all 0.3s ease;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .upload-btn-label:hover {
@@ -837,7 +833,7 @@
       font-weight: bold;
       font-size: 0.95rem;
       cursor: pointer;
-      transition: transform 0.3s;
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
       width: 100%;
       max-width: 280px;
     }
@@ -862,18 +858,22 @@
       transform: scale(1.05);
     }
 
-    /* EXPLODING PHOTO CARDS */
+    /* HARDWARE-ACCELERATED SMOOTH EXPLODING CARDS */
     .exploded-photo-card {
       position: absolute;
+      top: 50%;
+      left: 50%;
       width: clamp(140px, 18vw, 220px);
       background: #120a10;
-      padding: 10px 10px 25px 10px;
-      border-radius: 6px;
-      border: 1px solid rgba(212, 175, 55, 0.4);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9), 0 0 20px rgba(255, 77, 109, 0.2);
+      padding: 10px 10px 24px 10px;
+      border-radius: 8px;
+      border: 1px solid rgba(212, 175, 55, 0.45);
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.85), 0 0 20px rgba(255, 77, 109, 0.25);
       pointer-events: none;
       opacity: 0;
-      transform: translate(-50%, -50%) scale(0.1) rotate(0deg);
+      will-change: transform, opacity;
+      transform: translate3d(-50%, -50%, 0) scale(0.05) rotate(0deg);
+      transition: transform var(--duration, 2.5s) cubic-bezier(0.08, 0.82, 0.17, 1), opacity var(--fade-dur, 0.8s) ease;
       z-index: 8100;
     }
 
@@ -882,35 +882,19 @@
       height: clamp(140px, 18vw, 220px);
       object-fit: cover;
       border-radius: 4px;
-      filter: contrast(1.05) brightness(0.95);
+      display: block;
+      filter: contrast(1.04) brightness(0.96);
     }
 
-    .exploded-photo-card.animate-explosion {
-      animation: explodeCardAnim 8s cubic-bezier(0.15, 0.85, 0.35, 1) forwards;
+    .exploded-photo-card.active-launch {
+      opacity: 1;
+      transform: translate3d(var(--tx), var(--ty), 0) scale(var(--scl)) rotate(var(--rot));
     }
 
-    @keyframes explodeCardAnim {
-      0% {
-        opacity: 0;
-        transform: translate(-50%, -50%) scale(0.05) rotate(0deg);
-      }
-      15% {
-        opacity: 1;
-      }
-      80% {
-        opacity: 0.9;
-      }
-      100% {
-        opacity: 0.85;
-        transform: translate(var(--tx), var(--ty)) scale(var(--scl)) rotate(var(--rot));
-      }
-    }
-
-    /* SHINY GLOWY SCREEN TRANSITION */
     #shiny-glow-screen {
       position: fixed;
       inset: 0;
-      background: radial-gradient(circle at center, #ffffff 0%, #f7d070 40%, #0d0309 90%);
+      background: radial-gradient(circle at center, #ffffff 0%, #f7d070 45%, #0d0309 90%);
       z-index: 8500;
       opacity: 0;
       pointer-events: none;
@@ -921,7 +905,6 @@
       opacity: 1;
     }
 
-    /* ROMANTIC DESCRIPTION CARD */
     #romantic-desc-card {
       position: relative;
       z-index: 8800;
@@ -985,7 +968,6 @@
       box-shadow: 0 0 30px rgba(212, 175, 55, 0.6);
     }
 
-    /* FINAL OUTRO OVERLAY */
     #final-outro-screen {
       position: fixed;
       inset: 0;
@@ -1031,20 +1013,17 @@
     }
   </style>
 
-  <!-- THREE.JS LIBRARY FOR LAYER 5 -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
 
-  <!-- AUDIO PLAYER -->
   <audio id="bg-music" loop>
     <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=romantic-acoustic-112163.mp3" type="audio/mpeg">
   </audio>
 
-  <!-- EXPLOSION OVERLAY -->
   <div id="explosion-overlay"></div>
 
-  <!-- LAYER 1: AESTHETIC DARK INTRO SCREEN -->
+  <!-- LAYER 1 -->
   <div id="intro-screen">
     <div class="royal-frame-wrapper" id="royal-frame">
       <div class="title-container" id="title-container"></div>
@@ -1058,13 +1037,12 @@
     </div>
   </div>
 
-  <!-- LAYER 2: UNBOXED ROYAL ATMOSPHERE -->
+  <!-- LAYER 2 -->
   <div class="main-container" id="main-content">
     <h1 style="color: var(--royal-gold); font-size: 2.5rem; text-align: center; margin-bottom: 8px;">For My Beloved</h1>
     <p style="color: var(--soft-rose); margin-bottom: 30px; text-align: center;">Play our melody & break the wax seal...</p>
 
     <div class="experience-grid">
-      <!-- FLOATING TURNTABLE -->
       <div class="turntable-wrapper" id="turntable">
         <div class="turntable-title">Our Special Song</div>
         <div class="visualizer-ring"></div>
@@ -1075,14 +1053,12 @@
         <div class="player-hint" id="player-status">Tap vinyl or needle to play</div>
       </div>
 
-      <!-- REALISTIC 3D ENVELOPE -->
       <div class="envelope-area">
         <div class="envelope-3d" id="envelope">
           <div class="envelope-flap"></div>
           <div class="envelope-pocket"></div>
           <div class="royal-wax-seal" id="wax-seal" onclick="openRoyalEnvelope()"></div>
 
-          <!-- PARCHMENT LETTER -->
           <div class="parchment-letter">
             <div class="shayari-text">"Tera zikr aaye to dil mehak sa jaata hai,
 
@@ -1099,7 +1075,7 @@ Mera har sajda bas tere naam ho jaata hai."</div>
     </div>
   </div>
 
-  <!-- LAYER 3: STARRY NIGHT & LANTERNS PROMISE SKY -->
+  <!-- LAYER 3 -->
   <div id="sky-layer" onclick="launchLantern(event)">
     <div class="moon"></div>
     <div class="mountain-horizon"></div>
@@ -1110,7 +1086,7 @@ Mera har sajda bas tere naam ho jaata hai."</div>
     <button class="next-layer-trigger" onclick="event.stopPropagation(); openNoteModal();">One Last Chapter...</button>
   </div>
 
-  <!-- NIKAHNAMA NOTE MODAL (BEFORE LAYER 4) -->
+  <!-- NIKAHNAMA MODAL -->
   <div id="note-modal">
     <div class="note-card">
       <h3>A Royal Promise</h3>
@@ -1119,7 +1095,7 @@ Mera har sajda bas tere naam ho jaata hai."</div>
     </div>
   </div>
 
-  <!-- LAYER 4: ORBITING WORLDS (DUAL PLANETARY SYSTEM) -->
+  <!-- LAYER 4 -->
   <div id="map-layer">
     <div class="space-canvas" id="space-canvas">
       
@@ -1130,13 +1106,11 @@ Mera har sajda bas tere naam ho jaata hai."</div>
 
       <div class="distance-badge" id="distance-badge">Distance: 450 km</div>
 
-      <!-- PLANET 1: HIS WORLD -->
       <div class="planet" id="planet-his" style="left: 25%; top: 50%;">
         <span class="planet-name">His World</span>
         <span class="planet-date">03/09/2007</span>
       </div>
 
-      <!-- PLANET 2: HER WORLD -->
       <div class="planet" id="planet-hers" style="left: 65%; top: 50%;">
         <span class="planet-name">Her World</span>
         <span class="planet-date">09/12/2007</span>
@@ -1145,10 +1119,8 @@ Mera har sajda bas tere naam ho jaata hai."</div>
     </div>
   </div>
 
-  <!-- WHITE GLOW FLASH OVERLAY -->
   <div id="white-glow-flash"></div>
 
-  <!-- ROYAL GOLD AESTHETIC SCROLL MODAL -->
   <div id="royal-scroll-modal">
     <div class="royal-scroll-card">
       <div class="scroll-corner corner-tl"></div>
@@ -1166,7 +1138,7 @@ Mera har sajda bas tere naam ho jaata hai."</div>
     </div>
   </div>
 
-  <!-- LAYER 5: SANCTUARY OF 1,000 FLOATING CANDLES -->
+  <!-- LAYER 5 -->
   <div id="sanctuary-layer">
     <div class="sanctuary-header">
       <h2>Sanctuary of 1,000 Candles</h2>
@@ -1176,7 +1148,6 @@ Mera har sajda bas tere naam ho jaata hai."</div>
     <div id="candle-webgl-container"></div>
   </div>
 
-  <!-- SECRET NOTE MODAL (FOR LAYER 5) -->
   <div id="secret-note-modal">
     <div class="parchment-note-card">
       <p id="secret-note-text">"I love you"</p>
@@ -1184,7 +1155,7 @@ Mera har sajda bas tere naam ho jaata hai."</div>
     </div>
   </div>
 
-  <!-- LAYER 6: REALISTIC VINTAGE INSTANT POLAROID CAMERA -->
+  <!-- LAYER 6 -->
   <div id="polaroid-layer">
     <div id="camera-flash-overlay"></div>
 
@@ -1223,17 +1194,13 @@ Mera har sajda bas tere naam ho jaata hai."</div>
     </div>
   </div>
 
-  <!-- ========================================================
-       --- LAYER 7: DARK AESTHETIC MULTI-PHOTO EXPLOSION ---
-       ======================================================== -->
+  <!-- LAYER 7: REWORKED ULTRA-SMOOTH PHOTO EXPLOSION -->
   <div id="photo-explosion-layer">
     
-    <!-- Upload Initial Screen (Soles Creator Ke Liye) -->
     <div class="layer7-upload-container" id="layer7-upload-box">
       <div class="layer7-title" id="layer7-title-text">Memories Exploding</div>
       <div class="layer7-subtitle" id="layer7-subtitle-text">Choose beautiful photos of your girlfriend to flood the dark aesthetic night...</div>
       
-      <!-- ONLY PHOTO UPLOAD OPTION ALLOWED (accept="image/*") -->
       <label for="photo-file-input" class="upload-btn-label" id="upload-label-btn">Select Girlfriend's Photos ✨</label>
       <input type="file" id="photo-file-input" multiple accept="image/*" onchange="handlePhotoUpload(event)">
       
@@ -1245,10 +1212,8 @@ Mera har sajda bas tere naam ho jaata hai."</div>
       </div>
     </div>
 
-    <!-- Shiny Glow Effect Overlay -->
     <div id="shiny-glow-screen"></div>
 
-    <!-- Romantic Description Card -->
     <div id="romantic-desc-card">
       <div class="desc-header">My Eternal Sanctuary</div>
       <div class="desc-body">
@@ -1261,15 +1226,14 @@ Mera har sajda bas tere naam ho jaata hai."</div>
 
   </div>
 
-  <!-- FINAL OUTRO SCREEN -->
+  <!-- FINAL OUTRO -->
   <div id="final-outro-screen">
     <div class="final-love-msg">I love you my baby, keep loving me</div>
     <div class="final-signature">~ junaid</div>
   </div>
 
-  <!-- JAVASCRIPT LOGIC -->
   <script>
-    /* --- LAYER 1 INTRO LOGIC --- */
+    /* --- LAYER 1 --- */
     const textLines = ["HAPPY", "GIRLFRIEND'S", "DAY BABY"];
     const titleContainer = document.getElementById('title-container');
     const royalFrame = document.getElementById('royal-frame');
@@ -1344,7 +1308,7 @@ Mera har sajda bas tere naam ho jaata hai."</div>
       document.getElementById('main-content').classList.add('visible');
     }
 
-    /* --- LAYER 2 TURNTABLE & LETTER LOGIC --- */
+    /* --- LAYER 2 --- */
     function toggleVinylPlayer() {
       const turntable = document.getElementById('turntable');
       const status = document.getElementById('player-status');
@@ -1370,7 +1334,7 @@ Mera har sajda bas tere naam ho jaata hai."</div>
       setTimeout(() => document.getElementById('sky-layer').classList.add('active'), 1000);
     }
 
-    /* --- LAYER 3 SKY & LANTERNS LOGIC --- */
+    /* --- LAYER 3 --- */
     const promises = ["I promise to love you every single day", "I promise to hold your hand through everything", "I promise to protect your heart as carefully as my own"];
     let promiseIndex = 0;
 
@@ -1406,7 +1370,7 @@ Mera har sajda bas tere naam ho jaata hai."</div>
       }, 1000);
     }
 
-    /* --- LAYER 4 ORBITING PLANETS LOGIC --- */
+    /* --- LAYER 4 --- */
     let isFused = false;
 
     function initOrbitMechanic() {
@@ -1505,7 +1469,7 @@ Mera har sajda bas tere naam ho jaata hai."</div>
       }, 1200);
     }
 
-    /* --- LAYER 5 1000 CANDLES LOGIC --- */
+    /* --- LAYER 5 --- */
     let openedCandleCount = 0;
     let sanctuaryScene, sanctuaryCamera, sanctuaryRenderer;
     let sanctuaryLit = false;
@@ -1679,7 +1643,7 @@ Mera har sajda bas tere naam ho jaata hai."</div>
       document.getElementById('secret-note-modal').classList.remove('active');
     }
 
-    /* --- LAYER 6: REALISTIC INSTANT POLAROID CAMERA LOGIC --- */
+    /* --- LAYER 6 --- */
     const video = document.getElementById('webcam');
     const canvas = document.getElementById('polaroid-canvas');
     const polaroidResult = document.getElementById('polaroid-result');
@@ -1747,12 +1711,11 @@ Mera har sajda bas tere naam ho jaata hai."</div>
     }
 
     /* ========================================================
-       --- LAYER 7: DARK AESTHETIC MULTI-PHOTO EXPLOSION LOGIC ---
+       --- LAYER 7: REWORKED ULTRA-SMOOTH PHOTO EXPLOSION ---
        ======================================================== */
     let uploadedImageUrls = [];
     let isViewerMode = false;
 
-    // Check URL parameters on Load
     window.addEventListener('DOMContentLoaded', () => {
       const urlParams = new URLSearchParams(window.location.search);
       if (urlParams.get('viewerMode') === 'true') {
@@ -1767,7 +1730,6 @@ Mera har sajda bas tere naam ho jaata hai."</div>
         document.getElementById('polaroid-layer').style.visibility = 'hidden';
         document.getElementById('photo-explosion-layer').classList.add('active');
         
-        // Viewer ke liye AUTO-EXPLODE (agar link se open kiya ho)
         if (isViewerMode) {
           setTimeout(() => {
             triggerPhotoExplosion();
@@ -1781,13 +1743,21 @@ Mera har sajda bas tere naam ho jaata hai."</div>
       if (files.length === 0) return;
 
       uploadedImageUrls = [];
+      
       files.forEach(file => {
         if (file.type.startsWith('image/')) {
-          uploadedImageUrls.push(URL.createObjectURL(file));
+          const reader = new FileReader();
+          reader.onload = function(evt) {
+            uploadedImageUrls.push(evt.target.result);
+            // Preload image in memory for zero lag
+            const img = new Image();
+            img.src = evt.target.result;
+          };
+          reader.readAsDataURL(file);
         }
       });
 
-      document.getElementById('selected-count-msg').textContent = `${uploadedImageUrls.length} Photo(s) ready to explode!`;
+      document.getElementById('selected-count-msg').textContent = `${files.length} Photo(s) ready to explode!`;
       document.getElementById('explode-trigger-btn').style.display = 'inline-block';
       document.getElementById('generate-link-btn').style.display = 'inline-block';
     }
@@ -1818,7 +1788,7 @@ Mera har sajda bas tere naam ho jaata hai."</div>
       ];
       
       const activeImages = uploadedImageUrls.length > 0 ? uploadedImageUrls : fallbackImages;
-      const totalExplosions = Math.max(35, activeImages.length * 5);
+      const totalExplosions = Math.max(40, activeImages.length * 6);
 
       for (let i = 0; i < totalExplosions; i++) {
         setTimeout(() => {
@@ -1826,31 +1796,37 @@ Mera har sajda bas tere naam ho jaata hai."</div>
           card.className = 'exploded-photo-card';
 
           const img = document.createElement('img');
-          const randomImgSrc = activeImages[i % activeImages.length];
-          img.src = randomImgSrc;
+          img.src = activeImages[i % activeImages.length];
           card.appendChild(img);
 
-          card.style.left = '50%';
-          card.style.top = '50%';
-
-          const tx = (Math.random() - 0.5) * window.innerWidth * 1.6 + 'px';
-          const ty = (Math.random() - 0.5) * window.innerHeight * 1.6 + 'px';
-          const rot = (Math.random() - 0.5) * 90 + 'deg';
-          const scl = (0.6 + Math.random() * 0.7).toFixed(2);
+          // Physics Calculation for High-End Smooth Animations
+          const angle = Math.random() * Math.PI * 2;
+          const maxDistance = Math.min(window.innerWidth, window.innerHeight) * (0.6 + Math.random() * 0.7);
+          const tx = (Math.cos(angle) * maxDistance).toFixed(2) + 'px';
+          const ty = (Math.sin(angle) * maxDistance).toFixed(2) + 'px';
+          const rot = ((Math.random() - 0.5) * 80).toFixed(2) + 'deg';
+          const scl = (0.5 + Math.random() * 0.65).toFixed(2);
+          const duration = (2.2 + Math.random() * 1.2).toFixed(2) + 's';
 
           card.style.setProperty('--tx', tx);
           card.style.setProperty('--ty', ty);
           card.style.setProperty('--rot', rot);
           card.style.setProperty('--scl', scl);
+          card.style.setProperty('--duration', duration);
+          card.style.zIndex = 8100 + i;
 
           explosionContainer.appendChild(card);
 
+          // Double RAF trick for hardware acceleration transition trigger
           requestAnimationFrame(() => {
-            card.classList.add('animate-explosion');
+            requestAnimationFrame(() => {
+              card.classList.add('active-launch');
+            });
           });
-        }, i * 120);
+        }, i * 90);
       }
 
+      // Smoothly transition to Romantic Description Screen
       setTimeout(() => {
         const glowScreen = document.getElementById('shiny-glow-screen');
         glowScreen.classList.add('active');
@@ -1860,7 +1836,7 @@ Mera har sajda bas tere naam ho jaata hai."</div>
           document.getElementById('romantic-desc-card').classList.add('visible');
         }, 1800);
 
-      }, totalExplosions * 120 + 1200);
+      }, totalExplosions * 90 + 1500);
     }
 
     function showFinalOutro() {
