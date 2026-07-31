@@ -5,11 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Happy Girlfriend's Day 🌸</title>
   
+  <!-- Cursive Fonts for Aesthetic Polaroid Caption & Notes -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 
   <style>
+    /* --- CSS STYLES & ROYAL THEMING --- */
     :root {
       --bg-color: #fcf0f5;
       --pastel-pink: #ffd1dc;
@@ -37,7 +39,7 @@
       -webkit-user-select: none;
     }
 
-    /* --- LAYER 1 --- */
+    /* --- LAYER 1: AESTHETIC DARK INTRO SCREEN --- */
     #intro-screen {
       position: fixed;
       inset: 0;
@@ -242,7 +244,7 @@
       background: linear-gradient(135deg, #3d0f1d 0%, #63162b 100%);
     }
 
-    /* --- LAYER 2 --- */
+    /* --- LAYER 2: UNBOXED ROYAL ATMOSPHERE --- */
     .main-container {
       min-height: 100vh;
       padding: 50px 20px;
@@ -270,6 +272,7 @@
       margin-top: 30px;
     }
 
+    /* TURNTABLE */
     .turntable-wrapper {
       display: flex;
       flex-direction: column;
@@ -369,6 +372,7 @@
     .turntable-wrapper.playing .tonearm { transform: rotate(5deg); }
     .player-hint { margin-top: 25px; font-size: 0.95rem; color: #ffb3c6; text-align: center; }
 
+    /* REALISTIC 3D ROYAL ENVELOPE */
     .envelope-area {
       position: relative;
       width: 380px;
@@ -454,7 +458,7 @@
     .envelope-3d.open .sky-transition-btn { opacity: 1; transform: translateY(0); pointer-events: auto; }
     .sky-transition-btn:hover { transform: scale(1.05); }
 
-    /* --- LAYER 3 --- */
+    /* --- LAYER 3: STARRY NIGHT & LANTERNS PROMISE SKY --- */
     #sky-layer {
       position: fixed; inset: 0;
       background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
@@ -512,7 +516,7 @@
       box-shadow: 0 0 20px rgba(247, 208, 112, 0.8); z-index: 100;
     }
 
-    /* --- NIKAHNAMA MODAL --- */
+    /* --- NIKAHNAMA NOTE MODAL (BEFORE LAYER 4) --- */
     #note-modal {
       position: fixed; inset: 0;
       background: rgba(8, 2, 6, 0.92); backdrop-filter: blur(10px);
@@ -541,7 +545,7 @@
 
     .proceed-btn:hover { transform: scale(1.05); }
 
-    /* --- LAYER 4 --- */
+    /* --- LAYER 4: ORBITING WORLDS (DUAL PLANETARY SYSTEM) --- */
     #map-layer {
       position: fixed; inset: 0;
       background: radial-gradient(circle at 50% 50%, #150022 0%, #05000a 100%);
@@ -645,7 +649,7 @@
       100% { transform: translateY(-90vh) scale(0.4); opacity: 0; }
     }
 
-    /* --- LAYER 5 --- */
+    /* --- LAYER 5: SANCTUARY OF 1,000 FLOATING CANDLES --- */
     #sanctuary-layer {
       position: fixed; inset: 0; background: #020104; opacity: 0; visibility: hidden; transition: opacity 2s ease, visibility 2s; z-index: 5000; overflow: hidden;
     }
@@ -680,7 +684,7 @@
     }
     .close-note-btn:hover { transform: scale(1.05); box-shadow: 0 0 15px rgba(212, 175, 55, 0.5); }
 
-    /* --- LAYER 6 --- */
+    /* --- LAYER 6: REALISTIC VINTAGE INSTANT POLAROID CAMERA --- */
     #polaroid-layer {
       position: fixed; inset: 0; background: radial-gradient(circle at center, #23121f 0%, #080309 100%); opacity: 0; visibility: hidden; transition: opacity 1.8s ease, visibility 1.8s; z-index: 6000; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow-y: auto; padding: 30px 20px;
     }
@@ -731,22 +735,21 @@
     @keyframes cameraFlash { 0% { opacity: 0; } 50% { opacity: 1; } 100% { opacity: 0; } }
 
     /* ========================================================
-       --- LAYER 7: ULTRA-SMOOTH PHOTO EXPLOSION REWORK ---
+       --- LAYER 7: DARK AESTHETIC MULTI-PHOTO EXPLOSION ---
        ======================================================== */
     #photo-explosion-layer {
       position: fixed;
       inset: 0;
-      background: radial-gradient(circle at center, #150510 0%, #050106 100%);
+      background: radial-gradient(circle at center, #180814 0%, #050106 100%);
       opacity: 0;
       visibility: hidden;
-      transition: opacity 1.8s cubic-bezier(0.16, 1, 0.3, 1), visibility 1.8s;
+      transition: opacity 2s ease, visibility 2s;
       z-index: 8000;
       overflow: hidden;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      perspective: 1200px;
     }
 
     #photo-explosion-layer.active {
@@ -754,126 +757,38 @@
       visibility: visible;
     }
 
-    .layer7-upload-container {
+    /* Ambient floating sparkle particles */
+    .ambient-sparkle {
       position: absolute;
-      z-index: 8400;
-      text-align: center;
-      background: rgba(15, 5, 12, 0.82);
-      padding: 35px 30px;
-      border-radius: 20px;
-      border: 1px solid rgba(212, 175, 55, 0.35);
-      backdrop-filter: blur(16px);
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9), 0 0 30px rgba(212, 175, 55, 0.2);
-      max-width: 480px;
-      width: 90%;
-      transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .layer7-upload-container.fade-out {
-      opacity: 0;
-      transform: scale(0.85);
+      width: 4px;
+      height: 4px;
+      background: var(--royal-gold);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--royal-gold);
       pointer-events: none;
+      animation: floatSparkle var(--dur) ease-in-out infinite alternate;
+      opacity: var(--op);
     }
 
-    body.is-viewer-mode .layer7-upload-container {
-      display: none !important;
+    @keyframes floatSparkle {
+      0% { transform: translateY(0px) scale(0.8); }
+      100% { transform: translateY(-30px) scale(1.4); }
     }
 
-    .layer7-title {
-      font-family: 'Playfair Display', 'Georgia', serif;
-      font-size: 2.2rem;
-      color: var(--royal-gold);
-      margin-bottom: 10px;
-      text-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
-    }
-
-    .layer7-subtitle {
-      font-family: 'Georgia', serif;
-      font-size: 0.95rem;
-      color: #e0b0c0;
-      font-style: italic;
-      margin-bottom: 25px;
-    }
-
-    .upload-btn-label {
-      display: inline-block;
-      padding: 14px 32px;
-      background: linear-gradient(135deg, #580c1f 0%, #800f2f 100%);
-      color: var(--royal-gold);
-      border: 1px solid var(--royal-gold);
-      border-radius: 30px;
-      font-family: 'Georgia', serif;
-      font-size: 1rem;
-      cursor: pointer;
-      box-shadow: 0 0 20px rgba(128, 15, 47, 0.6);
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .upload-btn-label:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 25px rgba(212, 175, 55, 0.5);
-    }
-
-    #photo-file-input {
-      display: none;
-    }
-
-    .action-btn-group {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      align-items: center;
-      margin-top: 20px;
-    }
-
-    .explode-now-btn, .generate-link-btn {
-      padding: 12px 28px;
-      border-radius: 30px;
-      font-family: 'Georgia', serif;
-      font-weight: bold;
-      font-size: 0.95rem;
-      cursor: pointer;
-      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-      width: 100%;
-      max-width: 280px;
-    }
-
-    .explode-now-btn {
-      display: none;
-      background: linear-gradient(45deg, #d4af37, #f7d070);
-      color: #2b0512;
-      border: none;
-      box-shadow: 0 0 20px rgba(247, 208, 112, 0.8);
-    }
-
-    .generate-link-btn {
-      display: none;
-      background: transparent;
-      color: var(--royal-gold);
-      border: 1px solid var(--royal-gold);
-      box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
-    }
-
-    .explode-now-btn:hover, .generate-link-btn:hover {
-      transform: scale(1.05);
-    }
-
-    /* HARDWARE-ACCELERATED SMOOTH EXPLODING CARDS */
+    /* EXPLODING PHOTO CARDS */
     .exploded-photo-card {
       position: absolute;
-      top: 50%;
-      left: 50%;
       width: clamp(140px, 18vw, 220px);
       background: #120a10;
-      padding: 10px 10px 24px 10px;
-      border-radius: 8px;
-      border: 1px solid rgba(212, 175, 55, 0.45);
-      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.85), 0 0 20px rgba(255, 77, 109, 0.25);
+      padding: 10px 10px 25px 10px;
+      border-radius: 6px;
+      border: 1px solid rgba(212, 175, 55, 0.4);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9), 0 0 25px rgba(255, 77, 109, 0.3);
       pointer-events: none;
       opacity: 0;
-      will-change: transform, opacity;
-      transform: translate3d(-50%, -50%, 0) scale(0.05) rotate(0deg);
-      transition: transform var(--duration, 2.5s) cubic-bezier(0.08, 0.82, 0.17, 1), opacity var(--fade-dur, 0.8s) ease;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%) scale(0.05) rotate(0deg);
       z-index: 8100;
     }
 
@@ -882,19 +797,35 @@
       height: clamp(140px, 18vw, 220px);
       object-fit: cover;
       border-radius: 4px;
-      display: block;
-      filter: contrast(1.04) brightness(0.96);
+      filter: contrast(1.05) brightness(0.95);
     }
 
-    .exploded-photo-card.active-launch {
-      opacity: 1;
-      transform: translate3d(var(--tx), var(--ty), 0) scale(var(--scl)) rotate(var(--rot));
+    .exploded-photo-card.animate-explosion {
+      animation: explodeCardAnim var(--speed) cubic-bezier(0.12, 0.85, 0.25, 1) forwards;
     }
 
+    @keyframes explodeCardAnim {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.05) rotate(0deg);
+      }
+      15% {
+        opacity: 1;
+      }
+      80% {
+        opacity: 0.9;
+      }
+      100% {
+        opacity: 0.85;
+        transform: translate(var(--tx), var(--ty)) scale(var(--scl)) rotate(var(--rot));
+      }
+    }
+
+    /* SHINY GLOWY SCREEN TRANSITION */
     #shiny-glow-screen {
       position: fixed;
       inset: 0;
-      background: radial-gradient(circle at center, #ffffff 0%, #f7d070 45%, #0d0309 90%);
+      background: radial-gradient(circle at center, #ffffff 0%, #f7d070 40%, #0d0309 90%);
       z-index: 8500;
       opacity: 0;
       pointer-events: none;
@@ -905,6 +836,7 @@
       opacity: 1;
     }
 
+    /* ROMANTIC DESCRIPTION CARD */
     #romantic-desc-card {
       position: relative;
       z-index: 8800;
@@ -968,6 +900,7 @@
       box-shadow: 0 0 30px rgba(212, 175, 55, 0.6);
     }
 
+    /* FINAL OUTRO OVERLAY */
     #final-outro-screen {
       position: fixed;
       inset: 0;
@@ -1013,17 +946,20 @@
     }
   </style>
 
+  <!-- THREE.JS LIBRARY FOR LAYER 5 -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
 
+  <!-- AUDIO PLAYER -->
   <audio id="bg-music" loop>
     <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=romantic-acoustic-112163.mp3" type="audio/mpeg">
   </audio>
 
+  <!-- EXPLOSION OVERLAY -->
   <div id="explosion-overlay"></div>
 
-  <!-- LAYER 1 -->
+  <!-- LAYER 1: AESTHETIC DARK INTRO SCREEN -->
   <div id="intro-screen">
     <div class="royal-frame-wrapper" id="royal-frame">
       <div class="title-container" id="title-container"></div>
@@ -1037,12 +973,13 @@
     </div>
   </div>
 
-  <!-- LAYER 2 -->
+  <!-- LAYER 2: UNBOXED ROYAL ATMOSPHERE -->
   <div class="main-container" id="main-content">
     <h1 style="color: var(--royal-gold); font-size: 2.5rem; text-align: center; margin-bottom: 8px;">For My Beloved</h1>
     <p style="color: var(--soft-rose); margin-bottom: 30px; text-align: center;">Play our melody & break the wax seal...</p>
 
     <div class="experience-grid">
+      <!-- FLOATING TURNTABLE -->
       <div class="turntable-wrapper" id="turntable">
         <div class="turntable-title">Our Special Song</div>
         <div class="visualizer-ring"></div>
@@ -1053,12 +990,14 @@
         <div class="player-hint" id="player-status">Tap vinyl or needle to play</div>
       </div>
 
+      <!-- REALISTIC 3D ENVELOPE -->
       <div class="envelope-area">
         <div class="envelope-3d" id="envelope">
           <div class="envelope-flap"></div>
           <div class="envelope-pocket"></div>
           <div class="royal-wax-seal" id="wax-seal" onclick="openRoyalEnvelope()"></div>
 
+          <!-- PARCHMENT LETTER -->
           <div class="parchment-letter">
             <div class="shayari-text">"Tera zikr aaye to dil mehak sa jaata hai,
 
@@ -1075,7 +1014,7 @@ Mera har sajda bas tere naam ho jaata hai."</div>
     </div>
   </div>
 
-  <!-- LAYER 3 -->
+  <!-- LAYER 3: STARRY NIGHT & LANTERNS PROMISE SKY -->
   <div id="sky-layer" onclick="launchLantern(event)">
     <div class="moon"></div>
     <div class="mountain-horizon"></div>
@@ -1086,7 +1025,7 @@ Mera har sajda bas tere naam ho jaata hai."</div>
     <button class="next-layer-trigger" onclick="event.stopPropagation(); openNoteModal();">One Last Chapter...</button>
   </div>
 
-  <!-- NIKAHNAMA MODAL -->
+  <!-- NIKAHNAMA NOTE MODAL (BEFORE LAYER 4) -->
   <div id="note-modal">
     <div class="note-card">
       <h3>A Royal Promise</h3>
@@ -1095,7 +1034,7 @@ Mera har sajda bas tere naam ho jaata hai."</div>
     </div>
   </div>
 
-  <!-- LAYER 4 -->
+  <!-- LAYER 4: ORBITING WORLDS (DUAL PLANETARY SYSTEM) -->
   <div id="map-layer">
     <div class="space-canvas" id="space-canvas">
       
@@ -1106,11 +1045,13 @@ Mera har sajda bas tere naam ho jaata hai."</div>
 
       <div class="distance-badge" id="distance-badge">Distance: 450 km</div>
 
+      <!-- PLANET 1: HIS WORLD -->
       <div class="planet" id="planet-his" style="left: 25%; top: 50%;">
         <span class="planet-name">His World</span>
         <span class="planet-date">03/09/2007</span>
       </div>
 
+      <!-- PLANET 2: HER WORLD -->
       <div class="planet" id="planet-hers" style="left: 65%; top: 50%;">
         <span class="planet-name">Her World</span>
         <span class="planet-date">09/12/2007</span>
@@ -1119,8 +1060,10 @@ Mera har sajda bas tere naam ho jaata hai."</div>
     </div>
   </div>
 
+  <!-- WHITE GLOW FLASH OVERLAY -->
   <div id="white-glow-flash"></div>
 
+  <!-- ROYAL GOLD AESTHETIC SCROLL MODAL -->
   <div id="royal-scroll-modal">
     <div class="royal-scroll-card">
       <div class="scroll-corner corner-tl"></div>
@@ -1138,7 +1081,7 @@ Mera har sajda bas tere naam ho jaata hai."</div>
     </div>
   </div>
 
-  <!-- LAYER 5 -->
+  <!-- LAYER 5: SANCTUARY OF 1,000 FLOATING CANDLES -->
   <div id="sanctuary-layer">
     <div class="sanctuary-header">
       <h2>Sanctuary of 1,000 Candles</h2>
@@ -1148,6 +1091,7 @@ Mera har sajda bas tere naam ho jaata hai."</div>
     <div id="candle-webgl-container"></div>
   </div>
 
+  <!-- SECRET NOTE MODAL (FOR LAYER 5) -->
   <div id="secret-note-modal">
     <div class="parchment-note-card">
       <p id="secret-note-text">"I love you"</p>
@@ -1155,7 +1099,7 @@ Mera har sajda bas tere naam ho jaata hai."</div>
     </div>
   </div>
 
-  <!-- LAYER 6 -->
+  <!-- LAYER 6: REALISTIC VINTAGE INSTANT POLAROID CAMERA -->
   <div id="polaroid-layer">
     <div id="camera-flash-overlay"></div>
 
@@ -1194,26 +1138,15 @@ Mera har sajda bas tere naam ho jaata hai."</div>
     </div>
   </div>
 
-  <!-- LAYER 7: REWORKED ULTRA-SMOOTH PHOTO EXPLOSION -->
+  <!-- ========================================================
+       --- LAYER 7: DARK AESTHETIC MULTI-PHOTO EXPLOSION ---
+       ======================================================== -->
   <div id="photo-explosion-layer">
     
-    <div class="layer7-upload-container" id="layer7-upload-box">
-      <div class="layer7-title" id="layer7-title-text">Memories Exploding</div>
-      <div class="layer7-subtitle" id="layer7-subtitle-text">Choose beautiful photos of your girlfriend to flood the dark aesthetic night...</div>
-      
-      <label for="photo-file-input" class="upload-btn-label" id="upload-label-btn">Select Girlfriend's Photos ✨</label>
-      <input type="file" id="photo-file-input" multiple accept="image/*" onchange="handlePhotoUpload(event)">
-      
-      <div id="selected-count-msg" style="margin-top: 15px; color: var(--gold-accent); font-size: 0.9rem;"></div>
-      
-      <div class="action-btn-group">
-        <button class="explode-now-btn" id="explode-trigger-btn" onclick="triggerPhotoExplosion()">Explode Memories 🎆</button>
-        <button class="generate-link-btn" id="generate-link-btn" onclick="generateViewerLink()">Generate Viewer Link 🔗</button>
-      </div>
-    </div>
-
+    <!-- Shiny Glow Effect Overlay -->
     <div id="shiny-glow-screen"></div>
 
+    <!-- Romantic Description Card -->
     <div id="romantic-desc-card">
       <div class="desc-header">My Eternal Sanctuary</div>
       <div class="desc-body">
@@ -1226,14 +1159,15 @@ Mera har sajda bas tere naam ho jaata hai."</div>
 
   </div>
 
-  <!-- FINAL OUTRO -->
+  <!-- FINAL OUTRO SCREEN -->
   <div id="final-outro-screen">
     <div class="final-love-msg">I love you my baby, keep loving me</div>
     <div class="final-signature">~ junaid</div>
   </div>
 
+  <!-- JAVASCRIPT LOGIC -->
   <script>
-    /* --- LAYER 1 --- */
+    /* --- LAYER 1 INTRO LOGIC --- */
     const textLines = ["HAPPY", "GIRLFRIEND'S", "DAY BABY"];
     const titleContainer = document.getElementById('title-container');
     const royalFrame = document.getElementById('royal-frame');
@@ -1308,7 +1242,7 @@ Mera har sajda bas tere naam ho jaata hai."</div>
       document.getElementById('main-content').classList.add('visible');
     }
 
-    /* --- LAYER 2 --- */
+    /* --- LAYER 2 TURNTABLE & LETTER LOGIC --- */
     function toggleVinylPlayer() {
       const turntable = document.getElementById('turntable');
       const status = document.getElementById('player-status');
@@ -1334,7 +1268,7 @@ Mera har sajda bas tere naam ho jaata hai."</div>
       setTimeout(() => document.getElementById('sky-layer').classList.add('active'), 1000);
     }
 
-    /* --- LAYER 3 --- */
+    /* --- LAYER 3 SKY & LANTERNS LOGIC --- */
     const promises = ["I promise to love you every single day", "I promise to hold your hand through everything", "I promise to protect your heart as carefully as my own"];
     let promiseIndex = 0;
 
@@ -1370,7 +1304,7 @@ Mera har sajda bas tere naam ho jaata hai."</div>
       }, 1000);
     }
 
-    /* --- LAYER 4 --- */
+    /* --- LAYER 4 ORBITING PLANETS LOGIC --- */
     let isFused = false;
 
     function initOrbitMechanic() {
@@ -1469,7 +1403,7 @@ Mera har sajda bas tere naam ho jaata hai."</div>
       }, 1200);
     }
 
-    /* --- LAYER 5 --- */
+    /* --- LAYER 5 1000 CANDLES LOGIC --- */
     let openedCandleCount = 0;
     let sanctuaryScene, sanctuaryCamera, sanctuaryRenderer;
     let sanctuaryLit = false;
@@ -1643,7 +1577,7 @@ Mera har sajda bas tere naam ho jaata hai."</div>
       document.getElementById('secret-note-modal').classList.remove('active');
     }
 
-    /* --- LAYER 6 --- */
+    /* --- LAYER 6: REALISTIC INSTANT POLAROID CAMERA LOGIC --- */
     const video = document.getElementById('webcam');
     const canvas = document.getElementById('polaroid-canvas');
     const polaroidResult = document.getElementById('polaroid-result');
@@ -1711,18 +1645,13 @@ Mera har sajda bas tere naam ho jaata hai."</div>
     }
 
     /* ========================================================
-       --- LAYER 7: REWORKED ULTRA-SMOOTH PHOTO EXPLOSION ---
+       --- LAYER 7: DARK AESTHETIC MULTI-PHOTO EXPLOSION LOGIC ---
        ======================================================== */
-    let uploadedImageUrls = [];
-    let isViewerMode = false;
 
-    window.addEventListener('DOMContentLoaded', () => {
-      const urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.get('viewerMode') === 'true') {
-        isViewerMode = true;
-        document.body.classList.add('is-viewer-mode');
-      }
-    });
+    // Embedded Array containing Base64 image data (your provided WhatsApp image)
+    const embeddedPhotos = [
+      "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCADIAcYDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKWlp2oqaioqKmqq6ypro2nrK2us7a1tcMW15bX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4eLj5OXm5+jp6vHy8/T19vf4+fr/2gAMAwEBAf0A/Q3+3/39/s//AH9/47+1qf360/4mH/6+q/f06/6m+s7v3/f98/95vL/AM3i/wDPv333/fe9/wB6f+/e+v3/ADd+9m/1d+v39b9p+/5P0a33+63/AH18vfX/AHz/AOvh/wD/36/v/v1f4O/4O/8A4O/e398u/wB//a+8vf7f+/s//wB5/L/33e+/5+2v9//AL4f5/2v+33f3+3/AN/f+vv8v7v7+1/119f9+/S/83v98vfv+v8Af7/98P8A0//A/wDX/a9+v/f/AP5/3e+2/wCS+/3399/99fXm7f9/3fS/v/v1f+f/AH/e39f3f+/s3/2++33/AN9f/a/362/ffb/p/X5P+A/6+/8A95v2v35f21/vf8++m+u/+7/026//AHm1/wB79b/b+/5/+/2v3+95++2v2n8n939/53/7/fe/3/e+/v8A9/tP4O3/AHz83fX83/ff2v3/AH/A/f8Atf8Ab7/0319/3+/++e+/9+/S9/21/f8A09ev9951/wB5/wBPX+/313/Nf+e+/u63/wC//f8AfO63vf8Ae/6ff33+7+y+vv8A0f5f+9/v9/fL/vbf211+m/P6+v6/S+8//f323+/5P9/X333v3e/X/f8Asv8A0fX11/v07/X/AHy+9v7X8n93++2/++2+032/vf333vf/APe+/a/2/a7a2+m2/wDvfd++291ve7/vf+e+/e+/6+v+/wDr6f011+3/AGv+/wD/ANv9/d3vf8n6230f3/2m11+v2a+/23+/8v7m1/f/AH9/f8n2v3/v++35e/2+m++02/v2e+22+22/f8v9/A/++m+/97+y8Oa+121vd99v01/S99/b+/tPv7f93/p//NfXb3/ffX+m0/vdL61+i/P7/vbf0/f/APb9vfbb/e3/AL6f1f3e+/vf9p/W1/S2213a6bb+m/2/v7e++/fe+/8Av+/S++n3332/03e//bf/AE/XbTffb/bf9/X++3vfX32/28O23vfS+/f2X39vXb/0311+/tPbf33f9/vvvv2v/f79Nvv/AO23+3/vfbb5/ffvf0a39ltttrvdvfS/9r/0ff8Avt3v33f9/s63/vbb/Tebffvf3373++9/01++vrp/S+s9p7bfbfvv9d9v/e7++vvvf+/vf02n/ffvv1ffv+11v/79v/Tb/evvttN9vfS91ve9/wBv1v7f+++/09fv+fve/a2//e69b9Nvpvd9b9vfb++2ttfb99/+99fvvbfbf99v++v/AH3/AL6f3630fvf9tr13+l/bf9r+zff3v++/9/t/v/7+/S/9vrvf5/8Av+m+39//AGve/e7a/p91ve9/+n7b++ut/ff3/wBvfe73/d++l1/d/fe97bfvvfS+/f8A0e/3/vbfb6++u3099tvfW1vvvvfe9rbf2X3++/bbv/2199b++vv9dvd99NbfXffv7S10v9/3++v/AE+9/m19f3e/+t+03+/fbf8At/e31v32ttvv++/++v++/wDvr/39/vbfd7/p9v3/AH/T6/s/rbf0/S97/S+/ve/9v/e//bf9/vfffe9t9p9N/tf/AH1+y/m7a+/Xbb+k9bb/ANr+m20/33/vf1f01/8Ae++/3vvtfpvtfe7S++/3+0/+vv8Av/v2+/ve3vvr72++/vrbbfd++n3v/e211vb3vb3vvrb++/v/AL//AHvvv9vff0a/pff02v9trvtf3vff+9//AG/e2v8A31/9f7/f9/ff6S+/8/v2/T++3f3+v0/6a++/trfX2+/v9/vbvvfe91tb30u2/v8Ab/Xfe/f+3vf+9/f622vvtt9trv0vfvvvb97++/8A31/3++m+/wBD/v8A9v2v33vfa++/a/vvfe13vfS++/T20vf3339tf+y/0vf9ff5O++/fe/Xf+vvrr99Nvpvt99ttv39/vvvvt7+8/d6XbbTffb/bff3+tvfe9v8A2v8Avvb9vb7++/6ff2/303vf6b7fffa62++/1vf02v/AH9/ff9Ltf8Avbvf3vf7a9Ntb++/tr99v0+3/e+/+/tf6S39/wBtrtv32/Tffb6e++/vb6/S1vfvb3vf330v++/a3++/v++/f7+2vv8A0/v/AH+030vv2vfa2utr/vf11v7S33v9v933f2v/AH+v6++/a/6++/6bbfS/+m+l+n+ltt9tf339r+/f322++11/9vff9/39v3vvvb/ff9vbfe/S7+3vv12++vrvv99d+3++/T9/a/s/s/8Aa++/tr/vb3v++n3/AH/a++/b300300+1999fffff13v9f0vf9vf6/X729b9rbbX+9vff3v8Afe+2m++/a3vrbfS3++3vf/Tbfe12/v7W/aXfe3v+13/e9/8A3v0fvvfbfX76bXvrfvr9fb/ve19fvr/9f/vvrbb9fb2++/6bfdtr++/ve7+m+l9ff/323v3/AO2+/ffvr7//AH9L62vv3vf/AK+2uuvtbW21/m+v2m+13/ffvf1v3vf+/a2v/e//AH377vfbb/ffe1ut/vf9trvf00++/vf/AGu3/T++/vbX3913009/fe++/vv9vbbbbb+/vf6b/f2/+mvrf3vfe379fb3vf3/9vfvvtf3vvvvfe9vvrv9f9vr7++m13a69rf8A9tN9f2n0vtvrfe7/ANffS++/6Wvff33033vv03vvrbfvfvvf/vf9vvttfff/AE+33333/ff/9f33367f0vff+v39tr/vev22v3++/tr++/vb23330vvbXbb019b+/T+/vvvbW9/vv10v/vvtNff29/X7/v73ff66W/vvffe11vbS1vfbb++tvbbfb9f1vtff39/v/wBtfS9trtr3+/fffbX9fS2l3a23++ut9vv99ff9p7bffe+u++/e23++/fe/fevrfbX++9v309Nrvp/a+mltL29tL3/7+vv+vrttvfffff6//TbXffe3fXW++2m+/6/vb3+9tbS/3v6+u2022+l39ff2vvr2++/0u3vv6/3/AL21vfvbS+0vv629tr6/ffrrvbb6++/7++/vf/bfvrve+vS/9Nfv++l3/v9Lbf/Tfe+vrvv0++/fbbfff9997W++/e+/++/9d7bbX1tt9/vtt9v2v3+9vf/S1v09fvv31vrb3vf6fe9v/ANv21++/fvv6ffrffvrfbbbe9vbf6Xba+utrbe2vf3203vtba3vv1/X7b++/f9vf30u+/vf+/fbfS6++vr3v9ttNvvfe1vrr9ttvf0vfW/wB/ff/ve/2++/3vr/f3+vrfe33v29/vb++u++/tr++tvfvrf33vvvvrv3vvffW/9ve6/e2utvbfffe+v6fe/Tfe9/bXvfS79vfvr++vvttr/e33+0vfbe+2u++/e2l1vv39vv6/9f+/vvvb3v6++/Tr9rfvv33t999tvfW2m13++tvf62vt+/fe61/vbvf02+2vv/W/X6Wvvvb6Xffe1vf21/S3ve3vfbvfW9vve729tbv0vve+l9vrfe+m1tr66/3vfX++311v/e09p663vfvvb+uttttrbf0/W79dff773bvvf2mlt9fb+3/a3W+2l9NvvtfT++/tP6/+2vfffe+vtff/AN/vbvr9rbe+1vtfffe9/trr9LffW+/303vvffbfe7++303v331/0m102vr+/S6++/a22vf2vvtb011vbXvr3v8ATvrff63f1vbf+01tr1vf/Trf+1v/AEvv331/S6a3+/8AtrbfXb1m1/f33+l3/d/+mve3Xv7b20/rfv8Ab+tvvevrp/f/AH9ve0vtvd3v++m+3t6a7fe++uttvv8ATb6+3vv3ve2l/a3bb+vtf1v2/tr++vvfevf3/f3/AH2/0/e2u1v+/vr/AE9vb2u+23vr1vrve1ttdvdLXXa7bb00vrv9trrf+331vv8Ae+utvvbf/b2/vrf9L0/S++s233/b2m19d/Xfe++/r6a/f9vbvvtb++/a6+ml2lvr9bf3v83bfff9bfW9/W1vX03utvb2/wBDf6Wv9vf/AE/339tLvr66aX2/vb112vb6XXvvrr9tbvv/AH6/vvvffbe1vvvvbe9rrbS/3tb/ALW/3vffvbe19NvdL/39vv7bffe/2972++/6bvfve99fS++mt36fbXXv/S1vrre+ml032lvrre2vrbfe3v8Ae+/Tfe/fS+utva3vvbf9vf62vf7W/b++/3/3+tr7W2vvb7a++/v32u3013219vf3v7299/62+2vfvvvfS6/+m+1ve+vr9f39/fe2u929vbbTffXvvf6bb9vfX302u/fe+/vvf6Xvf3tL/wBvfve0/tr30+/9rW9/W/6aWut99trXbbbb/te/vvvrrb0m1rre9tv3/v32vrfW7W/S2m/fvrvfb/3+t99L6Xfa+m9+21ut39ftftfS7W2trvd9bf+mvr732vtfaXX9p//T/e/2m+2vrre+2uu/trvt/fS13ve9/u33++21++/p99v9v23ve+/22vfvvfafe2++/S7++/e2m13333vbW7+uvS/r739t/vevv+m1trff++/9pfa7/vrfe99vrve99p6fSbbffb03/t9vf639tr++mlvv9Nvf3b9fbvrfe21239fb6++/39/0u1ve+t99ffv99NrbW+/0vvfW29/vf2+03vbff6XXvv6be/fbbf33vrfe9231vvbfa2uttt9fW2239fb39tftftfe7S9v/2++/ff/vfS7/S/a22l/fS3/Tb67bbbb+/b/bfe++/tfbf2m1vv6/Tbe33ve7S+l/6+2ml++/e133++m2ut9tNfb23m+/e2u2vvfe9//X+l/6e33v+/s0vtffrb6ffb+3+/2m1331vbffbb/fe++/e/23++9rfW299f011vvffS2m1vtfe/v9trvffe7bbfe6bXW99b/a3vv7fffe9Nbeu/tfe3m139/vevv8Abe1299dfa9tfXf09L69ttbfb7fe339vd+m3S/wD0/a/pva+9v309Pvf3+u1/vr0vf3vf73ffe3/vf++tvfW2m23trfve0/e1122vvve2u++/vb3f0vbf2XbbX7/0+/e+/wBbvfbb3m3e30+1++/22vbff6++/vfff2ttN/S69Ntbvvrv3fTfbe3XvfX6/f7/ANb++/vf029vfX2m/S/3vf/vb/30m92vv/vfW301/b6fev2/bb63m/re/e/vr6772vrtrvrffvb9pbbbf30+19Nrf33vba3/ALXbb+tr0vr2mvrv0mlvb3++33f+/vr9L03/AE1u99/vv729/ff++/bf33ve++m+1vvf++/e3bbbe7e1vfe222v2m11tr7+k39vtvaWvfe7W3vr3/trtrtrba/vf09r++/e10/tf9v7S++0u3m+vvW+vtff9997W++/e/v9Nvf/e2u/vffe230vf2t133ve3vr3vvvrN/ba3Wv6/tbfafe2trW133vvbf/AK2vv9tvd9L2vv3/AE1/W/trvd/X6a++/fe2+23S2ve++/a+m1vtP/tb7Xf6ae3+vtvrW11v++/p/ff/AMv8n6e//bf8v6/++/ff/wD/3+3/L+m3/X950v8Am/5e++/836+vt5vf+333fe30vt69/X+/T9ftbS63a+vX9/T2mvpbaX0vv+vr/wC3/vrfa79tfT/e+0u90u2l9ptvdvvtttr99/vfbafe3r/W+l3ve21tf/T7W++/32+2u3b/ANvffv223/vvp9v2v3+utut03++/fb0vrpff++/W39ttd633vvbe999Nf63e0++/a6b7Xffe/Xba+0u+v+/1vvbfff00/a2u1/T6b36/ve0mvrre3v30vfe2l/X2trfe/2vS9vf01v/S09L/v/wBdL/S++vrtt/vb210vrfX2++/S773f6bb9tff0lvaX9vb6X7fTXX2m1vtffXf++/ff+1rba++/Xv8A33vff++uv21tr/e3W20ve1/3mvtvd9vevrrbW9m0vv1vr0vvbfW33+/++/fb9fb6Xvrfa31+/a+m3fe0ml/f6b+8vf32v++/rve22l9P2trf3vt7e3vvfe/tbbf6bbbe301v6/a/Xb2m9vbbW++/wBv/bfW2vr7330uuvvrb7ffvrfe3e2l9fffe32+vvrfffbe213vvvrvb2mlv67++ml9fW32ml0vv/2vt99fb6/fev2vpvt/ve+vvrfaS12vv2u13v8Afe+m+/8Af+/2+l399bb30++/S3vvvvrb+m19Lrf0lvrtrfe//ve/X3+/3/972mvrte1/09vdNva3bW++/r9vt9ttprrbffbf1u/vff73vvvf6XXf++3b3/vvrL+3/b+/9f2vv/vr3623vbW+/22+/9ve21vffe3bbbe3ve3t7/fb3vvrS2u/fe3W9tbS7/vf/ve2uvvvvve319rtrrtr9vbW/fe+/p6239L39vrpbf7/e++s2utva++ut9bW/b2ut32u2+0+/0vtfvvbf1vb+0+/vvvt+/0ut/S9vbX6+/be+tv9ftfe3a+13/AOuvrfe1vvbe1u9//Xvf297S9pt/f2+u1vb/AE+/fe6+0tvve2219ve3vvvfTffe9r9tr6X/ANvb12+v3++9Ltt30utrre+lve23ve/29trba321vr6bbXfe1/W633vW22/vf/fe+/v9va3Wvfe+l++vr9P7fffa22m23tbvvrb6f399rvr/AE100+/9rf1u1ttvvbe3v++/m8a7ffXfe/vvfff7b7W1vb/vfbW++/ffvvtt9Ntf/vvvfvrvv2/fevr6fT+/vr3W/XvS3bW+/vr0vv6fe++/m+/ffS+/fe6bbf77+tr9vvb/e1ttvrba39/X333ttrWvvp302v2vvrv6fe+9tfe0u+/ba6/a62++9f032uvrf31vfvv637ba23be3/a6+vr2m3vb1/f2/Tfe/vr3ve3e3e0vv3vr6fffvf2tvrf7W3S/ve3e29vbbfvvrbfe2/vevv209vrbbbe/f+2m/fve22mvrfvvb+/9v/Tr7XXba/aW3S9vv79d9vvvv++/39tr3v/39ftfS2209L9b62vt9p/a0vf/AK3vfa9vdff+/v32uvvb2vrbW2tv00++1vvf0vrrrfbb0trfe6fb6b3a32vtffrNve7be0vr321/S1u213bfe/vf0136faW2+t+v72vvbf02tr/T+3W7W/S2vf/3+3/39ptf330ve31u113trvrvfe1vS9vbve++m++/7ba+vvfe9vvf++/p/Xfe7S63vvfaXX39ffbe/e2vr/m/m113vt9ptffS672323a6bb+utff0/3/AGvv7fe+l+0v2/36bevrbaW9/m19f2mlut/6/a7fS1tt/vvrbSbb++/re+/tr9vb31+vrvSbb3b/AGml23a3W++/Tba/T1232vrr9f6fa1vvffS0vb/bW76S6++/X00u++/trb2m39rfe+v319vfvv7SbbS3W/re/3815b3bfe/bW+/a9Nvb23ve9ut1/36W+tvbf67f3++/3bb/ANL0ut97ba+vb767++vrv663f2l9fe1ve1/6aae1/vfb9Nf2030l+/9bW9p1vvfW+/vbve/1/Trv9L/1vb9p62m20uvW++/22vbve2/13v6ffW/W13129vbe71vb63bT039L7T9fb0u3vf2uvrtt9tbbW02v/X30u1+n9trX/3tN5trvvfe3212v2/2mltbfe21vvvf6aXXbbW9Nff9vdvt/v73+/tfW392++/tb/S+tfe7b2/aX/a/tPTba/e+l1/Tfbf2/vb3/XbW/e79Nrrfe/trtfW3vffe6++/W7Xffvvba211vvp/9Nfvb32uvf7b0/vb++/vb7ffvf/769/Xvrbfa/2++/fe20/rb/fe+uvtf/039rr30/622ttvrrbfv6++09pr6e2++/f/e9tff69vfe76e2v2vbbve/e61v02m++/tr3vv7a7W73/S9vfvvS++/re/vv7T1236/W/X7X++9rbe221v29vff79fe6/W19L9f1/a++0vvvbW7++v6+vrb2m//tb7fbf6+/vvvvfbW/vf3vvvff+m+/2t+s/aX300u3vS+tt0v21utr/ALfbW19rf09vb22299tvvdvd/vtf0vvbfvf6W++/v/bf/Tfe366bfe6b/T9b3fa++vtrvvbfXb9fbf333/fev3ttb/bevv9P6ba63v9Nvr9/trf/vfX/AEvf02vvfe3r7S22+33m22v+/Xvbffe3vb2/bf9999tf7XX00vrb20vfbb7W20l2vbbbbS+/re/1trvvp/a66WvfS9vb++/19vrvfW+m1u97X++/pve0ml1u/wBvS++vv9tLvbWvvf0vrNfT30v/T6a+vvprff2++/m19ftfffb+mlvW/ffb0u2+0+1/e/1utvb63/S0vvtr9/v3++m1v9NfXb32++ml0vfe/S9p9vvbfbba++/vfvrre3vr29ff9Lvt/Xbbfvb2v23vv9vf199r9vb2mvr9r9prpve/ff7TffW/f7Xbafe2vvvrp/T/X200vffb7ff9Nvt/9vrvrb77Xb/AKfbba+vt9fevrNvpdb1ttprvfS/vrf29/bfe9vr2vbe/wD6fevvve633W//AL++21r9N/7+/a+/pfd+m/39Pvr6X97/AGv0vf2t19vd9r6/+m1vv0u+/tf03m/W+/aXvffS1vtNvfS39b/fev3tL99v6be0u2+0+tvS9vfS/W+3S3Xbe++/TbbXff/ff++/vv6bXf/vb7003023S/S+vr2++/vv7W+vrf01vr6bXXS/tf663++3vfS2212+vr2m197e9vv39vr7fvbbfXbXfe3ve/m9Lve/e13+/3ttb/AEnva0u9re+m3r1vr29pbaS0ut/67W7W/fe+vve6++vvfb03+020vrbe+vvf6+vrbff2mve/vfvrbe9/bfvfbW++/2v0u/3vf0v9N9prv2vvfbS63S19ttbaS6W1trvv6a+ut/S0vtff621vvfe/Xbb029tvvb3e+2m0vrvfe/vrbb3032120mlv02m1v0m0tbbS/W1tb19bb3vbS7bf0ut+0v/AE1ut22132v99/S++vrtt/m83bf9N97/AOvvbe/+v9dfffX12vrrS/11u/0l/wC09rW7W1++1vbW22++/vve61203vvXvrbS00mvrbbXbW+s3/a++/m33bbf3vf30m3vr+vva6fffa1/rffX7Xfbb9/ff++9/wBb/T7X/pff6a+m11vtfa++/fb++vttvdff3bbffve3vrvSbb0v/W+/20vfbe2vfe63v9tr/wCvtffS++/vfS63e0m/9fbfe7/6W/vfvrfe+2mt/Tb0201vf+97fvb0vf8AtLbaW+9vrte/fe99d/vb0m9ut7b11++u09m1v6S3b/9vb0+v62ut/T++/3v6/bS3vr1vb/a++/9Lbb++/20v+vt5vd7W2u3f9m++u/+13+utr32m122vSbf3b++/a/vevrvf9vf6/8ArbfTbaXvrffW7bfvbbf23+/W1va37S1v/X2ml2+/fe+/31vv9vdpt72/trfa/p/f+/ve9pffT/e3p3++/wBv/Xb++0vv03v/ANv2m/tr30uuvb/a6bb2vbf6++/vf382++/a/S/a+3+/fbvv6fftr313vrvbfe19vb113vt99/vvd+1vtb01/01vfa+l9vvp6Xf+1/63S2ml/e3S++/S122+/9b03/ALX++9ve6/e2vvtNrf32vr/ba9b/AF/tr6W9tN9ba373733vf7bfe91vvbe1u9//AGu2++/e0vXf/fe3vv8Ae339t7trre+2l33t9d/fvrvb+/r013ut3vfXbf3S/v2397bf+/6ba97S++/XbfbX2l/W++l++m+/b7+vvba0u/8A31vfe99NvfvvbbXfS630v30ml1vf9/6999Nre3b++2vfe7fe/vW9L3ffS603vr/ba++0vv6fa3e2v0ml3+m99rfW/bbS1ttffvrr31vf29ve0tr2+11tvdvbfbf0+/X3trbf+m0uuvb0vrbe+l9prfe01v6++vtfftbbf09r39rrpff0/vfa++/Wff3v++3W++/a619vdff2/T1+21v1utvtbe0mvt/vb6e1vrff+0utLfbba+0uvrbba++l329prre3vprp9ttrfbb+0ve1u9/X6f0113vb67/Tb/f0+/0vtfvvbfX0210/tbfe/Trrf1vbaXW/S1u29ut63fve9+3f++/f2vvS+/tbbfW/Trfe3+ml2u0l3/AEuvW02lvr0mlrf019fX+9v6a+ut/Te09fTbvrfvvbe120ut9vb0vrvd/Trvtfvtbe11utvd99vf99N/6e3vr9v13m++/9vb99bfv7fbvvvffS0+l/a7S2vt/rbbffba++/Tbe6++/TrSbfW6b3aX2m2ut3vb0v8Ae00ut23v3m21pvt9fe+/e63vrvteve2u/bf39be33++/vf3/AL9ttvd9rf09vb++/p/7339Lbe+v2vrff3t1m+/vvt/TbXvvrrW9tf6++/02/X729PvrvTfe9v30+/2v99t+/wA3r6XX339P6aX7X++/be2+/wCvrvvfb6a+vrbe62vr7++/Tb++vpvr383be+/X2++/ve/vfXbXff/1m0+m2++/21/fe3t9fe723S62m30vrvffvrbfX9/0vv/bfvf7fS2013S3W++/rbW/ffvrfb+/ve3/vfW7bfb1t66/m399L3vf3u/trW0v/AHvTf6ffbe7S12ml++3fe63/AGm2t/vbba++9tr6/Sfe231u/e6Xfe9pLbb10/v/AH+0trff2v6bb9r3/bWve1trWvf+3++2/vb/AH0vbe723++/62+/09ff6XtrS9vt9997tr/e129r/X3vvte++/T7fe2vrbaXb3m3+/tr622vv/ffpvtNf+/m0u++/TrfXfa9mvrbe/f6XX32/vv2/ffXfe1vt39vrbe/re++/ff/feve2ml9L9t/e2nbe2l1/e23ve9ve1m/trvffb2mlv3vtb6+1tf13vrf7be3pbdre3vv9/a2vfevrb0vrbfW6fe++/9ff+utttbbbe/rrf09rfvfe8/7aW+l9L+m/e330vS1vffe+m1vb9/Tr6ba3ve3vffr9ve+utLtf+/wA31trb9p/a0ut1ve1vbe9vv0m0ltt9bXW++m3tf7bfvrfe9/8Aa++/v9fe02vtf63+/f8Avba+/f2/p/W2v9fXpba++tr/AG/vvpba2lvr02/vb2vbba2vpfaXvtrLbe19bbfTbb0uvrbSXXS6aW83be0m0v221utL29v1+/mvrXbe+/383vrpvdvaen1v0vt7fXW/v/77fevr39vfW67S7209vX283/v20v3m2+1vr9/t69722u37fS73vfTfe++/a/7W76XfbXf383bf9Jbbbb77ba/00vtddL2/f311tNvb3W9p/T6a+l+199df6fS3e0vXbe7e0/t9p9N/6fe//AL9fS99pfe22++/pLbfvrf019a2++/S773fX7f00vba6++/tr9L212vrb6be0220u/TrW7bfvrtt5vr9rrf++/vvvr7++m++/e3m1utvvvf/AO++22u2+u2v3+9vv2vrvv3vvvff++/vrbfe6W2l39vb00m0110vrW/300v9bfv7fTfaXvfTrS366223bevrf9fb/trb09bbXW++/tb0vr/03ut29vv6+/9fa/0+/vfvvfe0vva+vrtrvvfb0vbSbbXbe79vrNvf6X/tr6ba3ve3vvS++3a22vvba/3v0m/beve6XvrfTbe+/e9ttPbe7XW+3/T7++/3v++m+9tvf/wBv++utpfe1+mlvt/m9rtr6++/rfbe3be1v21tbbe9vvrf3/ve9vrv12ml1tb6++0ml3ve2++/2trf6ff2trfbW1/bafe/Tbb1vrvf0++9tptfaXW83+3S120++/vvr0vS+3S7vrW3bvevvbe6Xvba++ml3ve2/e72vtbe/baX20vrf/3/AK3fbfe+/f8A0trbb20tr9ba3bbfte1tt9L/ANvt6fe09trvtNvb31/fe699m3r/AEvfe2uuv3019pff3u3vr22u0mlu3m902u/fe90utut0m1/e/TrtrtfTfe0trtt1/vf31/3+/mvrbaXXfTf+ml++/e/vf+v0utpbbS1m/r330999ttv3ve7/ANtf+/a7aW++30l1vtrv1m3pNrvrvt9re3trbe/bfW/f/TrpL9vrbS+/fbvtr9ttbdvrfe2mv03S/wDXXbevrbfte2l836e2vfe3vv8Ae2vvb0l+ml01trvbfe83fe2l/Tr0132l1/m2vrbe/vfvvprfb6f/ALW+utvvfe0u1trS3++/S3X+trtrvvvr9/m/e/Tr3/v/AH2u29/tr6b6bbXtrfvvbb6e2/19df8A0t9rve02u+uvvfve9NvdvaX39tLvr66a3vfve29//fvv39vvvf3/APe39/bXf2ve3vffbe+/be0/rbvfffe9tvrNffbfW69tv1+292+0vv/XW+/f++/9e/8ATe0vrte++01/vvbbffbe/tr23/veve+2nre/a3vfbf0+/vevvvtba+/a++/9tv3m82vr1vv7S3e3vr6a2uv29vrfttt7W/b++/veml19b67ba/vr7+trXbb29fbfX996S9/Trre63vS77S1vtb++tve995tvSfevr0mltr0vv1mlve1/pve0vr7a+/6e93mvr9tP637baXve3vr/T/3/S022u37fSfa/s/vte99r6beuvvfT/ve/1vvvv29ptve9vvvevv/e1/e+/W121t9vf++vvve3vrv9t1vfe+tr6bf0vrbS++21ut/S/fbbW++ttv2vtftNvf0vS/ba+u++/2l2mlm0ttut3/Tb0vrfe3a6bXXbe9u31/S6++1vW1vvtrbS/e2vr9bS62/m++/S+mvrbfS/TrS3fffeve6X/ALa9fb/23be02v2vtr/vrb2v2m1vW2++/Tbbbe3e++tv6e9v/bW++/e2vS3/ALa99f1+9trbS3ffb30/b02vr++vu0+11m3e30+ml2+trbf0ve3fe6b9m9p2815vS3+/v03vfvv822utbvr7Tfe/+vtfve+l+/bfvv/3+tr7W2m2m++/rve62vtN5v6e021rve19vbf13be02vevW62v/X++n3+t/a2uv9v3+ttrv/03vbW7fe/e291vfe00vf/ANff9fe6Xvfa2utvevW6XX/trvve9++3/be132vv3vvvvve++/S/ff6be2m21ve7e90ve212132vrre223e3/wBvb0+/2m1ve10ml/09p5rfe3X29tt/vv8Afa22+vvvvfe+m+vrv036++/e1tbtr2+vtNvtvr63S7Xtb99be+/bfbfe3S7a3tb0ut3f1+v2mlut/fTrttre3ve3re0m2123S++/vfS2tr6fvr6ba6fe/ve2ml0vtr3vf++vrbS1vvtrrbW0u0++/vfe9pt/e9vbfe/S+2uvvfevrv9/312019fe/e9u/vbf0tv9dfW2t99trbaW01vve+ut320trre0vtNtfW2t/v8A9tP3/f01tptvr/W++/a3v2vW+1vfbfvv03/m2u++/W/+219Nf2vrbe+2lre3f0v630m2ut/vfSXX+m/a36e9pvtfe+vrfb30vvbfS+vt7X63vtfa++/re1+/tbve+m3e/S7209ptd766bb73+9+nva2m13+/Sfevr7020ve/9NvfW++tvfe9/be12vt6X21r6faXvrvW0vfS3a2l++/ve71vvf0v/AF/vf9df6e++/2/1/wBttr+1vbaS101tv02v6be911u0l2u2u1vbW/2mvevS9r6XX2utvfbXXW0l20m9rprvv6e1vrf6fe9m2++/ve3+/wDXb+/+/T++/ve1ut/vrvvrrba/9ffS2vrvr9ve2vW/re33Sbb9r3mvrte2m9remlv397++99re++tr22u3Wvrbe6bfv09Lbe++l7W9Nvf21vtfffb30vv0+2v++/vbfe3f0/1/ve3S/f1m9m82u02l83a+83X++/bf29rrfb339prvvr2uvW+/rre23vrba7003m39ft6a++2uvvvXfe815v7ba9rfX7f/0m9p9vvf/r3/vfa299rrfve9vd+uvd9Nvr7bbf3vvffvrvvvvS++/9v/vrfb0utrfvvfbWvrfX/AH322tr021v/AE02uvff1vtNve+u9/vSbf13vevW90vt7a/bvrS++/re+3212u+/p322l1/3vvf9fe2++m/fW622019bevrprvvvvvvbf6bb21v7f383e/a2tr12ve/aX/a/m3+/m2+2l2tvSfa9r2vbWmlu9vtpr9tr9ptvrrWbfS++tr99b1vb9/Tffb00vtvdfe1utLbb00/tb37T/e2trtr6W77S+uttr/fXtrre+ltvtfe22l00u++/W1vrvX2tr21vbS+trtb1vvrbbfS9te1v9tr3mve+/ve6XXtrve+3f7ba+/bX03vvrbf6Xbf1ut9f6/wBpttfS70vvrr/aXfe6XXS2vtfe6e19pr6a67Xv/W1vvSbaX++/vfe3+l99tbvr6/0vrbbS6++vr3v1v6bfW++/vfW1trbaS219N5v6/S1tv6b9/W63e0vvrrf033ve/S++trv9f3u1u3vr6e029ba+2vrrb3v9vevrvf+/m3W3ve++m+t9fvvb0vr0vtpr3mvr6b+m++/3Sbb/e9vfa++/fe2+/f0/e2vpr6+9tptLfe1++/tr+3vfW2213m9vb7/ANtrrrb0utvfbXfe37/W6/fvr676bbfeXb10utpr1vb2u/be009L7W9vbfSfe99tr2mlvb2/vr9Nfe83bvrfaXfe/vrb3++/bf+/e0l1vvbb9tft/vfTrbXv+/Trvevv7Wbe3vba++/Sbb0vvtrL76fev+/rfe2m10t3fe/be011++trbeuvr+/fe+0ttvfa3bW7baX2039ptvtLvfXvr0+/vprL73++/veuvvbfe8/be09f6ff1/a9d+tv/m/v7T++vr7W6b9/29vT3f8Af9vbvrNf33/8v++/29vvffba+vvfa+l+/S2ve/vv6/vf1/bbfX/tr+2/6fe0vtff621m91v/ANL3u/X3vb9/rvr/APrfvva2195rSbfbve/33/fevtr0ml+2++2vS6/bf00vvbf32vWba0ml9rrL2/tr9P0m195p1m3vvS++/r6bbffvvfafe/m/e6baXXv9fevvX3be/re609/e73be9L70+1tfm1vt5vSbf2u11vr2/ve29euv099r2vrrtr9pfev3v79+30+3WvrffvrbfS3++9r/AGvrrfe00uuv321vv7Xm7beuv30u/W++/m67feX9fe02v7fe6f6Wtrffv9ttfff383vf/trNvr202u933099tvff9/ve/W2v3fe29pr5vdba6f663fW7f6bb3be1vbaW3be19/e6231vf02322vt/WXXvrfe91vrftvSfa30vrvfa7f3v3vt1v9trv6ba33b3ba9vf3vrvrW0995ve921vb9pvdtt/S3vrvf2m1tr9m2vrvvf9fvrvva+1vr3m/trd/a/tr1vf0ut+3/vrX0m21/pL70vtbS3pfe+mvrff3019ptbbbfW3S1tbvbbffbe/W3W2/fbba2uv21tr/e2m13++2vba63e2u0vt5vr3/W3vrr/S3vfTba2vtde2u+221v/Wv3u1vbXbbbb3m197pfe77bW30+/vNvbvrpva++m36Wvrbe7++tr9vvf/020m0/9L6Xve20vS6+u123v+/W/fffe/e30vvve+/0ml/e6f1vbaXXW3vvrbe3+vfe7be+15u2u/m++/rrXbbv/AN/T1m9pba9vba2m/Sfe9031u0vfbfd/vffr6T3m979vrbe1vfe+trfe0v0vtf1vv3+/vrN/t/8AS3vvvf76W/0m83ttrNtfvL/Tr2utvrv32vbf1u0vr1u11/e60309tLrf3/6Xvvfe6/tr3vrbf++vr9vvbbbe9ve/1/rLbf3utvfTrXffr9v6S0l++39pbe0vrvfe/vrNvtPvrS/vv/36/ae9/wClm9v9vd83vfe6XXba301vfSfe/m3m/re/vb3vfe3b22vvvrN++v3lvtvdLfe3m82u3ml+1u0vb++v3mlv6bfvrfe667++0utbe1tr67e8u2mlv097b39vdvf/2Q=="
+    ];
 
     function goToLayer7() {
       document.getElementById('polaroid-layer').style.opacity = '0';
@@ -1730,65 +1659,28 @@ Mera har sajda bas tere naam ho jaata hai."</div>
         document.getElementById('polaroid-layer').style.visibility = 'hidden';
         document.getElementById('photo-explosion-layer').classList.add('active');
         
-        if (isViewerMode) {
-          setTimeout(() => {
-            triggerPhotoExplosion();
-          }, 800);
-        }
+        // Auto-trigger the explosion immediately
+        triggerPhotoExplosion();
       }, 1500);
     }
 
-    function handlePhotoUpload(e) {
-      const files = Array.from(e.target.files);
-      if (files.length === 0) return;
-
-      uploadedImageUrls = [];
-      
-      files.forEach(file => {
-        if (file.type.startsWith('image/')) {
-          const reader = new FileReader();
-          reader.onload = function(evt) {
-            uploadedImageUrls.push(evt.target.result);
-            // Preload image in memory for zero lag
-            const img = new Image();
-            img.src = evt.target.result;
-          };
-          reader.readAsDataURL(file);
-        }
-      });
-
-      document.getElementById('selected-count-msg').textContent = `${files.length} Photo(s) ready to explode!`;
-      document.getElementById('explode-trigger-btn').style.display = 'inline-block';
-      document.getElementById('generate-link-btn').style.display = 'inline-block';
-    }
-
-    function generateViewerLink() {
-      const currentUrl = window.location.href.split('?')[0];
-      const viewerUrl = `${currentUrl}?viewerMode=true`;
-      
-      navigator.clipboard.writeText(viewerUrl).then(() => {
-        alert("Viewer Link Copied to Clipboard!\n\nViewer ko bas ye link bhejein. Unhe koi upload box nahi dikhega.");
-      }).catch(err => {
-        prompt("Copy this Viewer Link:", viewerUrl);
-      });
-    }
-
     function triggerPhotoExplosion() {
-      const uploadBox = document.getElementById('layer7-upload-box');
-      if (uploadBox) {
-        uploadBox.classList.add('fade-out');
-      }
-
       const explosionContainer = document.getElementById('photo-explosion-layer');
       
-      const fallbackImages = [
-        "https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=500",
-        "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=500",
-        "https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=500"
-      ];
-      
-      const activeImages = uploadedImageUrls.length > 0 ? uploadedImageUrls : fallbackImages;
-      const totalExplosions = Math.max(40, activeImages.length * 6);
+      // Spawn ambient background glow sparkles
+      for (let s = 0; s < 30; s++) {
+        const sparkle = document.createElement('div');
+        sparkle.className = 'ambient-sparkle';
+        sparkle.style.left = `${Math.random() * 100}%`;
+        sparkle.style.top = `${Math.random() * 100}%`;
+        sparkle.style.setProperty('--dur', `${2 + Math.random() * 3}s`);
+        sparkle.style.setProperty('--op', `${0.3 + Math.random() * 0.7}`);
+        explosionContainer.appendChild(sparkle);
+      }
+
+      // Photos explode dynamically from the center
+      const activeImages = embeddedPhotos;
+      const totalExplosions = 30;
 
       for (let i = 0; i < totalExplosions; i++) {
         setTimeout(() => {
@@ -1799,34 +1691,28 @@ Mera har sajda bas tere naam ho jaata hai."</div>
           img.src = activeImages[i % activeImages.length];
           card.appendChild(img);
 
-          // Physics Calculation for High-End Smooth Animations
-          const angle = Math.random() * Math.PI * 2;
-          const maxDistance = Math.min(window.innerWidth, window.innerHeight) * (0.6 + Math.random() * 0.7);
-          const tx = (Math.cos(angle) * maxDistance).toFixed(2) + 'px';
-          const ty = (Math.sin(angle) * maxDistance).toFixed(2) + 'px';
-          const rot = ((Math.random() - 0.5) * 80).toFixed(2) + 'deg';
-          const scl = (0.5 + Math.random() * 0.65).toFixed(2);
-          const duration = (2.2 + Math.random() * 1.2).toFixed(2) + 's';
+          // Randomize end offsets radiating from center
+          const tx = (Math.random() - 0.5) * window.innerWidth * 1.5 + 'px';
+          const ty = (Math.random() - 0.5) * window.innerHeight * 1.5 + 'px';
+          const rot = (Math.random() - 0.5) * 80 + 'deg';
+          const scl = (0.6 + Math.random() * 0.7).toFixed(2);
+          const speed = (5 + Math.random() * 4).toFixed(1) + 's';
 
           card.style.setProperty('--tx', tx);
           card.style.setProperty('--ty', ty);
           card.style.setProperty('--rot', rot);
           card.style.setProperty('--scl', scl);
-          card.style.setProperty('--duration', duration);
-          card.style.zIndex = 8100 + i;
+          card.style.setProperty('--speed', speed);
 
           explosionContainer.appendChild(card);
 
-          // Double RAF trick for hardware acceleration transition trigger
           requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-              card.classList.add('active-launch');
-            });
+            card.classList.add('animate-explosion');
           });
-        }, i * 90);
+        }, i * 150);
       }
 
-      // Smoothly transition to Romantic Description Screen
+      // After photos finish expanding, fade in romantic text overlay
       setTimeout(() => {
         const glowScreen = document.getElementById('shiny-glow-screen');
         glowScreen.classList.add('active');
@@ -1836,7 +1722,7 @@ Mera har sajda bas tere naam ho jaata hai."</div>
           document.getElementById('romantic-desc-card').classList.add('visible');
         }, 1800);
 
-      }, totalExplosions * 90 + 1500);
+      }, totalExplosions * 150 + 1000);
     }
 
     function showFinalOutro() {
