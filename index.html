@@ -93,12 +93,47 @@
                 return data.photos && data.photos.length > 0;
             }
 
-            // File to Base64
+            // File to Base64 with compression
             function fileToBase64(file) {
                 return new Promise(function(resolve, reject) {
                     const reader = new FileReader();
                     reader.onload = function(e) { resolve(e.target.result); };
                     reader.onerror = function(e) { reject(e); };
+                    reader.readAsDataURL(file);
+                });
+            }
+
+            // Compress image before saving
+            function compressImage(file, maxWidth = 500, maxHeight = 500, quality = 0.6) {
+                return new Promise((resolve) => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = new Image();
+                        img.onload = function() {
+                            const canvas = document.createElement('canvas');
+                            let width = img.width;
+                            let height = img.height;
+                            
+                            if (width > height) {
+                                if (width > maxWidth) {
+                                    height *= maxWidth / width;
+                                    width = maxWidth;
+                                }
+                            } else {
+                                if (height > maxHeight) {
+                                    width *= maxHeight / height;
+                                    height = maxHeight;
+                                }
+                            }
+                            
+                            canvas.width = width;
+                            canvas.height = height;
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(img, 0, 0, width, height);
+                            resolve(canvas.toDataURL('image/jpeg', quality));
+                        };
+                        img.src = e.target.result;
+                    };
                     reader.readAsDataURL(file);
                 });
             }
@@ -321,13 +356,11 @@
                     .layer7-title{font-family:'Playfair Display','Georgia',serif;font-size:2.2rem;color:var(--royal-gold);margin-bottom:10px;text-shadow:0 0 15px rgba(212,175,55,0.4)}
                     .layer7-subtitle{font-family:'Georgia',serif;font-size:0.95rem;color:#e0b0c0;font-style:italic;margin-bottom:25px}
                     
-                    .upload-btn-label{display:none;padding:14px 32px;background:linear-gradient(135deg,#580c1f 0%,#800f2f 100%);color:var(--royal-gold);border:1px solid var(--royal-gold);border-radius:30px;font-family:'Georgia',serif;font-size:1rem;cursor:pointer;box-shadow:0 0 20px rgba(128,15,47,0.6);transition:all 0.3s ease}
+                    .upload-btn-label{padding:14px 32px;background:linear-gradient(135deg,#580c1f 0%,#800f2f 100%);color:var(--royal-gold);border:1px solid var(--royal-gold);border-radius:30px;font-family:'Georgia',serif;font-size:1rem;cursor:pointer;box-shadow:0 0 20px rgba(128,15,47,0.6);transition:all 0.3s ease}
                     .upload-btn-label:hover{transform:scale(1.05);box-shadow:0 0 25px rgba(212,175,55,0.5)}
-                    .upload-btn-label.show{display:inline-block}
                     
-                    .song-upload-btn-label{display:none;padding:14px 32px;background:linear-gradient(135deg,#1a0b12 0%,#3d0f1d 100%);color:var(--royal-gold);border:1px solid var(--royal-gold);border-radius:30px;font-family:'Georgia',serif;font-size:1rem;cursor:pointer;box-shadow:0 0 20px rgba(128,15,47,0.6);transition:all 0.3s ease;margin-top:10px}
+                    .song-upload-btn-label{padding:14px 32px;background:linear-gradient(135deg,#1a0b12 0%,#3d0f1d 100%);color:var(--royal-gold);border:1px solid var(--royal-gold);border-radius:30px;font-family:'Georgia',serif;font-size:1rem;cursor:pointer;box-shadow:0 0 20px rgba(128,15,47,0.6);transition:all 0.3s ease;margin-top:10px}
                     .song-upload-btn-label:hover{transform:scale(1.05);box-shadow:0 0 25px rgba(212,175,55,0.5)}
-                    .song-upload-btn-label.show{display:inline-block}
                     
                     #photo-file-input{display:none}
                     #song-file-input{display:none}
@@ -477,7 +510,7 @@
                             <div class="layer7-subtitle" id="layer7-subtitle-text">Upload your girlfriend's beautiful photos for a magical experience...</div>
                             
                             <div id="upload-section">
-                                <label for="photo-file-input" class="upload-btn-label" id="upload-label-btn">📸 Select Girlfriend's Photos</label>
+                                <label for="photo-file-input" class="upload-btn-label" id="upload-label-btn">📸 Select Girlfriend's Photos (Max 35)</label>
                                 <input type="file" id="photo-file-input" multiple accept="image/*">
                                 
                                 <br><br>
@@ -532,7 +565,6 @@
                         if (saved) {
                             uploadedSongData = saved;
                             console.log('🎵 Song loaded from storage');
-                            // Set the audio source
                             const audio = document.getElementById('bg-music');
                             audio.src = saved;
                             audio.load();
@@ -558,9 +590,8 @@
                         const songInput = document.getElementById('song-file-input');
                         
                         if (hasSaved) {
-                            // HIDE UPLOAD - SHOW EXPLODE
+                            // ✅ HIDE UPLOAD - SHOW EXPLODE
                             if (uploadLabel) {
-                                uploadLabel.classList.remove('show');
                                 uploadLabel.style.display = 'none';
                             }
                             if (fileInput) fileInput.style.display = 'none';
@@ -582,7 +613,6 @@
                             if (subtitle) subtitle.textContent = 'Your beautiful memories are ready! ✨';
                             if (title) title.textContent = '💖 Memories Gallery';
                             
-                            // Hide song upload if song exists
                             if (uploadedSongData) {
                                 if (songLabel) songLabel.style.display = 'none';
                                 if (songInput) songInput.style.display = 'none';
@@ -593,7 +623,6 @@
                         } else {
                             // NO PHOTOS
                             if (uploadLabel) {
-                                uploadLabel.classList.add('show');
                                 uploadLabel.style.display = 'inline-block';
                             }
                             if (fileInput) fileInput.style.display = 'inline-block';
@@ -604,14 +633,11 @@
                                 countMsg.style.display = 'block';
                             }
                             
-                            // Show song upload
                             if (songLabel) {
-                                songLabel.classList.add('show');
                                 songLabel.style.display = 'inline-block';
                             }
                             if (songInput) songInput.style.display = 'inline-block';
                             
-                            // Viewer mode - special message
                             if (isViewerMode) {
                                 if (title) title.textContent = '💔 No Memories Found';
                                 if (subtitle) subtitle.textContent = 'The creator hasn\'t uploaded any photos yet.';
@@ -1145,7 +1171,7 @@
                     });
 
                     // ============================================================
-                    // PHOTO UPLOAD - FIXED
+                    // PHOTO UPLOAD - FIXED FOR 35 PHOTOS
                     // ============================================================
                     
                     // Handle photo upload
@@ -1153,19 +1179,43 @@
                         const files = Array.from(e.target.files);
                         if (files.length === 0) return;
 
+                        // ✅ MAX 35 PHOTOS
+                        if (files.length > 35) {
+                            alert('⚠️ Maximum 35 photos allowed. Please select up to 35 photos.');
+                            this.value = '';
+                            return;
+                        }
+
+                        // Check file sizes
+                        const MAX_SIZE = 3 * 1024 * 1024; // 3MB per photo
+                        const oversizedFiles = files.filter(f => f.size > MAX_SIZE);
+                        if (oversizedFiles.length > 0) {
+                            alert(`⚠️ ${oversizedFiles.length} photo(s) are too large (>3MB).\nPlease compress them and try again.`);
+                            this.value = '';
+                            return;
+                        }
+
                         const newBase64 = [];
+                        let processed = 0;
+
+                        document.getElementById('selected-count-msg').textContent = 
+                            `📸 Processing 0/${files.length} photos...`;
 
                         for (let i = 0; i < files.length; i++) {
                             try {
-                                const base64Data = await fileToBase64(files[i]);
-                                newBase64.push(base64Data);
+                                // Compress image before saving
+                                const compressedData = await compressImage(files[i], 500, 500, 0.6);
+                                newBase64.push(compressedData);
+                                processed++;
+                                document.getElementById('selected-count-msg').textContent = 
+                                    `📸 Processing ${processed}/${files.length} photos...`;
                             } catch (err) {
                                 console.warn('Failed to convert:', err);
                             }
                         }
 
                         if (newBase64.length === 0) {
-                            alert('No valid images found. Please try again.');
+                            alert('❌ No valid images found. Please try again.');
                             return;
                         }
 
@@ -1178,25 +1228,25 @@
                         const saved = savePhotos(allPhotos);
                         
                         if (saved) {
-                            // Update UI
+                            // Update UI - THIS WILL HIDE THE UPLOAD OPTION
                             updateUI();
-                            document.getElementById('selected-count-msg').textContent = '✅ ' + uploadedImageUrls.length + ' photos saved!';
-                            alert('✅ ' + uploadedImageUrls.length + ' photos saved permanently!\n\nRefresh karein toh bhi rahengi.');
-                            console.log('✅ Saved and UI updated');
+                            document.getElementById('selected-count-msg').textContent = 
+                                `✅ ${uploadedImageUrls.length} photos saved! (${uploadedImageUrls.length} total)`;
+                            alert(`✅ ${uploadedImageUrls.length} photos saved permanently!\n\nRefresh karein toh bhi rahengi. Upload option ab nahi dikhega.`);
+                            console.log('✅ Saved', uploadedImageUrls.length, 'photos');
                         } else {
                             alert('❌ Error saving photos. Please try again.');
                         }
                     });
 
                     // ============================================================
-                    // SONG UPLOAD - NEW FEATURE
+                    // SONG UPLOAD
                     // ============================================================
                     document.getElementById('song-file-input').addEventListener('change', async function(e) {
                         const file = e.target.files[0];
                         if (!file) return;
 
                         try {
-                            // Check file size (max 10MB)
                             if (file.size > 10 * 1024 * 1024) {
                                 alert('Song file is too large! Please use a file under 10MB.');
                                 return;
@@ -1205,11 +1255,9 @@
                             const base64Data = await fileToBase64(file);
                             uploadedSongData = base64Data;
                             
-                            // Save to localStorage
                             const saved = saveSong(base64Data);
                             
                             if (saved) {
-                                // Set audio source
                                 const audio = document.getElementById('bg-music');
                                 audio.src = base64Data;
                                 audio.load();
@@ -1247,7 +1295,7 @@
                     });
 
                     // ============================================================
-                    // EXPLODE MEMORIES
+                    // EXPLODE MEMORIES - UPDATED FOR MORE PHOTOS
                     // ============================================================
                     document.getElementById('explode-trigger-btn').addEventListener('click', function() {
                         if (uploadedImageUrls.length === 0) {
@@ -1255,13 +1303,22 @@
                             return;
                         }
                         
-                        // Save before exploding
                         savePhotos(uploadedImageUrls);
                         
                         document.getElementById('layer7-upload-box').classList.add('fade-out');
                         const explosionContainer = document.getElementById('photo-explosion-layer');
                         const activeImages = uploadedImageUrls;
-                        const totalExplosions = Math.max(35, activeImages.length * 5);
+                        
+                        // ✅ More explosions for more photos
+                        const totalExplosions = Math.max(50, activeImages.length * 8);
+                        
+                        // Pre-load images to avoid delays
+                        const preloadedImages = [];
+                        activeImages.forEach((url) => {
+                            const img = new Image();
+                            img.src = url;
+                            preloadedImages.push(img);
+                        });
 
                         for (let j = 0; j < totalExplosions; j++) {
                             (function(index) {
@@ -1272,16 +1329,22 @@
                                     img.src = activeImages[index % activeImages.length];
                                     card.appendChild(img);
 
+                                    // Random positions spread across screen
+                                    const screenWidth = window.innerWidth;
+                                    const screenHeight = window.innerHeight;
+                                    
                                     card.style.left = '50%';
                                     card.style.top = '50%';
-                                    card.style.setProperty('--tx', ((Math.random() - 0.5) * window.innerWidth * 1.6) + 'px');
-                                    card.style.setProperty('--ty', ((Math.random() - 0.5) * window.innerHeight * 1.6) + 'px');
-                                    card.style.setProperty('--rot', ((Math.random() - 0.5) * 90) + 'deg');
-                                    card.style.setProperty('--scl', (0.6 + Math.random() * 0.7).toFixed(2));
+                                    card.style.setProperty('--tx', ((Math.random() - 0.5) * screenWidth * 1.8) + 'px');
+                                    card.style.setProperty('--ty', ((Math.random() - 0.5) * screenHeight * 1.8) + 'px');
+                                    card.style.setProperty('--rot', ((Math.random() - 0.5) * 360) + 'deg');
+                                    card.style.setProperty('--scl', (0.5 + Math.random() * 1.0).toFixed(2));
 
                                     explosionContainer.appendChild(card);
-                                    requestAnimationFrame(function() { card.classList.add('animate-explosion'); });
-                                }, index * 120);
+                                    requestAnimationFrame(function() { 
+                                        card.classList.add('animate-explosion'); 
+                                    });
+                                }, index * 80);
                             })(j);
                         }
 
@@ -1292,7 +1355,7 @@
                                 glowScreen.classList.remove('active');
                                 document.getElementById('romantic-desc-card').classList.add('visible');
                             }, 1800);
-                        }, totalExplosions * 120 + 1200);
+                        }, totalExplosions * 80 + 1200);
                     });
 
                     // ============================================================
@@ -1303,7 +1366,6 @@
                         setTimeout(function() {
                             document.getElementById('polaroid-layer').style.visibility = 'hidden';
                             document.getElementById('photo-explosion-layer').classList.add('active');
-                            // Reload photos and update UI
                             loadPhotosFromStorage();
                             updateUI();
                         }, 1500);
@@ -1322,13 +1384,8 @@
                     // ============================================================
                     // INIT - LOAD EVERYTHING
                     // ============================================================
-                    // Load photos from storage
                     const hasSaved = loadPhotosFromStorage();
-                    
-                    // Load song from storage
                     const hasSong = loadSongFromStorage();
-                    
-                    // Update UI
                     updateUI();
                     
                     // Viewer mode special handling
@@ -1343,7 +1400,6 @@
                         const songLabel = document.getElementById('song-upload-label');
                         const songInput = document.getElementById('song-file-input');
                         
-                        // Hide upload and generate in viewer mode
                         if (uploadLabel) uploadLabel.style.display = 'none';
                         if (fileInput) fileInput.style.display = 'none';
                         if (generateBtn) generateBtn.style.display = 'none';
@@ -1351,14 +1407,12 @@
                         if (songInput) songInput.style.display = 'none';
                         
                         if (!hasSaved) {
-                            // No photos - show message
                             if (title) title.textContent = '💔 No Memories Found';
                             if (subtitle) subtitle.textContent = 'The creator hasn\'t uploaded any photos yet.';
                             if (countMsg) countMsg.textContent = 'Please ask your partner to upload photos first.';
                             if (countMsg) countMsg.style.display = 'block';
                             if (explodeBtn) explodeBtn.style.display = 'none';
                         } else {
-                            // Has photos - show explode button
                             if (title) title.textContent = '💖 Your Memories Are Ready!';
                             if (subtitle) subtitle.textContent = 'Tap the button below to watch the magic explode ✨';
                             if (countMsg) countMsg.textContent = uploadedImageUrls.length + ' Photo(s) loaded!';
@@ -1376,7 +1430,6 @@
                     console.log('🎵 Song Loaded:', !!uploadedSongData);
                 }
 
-                // Start after a small delay
                 setTimeout(initApp, 300);
             }
 
