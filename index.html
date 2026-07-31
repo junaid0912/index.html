@@ -19,8 +19,8 @@
             // ============================================================
             // 1. PERMANENT STORAGE - localStorage with Base64
             // ============================================================
-            const STORAGE_KEY = 'gf_photos_permanent_v4';
-            const SONG_KEY = 'gf_song_permanent';
+            const STORAGE_KEY = 'gf_photos_permanent_v5';
+            const SONG_KEY = 'gf_song_permanent_v2';
             const isViewerMode = window.location.search.includes('viewerMode=true');
 
             // Save photos to localStorage
@@ -87,13 +87,7 @@
                 }
             }
 
-            // Check if photos exist
-            function hasPhotos() {
-                const data = loadPhotos();
-                return data.photos && data.photos.length > 0;
-            }
-
-            // File to Base64 with compression
+            // File to Base64
             function fileToBase64(file) {
                 return new Promise(function(resolve, reject) {
                     const reader = new FileReader();
@@ -104,7 +98,7 @@
             }
 
             // Compress image before saving
-            function compressImage(file, maxWidth = 500, maxHeight = 500, quality = 0.6) {
+            function compressImage(file, maxWidth = 400, maxHeight = 400, quality = 0.5) {
                 return new Promise((resolve) => {
                     const reader = new FileReader();
                     reader.onload = function(e) {
@@ -404,7 +398,7 @@
                 app.innerHTML = `
                     <style>${styles}</style>
                     
-                    <!-- Audio element with dynamic source -->
+                    <!-- Audio element for MP4 audio -->
                     <audio id="bg-music" loop preload="none"></audio>
                     
                     <div id="explosion-overlay"></div>
@@ -510,12 +504,12 @@
                             <div class="layer7-subtitle" id="layer7-subtitle-text">Upload your girlfriend's beautiful photos for a magical experience...</div>
                             
                             <div id="upload-section">
-                                <label for="photo-file-input" class="upload-btn-label" id="upload-label-btn">📸 Select Girlfriend's Photos (Max 35)</label>
+                                <label for="photo-file-input" class="upload-btn-label" id="upload-label-btn">📸 Select Photos (Max 35)</label>
                                 <input type="file" id="photo-file-input" multiple accept="image/*">
                                 
                                 <br><br>
-                                <label for="song-file-input" class="song-upload-btn-label" id="song-upload-label">🎵 Upload Your Special Song</label>
-                                <input type="file" id="song-file-input" accept="audio/*">
+                                <label for="song-file-input" class="song-upload-btn-label" id="song-upload-label">🎵 Upload MP4 Audio (Max 10MB)</label>
+                                <input type="file" id="song-file-input" accept="audio/mp4,audio/m4a,audio/*">
                                 <div id="song-status" style="color:#f7d070;font-size:0.9rem;margin-top:8px;"></div>
                             </div>
                             
@@ -591,9 +585,7 @@
                         
                         if (hasSaved) {
                             // ✅ HIDE UPLOAD - SHOW EXPLODE
-                            if (uploadLabel) {
-                                uploadLabel.style.display = 'none';
-                            }
+                            if (uploadLabel) uploadLabel.style.display = 'none';
                             if (fileInput) fileInput.style.display = 'none';
                             
                             if (explodeBtn) {
@@ -622,9 +614,7 @@
                             return true;
                         } else {
                             // NO PHOTOS
-                            if (uploadLabel) {
-                                uploadLabel.style.display = 'inline-block';
-                            }
+                            if (uploadLabel) uploadLabel.style.display = 'inline-block';
                             if (fileInput) fileInput.style.display = 'inline-block';
                             if (explodeBtn) explodeBtn.style.display = 'none';
                             if (generateBtn) generateBtn.style.display = 'none';
@@ -633,9 +623,7 @@
                                 countMsg.style.display = 'block';
                             }
                             
-                            if (songLabel) {
-                                songLabel.style.display = 'inline-block';
-                            }
+                            if (songLabel) songLabel.style.display = 'inline-block';
                             if (songInput) songInput.style.display = 'inline-block';
                             
                             if (isViewerMode) {
@@ -1174,7 +1162,6 @@
                     // PHOTO UPLOAD - FIXED FOR 35 PHOTOS
                     // ============================================================
                     
-                    // Handle photo upload
                     document.getElementById('photo-file-input').addEventListener('change', async function(e) {
                         const files = Array.from(e.target.files);
                         if (files.length === 0) return;
@@ -1186,8 +1173,8 @@
                             return;
                         }
 
-                        // Check file sizes
-                        const MAX_SIZE = 3 * 1024 * 1024; // 3MB per photo
+                        // Check file sizes (3MB max per photo)
+                        const MAX_SIZE = 3 * 1024 * 1024;
                         const oversizedFiles = files.filter(f => f.size > MAX_SIZE);
                         if (oversizedFiles.length > 0) {
                             alert(`⚠️ ${oversizedFiles.length} photo(s) are too large (>3MB).\nPlease compress them and try again.`);
@@ -1203,8 +1190,8 @@
 
                         for (let i = 0; i < files.length; i++) {
                             try {
-                                // Compress image before saving
-                                const compressedData = await compressImage(files[i], 500, 500, 0.6);
+                                // Compress image before saving (400x400, quality 0.5)
+                                const compressedData = await compressImage(files[i], 400, 400, 0.5);
                                 newBase64.push(compressedData);
                                 processed++;
                                 document.getElementById('selected-count-msg').textContent = 
@@ -1224,11 +1211,9 @@
                         const allPhotos = current.photos.concat(newBase64);
                         uploadedImageUrls = allPhotos;
                         
-                        // SAVE PERMANENTLY
                         const saved = savePhotos(allPhotos);
                         
                         if (saved) {
-                            // Update UI - THIS WILL HIDE THE UPLOAD OPTION
                             updateUI();
                             document.getElementById('selected-count-msg').textContent = 
                                 `✅ ${uploadedImageUrls.length} photos saved! (${uploadedImageUrls.length} total)`;
@@ -1240,15 +1225,25 @@
                     });
 
                     // ============================================================
-                    // SONG UPLOAD
+                    // SONG UPLOAD - MP4 SUPPORT
                     // ============================================================
                     document.getElementById('song-file-input').addEventListener('change', async function(e) {
                         const file = e.target.files[0];
                         if (!file) return;
 
                         try {
+                            // Check file size (max 10MB)
                             if (file.size > 10 * 1024 * 1024) {
-                                alert('Song file is too large! Please use a file under 10MB.');
+                                alert('❌ Song file is too large! Please use a file under 10MB.');
+                                this.value = '';
+                                return;
+                            }
+
+                            // Check if it's an audio file (MP4, M4A, etc.)
+                            const validTypes = ['audio/mp4', 'audio/m4a', 'audio/aac', 'audio/mpeg', 'audio/ogg', 'audio/wav'];
+                            if (!validTypes.includes(file.type) && !file.name.match(/\.(mp4|m4a|aac|mp3|ogg|wav)$/i)) {
+                                alert('⚠️ Please upload a valid audio file (MP4, M4A, MP3, etc.)');
+                                this.value = '';
                                 return;
                             }
 
@@ -1273,7 +1268,7 @@
                             }
                         } catch (err) {
                             console.error('Song upload error:', err);
-                            alert('Error uploading song. Please try again.');
+                            alert('❌ Error uploading song. Please try again.');
                         }
                     });
 
@@ -1295,7 +1290,7 @@
                     });
 
                     // ============================================================
-                    // EXPLODE MEMORIES - UPDATED FOR MORE PHOTOS
+                    // EXPLODE MEMORIES
                     // ============================================================
                     document.getElementById('explode-trigger-btn').addEventListener('click', function() {
                         if (uploadedImageUrls.length === 0) {
@@ -1309,16 +1304,8 @@
                         const explosionContainer = document.getElementById('photo-explosion-layer');
                         const activeImages = uploadedImageUrls;
                         
-                        // ✅ More explosions for more photos
+                        // More explosions for more photos
                         const totalExplosions = Math.max(50, activeImages.length * 8);
-                        
-                        // Pre-load images to avoid delays
-                        const preloadedImages = [];
-                        activeImages.forEach((url) => {
-                            const img = new Image();
-                            img.src = url;
-                            preloadedImages.push(img);
-                        });
 
                         for (let j = 0; j < totalExplosions; j++) {
                             (function(index) {
@@ -1329,7 +1316,6 @@
                                     img.src = activeImages[index % activeImages.length];
                                     card.appendChild(img);
 
-                                    // Random positions spread across screen
                                     const screenWidth = window.innerWidth;
                                     const screenHeight = window.innerHeight;
                                     
