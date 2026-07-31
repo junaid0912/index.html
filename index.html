@@ -1,17 +1,59 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Happy Girlfriend's Day 🌸</title>
-  
-  <!-- Cursive Fonts for Aesthetic Polaroid Caption & Notes -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+/**
+ * 🌸 Happy Girlfriend's Day - Standalone JavaScript Conversion
+ * With Persistent Base64 Storage & Viewer Mode
+ */
 
-  <style>
-    /* --- CSS STYLES & ROYAL THEMING --- */
+(function () {
+  // ============================================================
+  // 1. Persistent State Management with Base64
+  // ============================================================
+  const STORAGE_KEY = 'gf_day_photos';
+
+  // Check if viewer mode (no upload option)
+  const isViewerMode = window.location.search.includes('viewerMode=true');
+
+  // Save photo base64 data to localStorage
+  function savePhotoState(base64Data) {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ photos: base64Data, uploaded: true }));
+    } catch (e) {
+      console.warn('Could not save state:', e);
+    }
+  }
+
+  // Load photo base64 data from localStorage
+  function loadPhotoState() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return { photos: [], uploaded: false };
+      const parsed = JSON.parse(raw);
+      if (!Array.isArray(parsed.photos)) parsed.photos = [];
+      return parsed;
+    } catch (e) {
+      console.warn('Could not load state:', e);
+      return { photos: [], uploaded: false };
+    }
+  }
+
+  // Convert file to base64
+  function fileToBase64(file) {
+    return new Promise(function(resolve, reject) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        resolve(e.target.result);
+      };
+      reader.onerror = function(e) {
+        reject(e);
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  // ============================================================
+  // 2. Inject Styles
+  // ============================================================
+  const styleElement = document.createElement('style');
+  styleElement.textContent = `
     :root {
       --bg-color: #fcf0f5;
       --pastel-pink: #ffd1dc;
@@ -39,7 +81,6 @@
       -webkit-user-select: none;
     }
 
-    /* --- LAYER 1: AESTHETIC DARK INTRO SCREEN --- */
     #intro-screen {
       position: fixed;
       inset: 0;
@@ -117,21 +158,9 @@
     }
 
     @keyframes flyFromRandom {
-      0% {
-        opacity: 0;
-        transform: translate3d(var(--rx), var(--ry), -1200px) rotate(var(--rot));
-        filter: blur(12px);
-      }
-      80% {
-        opacity: 0.9;
-        transform: translate3d(0, 0, 30px) rotate(0deg);
-        filter: blur(0px);
-      }
-      100% {
-        opacity: 1;
-        transform: translate3d(0, 0, 0) rotate(0deg);
-        filter: blur(0px);
-      }
+      0% { opacity: 0; transform: translate3d(var(--rx), var(--ry), -1200px) rotate(var(--rot)); filter: blur(12px); }
+      80% { opacity: 0.9; transform: translate3d(0, 0, 30px) rotate(0deg); filter: blur(0px); }
+      100% { opacity: 1; transform: translate3d(0, 0, 0) rotate(0deg); filter: blur(0px); }
     }
 
     .bomb-wrapper {
@@ -159,9 +188,7 @@
       transition: transform 0.3s;
     }
 
-    .bomb-btn:hover {
-      transform: scale(1.15) rotate(8deg);
-    }
+    .bomb-btn:hover { transform: scale(1.15) rotate(8deg); }
 
     @keyframes floatGentle {
       0%, 100% { transform: translateY(0px) rotate(-3deg); }
@@ -244,7 +271,6 @@
       background: linear-gradient(135deg, #3d0f1d 0%, #63162b 100%);
     }
 
-    /* --- LAYER 2: UNBOXED ROYAL ATMOSPHERE --- */
     .main-container {
       min-height: 100vh;
       padding: 50px 20px;
@@ -272,7 +298,6 @@
       margin-top: 30px;
     }
 
-    /* TURNTABLE */
     .turntable-wrapper {
       display: flex;
       flex-direction: column;
@@ -372,7 +397,6 @@
     .turntable-wrapper.playing .tonearm { transform: rotate(5deg); }
     .player-hint { margin-top: 25px; font-size: 0.95rem; color: #ffb3c6; text-align: center; }
 
-    /* REALISTIC 3D ROYAL ENVELOPE */
     .envelope-area {
       position: relative;
       width: 380px;
@@ -458,7 +482,6 @@
     .envelope-3d.open .sky-transition-btn { opacity: 1; transform: translateY(0); pointer-events: auto; }
     .sky-transition-btn:hover { transform: scale(1.05); }
 
-    /* --- LAYER 3: STARRY NIGHT & LANTERNS PROMISE SKY --- */
     #sky-layer {
       position: fixed; inset: 0;
       background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
@@ -516,7 +539,6 @@
       box-shadow: 0 0 20px rgba(247, 208, 112, 0.8); z-index: 100;
     }
 
-    /* --- NIKAHNAMA NOTE MODAL (BEFORE LAYER 4) --- */
     #note-modal {
       position: fixed; inset: 0;
       background: rgba(8, 2, 6, 0.92); backdrop-filter: blur(10px);
@@ -545,7 +567,6 @@
 
     .proceed-btn:hover { transform: scale(1.05); }
 
-    /* --- LAYER 4: ORBITING WORLDS (DUAL PLANETARY SYSTEM) --- */
     #map-layer {
       position: fixed; inset: 0;
       background: radial-gradient(circle at 50% 50%, #150022 0%, #05000a 100%);
@@ -649,7 +670,6 @@
       100% { transform: translateY(-90vh) scale(0.4); opacity: 0; }
     }
 
-    /* --- LAYER 5: SANCTUARY OF 1,000 FLOATING CANDLES --- */
     #sanctuary-layer {
       position: fixed; inset: 0; background: #020104; opacity: 0; visibility: hidden; transition: opacity 2s ease, visibility 2s; z-index: 5000; overflow: hidden;
     }
@@ -684,7 +704,6 @@
     }
     .close-note-btn:hover { transform: scale(1.05); box-shadow: 0 0 15px rgba(212, 175, 55, 0.5); }
 
-    /* --- LAYER 6: REALISTIC VINTAGE INSTANT POLAROID CAMERA --- */
     #polaroid-layer {
       position: fixed; inset: 0; background: radial-gradient(circle at center, #23121f 0%, #080309 100%); opacity: 0; visibility: hidden; transition: opacity 1.8s ease, visibility 1.8s; z-index: 6000; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow-y: auto; padding: 30px 20px;
     }
@@ -734,457 +753,348 @@
 
     @keyframes cameraFlash { 0% { opacity: 0; } 50% { opacity: 1; } 100% { opacity: 0; } }
 
-    /* ========================================================
-       --- LAYER 7: DARK AESTHETIC MULTI-PHOTO EXPLOSION ---
-       ======================================================== */
     #photo-explosion-layer {
-      position: fixed;
-      inset: 0;
-      background: radial-gradient(circle at center, #180814 0%, #050106 100%);
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity 2s ease, visibility 2s;
-      z-index: 8000;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+      position: fixed; inset: 0; background: radial-gradient(circle at center, #150510 0%, #050106 100%);
+      opacity: 0; visibility: hidden; transition: opacity 2s ease, visibility 2s; z-index: 8000; overflow: hidden;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+    }
+    #photo-explosion-layer.active { opacity: 1; visibility: visible; }
+
+    .layer7-upload-container {
+      position: absolute; z-index: 8200; text-align: center; background: rgba(15, 5, 12, 0.75);
+      padding: 35px 30px; border-radius: 20px; border: 1px solid rgba(212, 175, 55, 0.3);
+      backdrop-filter: blur(15px); box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(212, 175, 55, 0.15);
+      max-width: 480px; width: 90%; transition: all 0.8s ease;
+    }
+    .layer7-upload-container.fade-out { opacity: 0; transform: scale(0.8); pointer-events: none; }
+    .layer7-title { font-family: 'Playfair Display', 'Georgia', serif; font-size: 2.2rem; color: var(--royal-gold); margin-bottom: 10px; text-shadow: 0 0 15px rgba(212, 175, 55, 0.4); }
+    .layer7-subtitle { font-family: 'Georgia', serif; font-size: 0.95rem; color: #e0b0c0; font-style: italic; margin-bottom: 25px; }
+
+    .upload-btn-label {
+      display: inline-block; padding: 14px 32px; background: linear-gradient(135deg, #580c1f 0%, #800f2f 100%);
+      color: var(--royal-gold); border: 1px solid var(--royal-gold); border-radius: 30px;
+      font-family: 'Georgia', serif; font-size: 1rem; cursor: pointer; box-shadow: 0 0 20px rgba(128, 15, 47, 0.6);
+      transition: all 0.3s ease;
+    }
+    .upload-btn-label:hover { transform: scale(1.05); box-shadow: 0 0 25px rgba(212, 175, 55, 0.5); }
+    #photo-file-input { display: none; }
+
+    .action-btn-group { display: flex; flex-direction: column; gap: 12px; align-items: center; margin-top: 20px; }
+    .explode-now-btn, .generate-link-btn {
+      padding: 12px 28px; border-radius: 30px; font-family: 'Georgia', serif; font-weight: bold;
+      font-size: 0.95rem; cursor: pointer; transition: transform 0.3s; width: 100%; max-width: 280px;
+    }
+    .explode-now-btn { display: none; background: linear-gradient(45deg, #d4af37, #f7d070); color: #2b0512; border: none; box-shadow: 0 0 20px rgba(247, 208, 112, 0.8); }
+    .generate-link-btn { display: none; background: transparent; color: var(--royal-gold); border: 1px solid var(--royal-gold); box-shadow: 0 0 15px rgba(212, 175, 55, 0.3); }
+    .explode-now-btn:hover, .generate-link-btn:hover { transform: scale(1.05); }
+
+    /* Hide upload option in viewer mode */
+    .viewer-mode .upload-btn-label,
+    .viewer-mode #photo-file-input,
+    .viewer-mode #selected-count-msg,
+    .viewer-mode .generate-link-btn {
+      display: none !important;
     }
 
-    #photo-explosion-layer.active {
-      opacity: 1;
-      visibility: visible;
-    }
-
-    /* Ambient floating sparkle particles */
-    .ambient-sparkle {
-      position: absolute;
-      width: 4px;
-      height: 4px;
-      background: var(--royal-gold);
-      border-radius: 50%;
-      box-shadow: 0 0 10px var(--royal-gold);
-      pointer-events: none;
-      animation: floatSparkle var(--dur) ease-in-out infinite alternate;
-      opacity: var(--op);
-    }
-
-    @keyframes floatSparkle {
-      0% { transform: translateY(0px) scale(0.8); }
-      100% { transform: translateY(-30px) scale(1.4); }
-    }
-
-    /* EXPLODING PHOTO CARDS */
     .exploded-photo-card {
-      position: absolute;
-      width: clamp(140px, 18vw, 220px);
-      background: #120a10;
-      padding: 10px 10px 25px 10px;
-      border-radius: 6px;
-      border: 1px solid rgba(212, 175, 55, 0.4);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9), 0 0 25px rgba(255, 77, 109, 0.3);
-      pointer-events: none;
-      opacity: 0;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%) scale(0.05) rotate(0deg);
-      z-index: 8100;
+      position: absolute; width: clamp(140px, 18vw, 220px); background: #120a10; padding: 10px 10px 25px 10px;
+      border-radius: 6px; border: 1px solid rgba(212, 175, 55, 0.4); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9), 0 0 20px rgba(255, 77, 109, 0.2);
+      pointer-events: none; opacity: 0; transform: translate(-50%, -50%) scale(0.1) rotate(0deg); z-index: 8100;
     }
-
-    .exploded-photo-card img {
-      width: 100%;
-      height: clamp(140px, 18vw, 220px);
-      object-fit: cover;
-      border-radius: 4px;
-      filter: contrast(1.05) brightness(0.95);
-    }
-
-    .exploded-photo-card.animate-explosion {
-      animation: explodeCardAnim var(--speed) cubic-bezier(0.12, 0.85, 0.25, 1) forwards;
-    }
+    .exploded-photo-card img { width: 100%; height: clamp(140px, 18vw, 220px); object-fit: cover; border-radius: 4px; filter: contrast(1.05) brightness(0.95); }
+    .exploded-photo-card.animate-explosion { animation: explodeCardAnim 8s cubic-bezier(0.15, 0.85, 0.35, 1) forwards; }
 
     @keyframes explodeCardAnim {
-      0% {
-        opacity: 0;
-        transform: translate(-50%, -50%) scale(0.05) rotate(0deg);
-      }
-      15% {
-        opacity: 1;
-      }
-      80% {
-        opacity: 0.9;
-      }
-      100% {
-        opacity: 0.85;
-        transform: translate(var(--tx), var(--ty)) scale(var(--scl)) rotate(var(--rot));
-      }
+      0% { opacity: 0; transform: translate(-50%, -50%) scale(0.05) rotate(0deg); }
+      15% { opacity: 1; }
+      80% { opacity: 0.9; }
+      100% { opacity: 0.85; transform: translate(var(--tx), var(--ty)) scale(var(--scl)) rotate(var(--rot)); }
     }
 
-    /* SHINY GLOWY SCREEN TRANSITION */
     #shiny-glow-screen {
-      position: fixed;
-      inset: 0;
-      background: radial-gradient(circle at center, #ffffff 0%, #f7d070 40%, #0d0309 90%);
-      z-index: 8500;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 1.8s ease-in-out;
+      position: fixed; inset: 0; background: radial-gradient(circle at center, #ffffff 0%, #f7d070 40%, #0d0309 90%);
+      z-index: 8500; opacity: 0; pointer-events: none; transition: opacity 1.8s ease-in-out;
     }
+    #shiny-glow-screen.active { opacity: 1; }
 
-    #shiny-glow-screen.active {
-      opacity: 1;
-    }
-
-    /* ROMANTIC DESCRIPTION CARD */
     #romantic-desc-card {
-      position: relative;
-      z-index: 8800;
-      max-width: 550px;
-      width: 90%;
-      background: rgba(18, 5, 14, 0.88);
-      border: 1px solid var(--royal-gold);
-      border-radius: 16px;
-      padding: 45px 35px;
-      text-align: center;
-      backdrop-filter: blur(16px);
-      box-shadow: 0 0 60px rgba(212, 175, 55, 0.4), inset 0 0 30px rgba(128, 15, 47, 0.3);
-      opacity: 0;
-      transform: translateY(30px) scale(0.9);
-      transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
-      display: none;
+      position: relative; z-index: 8800; max-width: 550px; width: 90%; background: rgba(18, 5, 14, 0.88);
+      border: 1px solid var(--royal-gold); border-radius: 16px; padding: 45px 35px; text-align: center;
+      backdrop-filter: blur(16px); box-shadow: 0 0 60px rgba(212, 175, 55, 0.4), inset 0 0 30px rgba(128, 15, 47, 0.3);
+      opacity: 0; transform: translateY(30px) scale(0.9); transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1); display: none;
     }
-
-    #romantic-desc-card.visible {
-      display: block;
-      opacity: 1;
-      transform: translateY(0) scale(1);
-    }
-
-    .desc-header {
-      font-family: 'Playfair Display', serif;
-      font-size: 2.2rem;
-      color: var(--royal-gold);
-      margin-bottom: 20px;
-      letter-spacing: 1.5px;
-    }
-
-    .desc-body {
-      font-family: 'Georgia', serif;
-      font-size: 1.15rem;
-      line-height: 2;
-      color: #f3e5ab;
-      font-style: italic;
-      margin-bottom: 30px;
-      text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-    }
+    #romantic-desc-card.visible { display: block; opacity: 1; transform: translateY(0) scale(1); }
+    .desc-header { font-family: 'Playfair Display', serif; font-size: 2.2rem; color: var(--royal-gold); margin-bottom: 20px; letter-spacing: 1.5px; }
+    .desc-body { font-family: 'Georgia', serif; font-size: 1.15rem; line-height: 2; color: #f3e5ab; font-style: italic; margin-bottom: 30px; text-shadow: 0 0 10px rgba(0, 0, 0, 0.5); }
 
     .the-end-btn {
-      padding: 14px 38px;
-      background: linear-gradient(135deg, #800f2f 0%, #580c1f 100%);
-      color: var(--royal-gold);
-      border: 1px solid var(--royal-gold);
-      border-radius: 40px;
-      font-family: 'Georgia', serif;
-      font-size: 1rem;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      cursor: pointer;
-      box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+      padding: 14px 38px; background: linear-gradient(135deg, #800f2f 0%, #580c1f 100%); color: var(--royal-gold);
+      border: 1px solid var(--royal-gold); border-radius: 40px; font-family: 'Georgia', serif; font-size: 1rem;
+      letter-spacing: 2px; text-transform: uppercase; cursor: pointer; box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
       transition: all 0.4s ease;
     }
+    .the-end-btn:hover { transform: scale(1.05); background: linear-gradient(135deg, #a4133c 0%, #800f2f 100%); box-shadow: 0 0 30px rgba(212, 175, 55, 0.6); }
 
-    .the-end-btn:hover {
-      transform: scale(1.05);
-      background: linear-gradient(135deg, #a4133c 0%, #800f2f 100%);
-      box-shadow: 0 0 30px rgba(212, 175, 55, 0.6);
-    }
-
-    /* FINAL OUTRO OVERLAY */
     #final-outro-screen {
-      position: fixed;
-      inset: 0;
-      background: #040105;
-      z-index: 9000;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity 2s ease, visibility 2s;
-      padding: 20px;
-      text-align: center;
+      position: fixed; inset: 0; background: #040105; z-index: 9000; display: flex; flex-direction: column;
+      justify-content: center; align-items: center; opacity: 0; visibility: hidden; transition: opacity 2s ease, visibility 2s; padding: 20px; text-align: center;
     }
-
-    #final-outro-screen.active {
-      opacity: 1;
-      visibility: visible;
-    }
-
-    .final-love-msg {
-      font-family: 'Caveat', cursive;
-      font-size: clamp(2.2rem, 6vw, 3.8rem);
-      color: #ffb3c6;
-      text-shadow: 0 0 20px rgba(255, 77, 109, 0.8), 0 0 40px rgba(212, 175, 55, 0.4);
-      line-height: 1.4;
-      animation: pulseEnding 3s infinite ease-in-out;
-    }
-
-    .final-signature {
-      font-family: 'Georgia', serif;
-      font-size: 1.5rem;
-      color: var(--royal-gold);
-      margin-top: 20px;
-      font-style: italic;
-      letter-spacing: 2px;
-    }
+    #final-outro-screen.active { opacity: 1; visibility: visible; }
+    .final-love-msg { font-family: 'Caveat', cursive; font-size: clamp(2.2rem, 6vw, 3.8rem); color: #ffb3c6; text-shadow: 0 0 20px rgba(255, 77, 109, 0.8), 0 0 40px rgba(212, 175, 55, 0.4); line-height: 1.4; animation: pulseEnding 3s infinite ease-in-out; }
+    .final-signature { font-family: 'Georgia', serif; font-size: 1.5rem; color: var(--royal-gold); margin-top: 20px; font-style: italic; letter-spacing: 2px; }
 
     @keyframes pulseEnding {
       0%, 100% { transform: scale(1); opacity: 0.95; }
       50% { transform: scale(1.04); opacity: 1; }
     }
-  </style>
+  `;
+  document.head.appendChild(styleElement);
 
-  <!-- THREE.JS LIBRARY FOR LAYER 5 -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-</head>
-<body>
+  // ============================================================
+  // 2. Load Three.js
+  // ============================================================
+  function loadThreeJS() {
+    return new Promise(function(resolve, reject) {
+      if (typeof THREE !== 'undefined') {
+        resolve();
+        return;
+      }
+      var script = document.createElement('script');
+      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
+      script.onload = function() {
+        if (typeof THREE !== 'undefined') {
+          resolve();
+        } else {
+          reject(new Error('THREE not available after load'));
+        }
+      };
+      script.onerror = function() {
+        reject(new Error('Failed to load Three.js'));
+      };
+      document.head.appendChild(script);
+    });
+  }
 
-  <!-- AUDIO PLAYER -->
-  <audio id="bg-music" loop>
-    <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=romantic-acoustic-112163.mp3" type="audio/mpeg">
-  </audio>
+  // ============================================================
+  // 3. Inject HTML Body Structure
+  // ============================================================
+  const bodyContent = `
+    <audio id="bg-music" loop>
+      <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=romantic-acoustic-112163.mp3" type="audio/mpeg">
+    </audio>
 
-  <!-- EXPLOSION OVERLAY -->
-  <div id="explosion-overlay"></div>
+    <div id="explosion-overlay"></div>
 
-  <!-- LAYER 1: AESTHETIC DARK INTRO SCREEN -->
-  <div id="intro-screen">
-    <div class="royal-frame-wrapper" id="royal-frame">
-      <div class="title-container" id="title-container"></div>
-    </div>
-    <div class="bomb-wrapper" id="bomb-wrapper">
-      <button class="bomb-btn" onclick="explodeLoveBomb(event)">💣</button>
-      <div class="bomb-hint">TAP TO UNLOCK</div>
-    </div>
-    <div class="start-btn-wrapper" id="next-btn-wrapper">
-      <button class="start-btn" onclick="startExperience()">Enter The Experience</button>
-    </div>
-  </div>
-
-  <!-- LAYER 2: UNBOXED ROYAL ATMOSPHERE -->
-  <div class="main-container" id="main-content">
-    <h1 style="color: var(--royal-gold); font-size: 2.5rem; text-align: center; margin-bottom: 8px;">For My Beloved</h1>
-    <p style="color: var(--soft-rose); margin-bottom: 30px; text-align: center;">Play our melody & break the wax seal...</p>
-
-    <div class="experience-grid">
-      <!-- FLOATING TURNTABLE -->
-      <div class="turntable-wrapper" id="turntable">
-        <div class="turntable-title">Our Special Song</div>
-        <div class="visualizer-ring"></div>
-        <div class="vinyl-container" onclick="toggleVinylPlayer()">
-          <div class="vinyl-record"><div class="vinyl-center-label"></div></div>
-          <div class="tonearm"><div class="tonearm-base"></div><div class="tonearm-stick"></div><div class="tonearm-head"></div></div>
-        </div>
-        <div class="player-hint" id="player-status">Tap vinyl or needle to play</div>
+    <div id="intro-screen">
+      <div class="royal-frame-wrapper" id="royal-frame">
+        <div class="title-container" id="title-container"></div>
       </div>
+      <div class="bomb-wrapper" id="bomb-wrapper">
+        <button class="bomb-btn" id="bomb-action-btn">💣</button>
+        <div class="bomb-hint">TAP TO UNLOCK</div>
+      </div>
+      <div class="start-btn-wrapper" id="next-btn-wrapper">
+        <button class="start-btn" id="enter-exp-btn">Enter The Experience</button>
+      </div>
+    </div>
 
-      <!-- REALISTIC 3D ENVELOPE -->
-      <div class="envelope-area">
-        <div class="envelope-3d" id="envelope">
-          <div class="envelope-flap"></div>
-          <div class="envelope-pocket"></div>
-          <div class="royal-wax-seal" id="wax-seal" onclick="openRoyalEnvelope()"></div>
+    <div class="main-container" id="main-content">
+      <h1 style="color: var(--royal-gold); font-size: 2.5rem; text-align: center; margin-bottom: 8px;">For My Beloved</h1>
+      <p style="color: var(--soft-rose); margin-bottom: 30px; text-align: center;">Play our melody & break the wax seal...</p>
 
-          <!-- PARCHMENT LETTER -->
-          <div class="parchment-letter">
-            <div class="shayari-text">"Tera zikr aaye to dil mehak sa jaata hai,
+      <div class="experience-grid">
+        <div class="turntable-wrapper" id="turntable">
+          <div class="turntable-title">Our Special Song</div>
+          <div class="visualizer-ring"></div>
+          <div class="vinyl-container" id="vinyl-trigger">
+            <div class="vinyl-record"><div class="vinyl-center-label"></div></div>
+            <div class="tonearm"><div class="tonearm-base"></div><div class="tonearm-stick"></div><div class="tonearm-head"></div></div>
+          </div>
+          <div class="player-hint" id="player-status">Tap vinyl or needle to play</div>
+        </div>
 
-Har lamha tera khayaal muskurata hai.
+        <div class="envelope-area">
+          <div class="envelope-3d" id="envelope">
+            <div class="envelope-flap"></div>
+            <div class="envelope-pocket"></div>
+            <div class="royal-wax-seal" id="wax-seal"></div>
 
-Na jaane kaisi kashish hai teri mohabbat mein,
-Mera har sajda bas tere naam ho jaata hai."</div>
-
-            <div class="shayari-signature">~ your beloved junaid</div>
-            <button class="sky-transition-btn" onclick="transitionToSkyLayer()">Send a Wish into the Sky</button>
+            <div class="parchment-letter">
+              <div class="shayari-text">"Tera zikr aaye to dil mehak sa jaata hai,\n\nHar lamha tera khayaal muskurata hai.\n\nNa jaane kaisi kashish hai teri mohabbat mein,\nMera har sajda bas tere naam ho jaata hai."</div>
+              <div class="shayari-signature">~ your beloved junaid</div>
+              <button class="sky-transition-btn" id="sky-trans-btn">Send a Wish into the Sky</button>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- LAYER 3: STARRY NIGHT & LANTERNS PROMISE SKY -->
-  <div id="sky-layer" onclick="launchLantern(event)">
-    <div class="moon"></div>
-    <div class="mountain-horizon"></div>
-    <div class="sky-header">
-      <h2>The Promise Sky</h2>
-      <p>Tap anywhere on the night sky to launch a glowing lantern...</p>
-    </div>
-    <button class="next-layer-trigger" onclick="event.stopPropagation(); openNoteModal();">One Last Chapter...</button>
-  </div>
-
-  <!-- NIKAHNAMA NOTE MODAL (BEFORE LAYER 4) -->
-  <div id="note-modal">
-    <div class="note-card">
-      <h3>A Royal Promise</h3>
-      <p>"Yeah, promises nikahnama m likhwalena agr believe na ho toh 💍"</p>
-      <button class="proceed-btn" onclick="goToMapLayer()">Enter Our Universe</button>
-    </div>
-  </div>
-
-  <!-- LAYER 4: ORBITING WORLDS (DUAL PLANETARY SYSTEM) -->
-  <div id="map-layer">
-    <div class="space-canvas" id="space-canvas">
-      
-      <div class="orbit-title" id="orbit-title">
-        <h2>Orbiting Worlds</h2>
-        <p>Drag the two worlds closer together to unite our stars...</p>
+    <div id="sky-layer">
+      <div class="moon"></div>
+      <div class="mountain-horizon"></div>
+      <div class="sky-header">
+        <h2>The Promise Sky</h2>
+        <p>Tap anywhere on the night sky to launch a glowing lantern...</p>
       </div>
+      <button class="next-layer-trigger" id="open-note-modal-btn">One Last Chapter...</button>
+    </div>
 
-      <div class="distance-badge" id="distance-badge">Distance: 450 km</div>
-
-      <!-- PLANET 1: HIS WORLD -->
-      <div class="planet" id="planet-his" style="left: 25%; top: 50%;">
-        <span class="planet-name">His World</span>
-        <span class="planet-date">03/09/2007</span>
+    <div id="note-modal">
+      <div class="note-card">
+        <h3>A Royal Promise</h3>
+        <p>"Yeah, promises nikahnama m likhwalena agr believe na ho toh 💍"</p>
+        <button class="proceed-btn" id="go-map-btn">Enter Our Universe</button>
       </div>
-
-      <!-- PLANET 2: HER WORLD -->
-      <div class="planet" id="planet-hers" style="left: 65%; top: 50%;">
-        <span class="planet-name">Her World</span>
-        <span class="planet-date">09/12/2007</span>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- WHITE GLOW FLASH OVERLAY -->
-  <div id="white-glow-flash"></div>
-
-  <!-- ROYAL GOLD AESTHETIC SCROLL MODAL -->
-  <div id="royal-scroll-modal">
-    <div class="royal-scroll-card">
-      <div class="scroll-corner corner-tl"></div>
-      <div class="scroll-corner corner-tr"></div>
-      <div class="scroll-corner corner-bl"></div>
-      <div class="scroll-corner corner-br"></div>
-
-      <div class="scroll-header">Written In The Stars</div>
-      <div class="quote-body">
-        "Two souls created from the same cosmic stardust, orbiting through time only to fall into each other's forever.<br><br>
-        You are my missing constellation, my peaceful universe, and my sweetest destiny."
-      </div>
-      <div class="quote-author">Happy Girlfriend's Day, My Beloved Queen</div>
-      <button class="proceed-btn" style="margin-top: 25px;" onclick="closeScrollAndEnterSanctuary()">Enter Candle Sanctuary</button>
-    </div>
-  </div>
-
-  <!-- LAYER 5: SANCTUARY OF 1,000 FLOATING CANDLES -->
-  <div id="sanctuary-layer">
-    <div class="sanctuary-header">
-      <h2>Sanctuary of 1,000 Candles</h2>
-      <p id="sanctuary-hint">Tap the center candle to ignite the sanctuary...</p>
-    </div>
-    <button class="polaroid-layer-trigger" onclick="goToPolaroidLayer()">Instant Polaroid 📸</button>
-    <div id="candle-webgl-container"></div>
-  </div>
-
-  <!-- SECRET NOTE MODAL (FOR LAYER 5) -->
-  <div id="secret-note-modal">
-    <div class="parchment-note-card">
-      <p id="secret-note-text">"I love you"</p>
-      <button class="close-note-btn" onclick="closeSecretNoteModal()">Keep In My Heart</button>
-    </div>
-  </div>
-
-  <!-- LAYER 6: REALISTIC VINTAGE INSTANT POLAROID CAMERA -->
-  <div id="polaroid-layer">
-    <div id="camera-flash-overlay"></div>
-
-    <div class="polaroid-header">
-      <h2>Instant Polaroid Camera</h2>
-      <p>Tap the red shutter button on the camera to click your live photo ✨</p>
     </div>
 
-    <div class="camera-wrapper">
-      <div class="polaroid-camera-body">
-        <div class="camera-stripe"></div>
-        <div class="camera-top-bar">
-          <div class="camera-flash-bulb"></div>
-          <div class="camera-viewfinder-window"></div>
-          <button class="shutter-btn" title="Click Photo" onclick="clickPolaroidShutter()"></button>
+    <div id="map-layer">
+      <div class="space-canvas" id="space-canvas">
+        <div class="orbit-title" id="orbit-title">
+          <h2>Orbiting Worlds</h2>
+          <p>Drag the two worlds closer together to unite our stars...</p>
         </div>
-
-        <div class="camera-lens-outer">
-          <video id="webcam" autoplay playsinline></video>
+        <div class="distance-badge" id="distance-badge">Distance: 450 km</div>
+        <div class="planet" id="planet-his" style="left: 25%; top: 50%;">
+          <span class="planet-name">His World</span>
+          <span class="planet-date">03/09/2007</span>
         </div>
-
-        <div class="camera-ejection-slot"></div>
-      </div>
-
-      <div class="polaroid-card" id="polaroid-result">
-        <div class="photo-frame">
-          <canvas id="polaroid-canvas"></canvas>
+        <div class="planet" id="planet-hers" style="left: 65%; top: 50%;">
+          <span class="planet-name">Her World</span>
+          <span class="planet-date">09/12/2007</span>
         </div>
-        <div class="polaroid-caption">My favourite person</div>
-      </div>
-
-      <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;">
-        <button class="retake-btn" id="retake-btn" style="display: none;" onclick="resetCamera()">Click Another 📸</button>
-        <button class="next-layer7-btn" id="next-layer7-btn" style="display: none;" onclick="goToLayer7()">The Photo Galaxy 💖</button>
       </div>
     </div>
-  </div>
 
-  <!-- ========================================================
-       --- LAYER 7: DARK AESTHETIC MULTI-PHOTO EXPLOSION ---
-       ======================================================== -->
-  <div id="photo-explosion-layer">
-    
-    <!-- Shiny Glow Effect Overlay -->
-    <div id="shiny-glow-screen"></div>
+    <div id="white-glow-flash"></div>
 
-    <!-- Romantic Description Card -->
-    <div id="romantic-desc-card">
-      <div class="desc-header">My Eternal Sanctuary</div>
-      <div class="desc-body">
-        "In a universe full of fading stars, your smile remains my brightest light.<br>
-        Every single photo of yours carries a piece of magic that captivates my heart over and over again.<br><br>
-        You are my softest thought, my favorite reality, and the forever I always dreamed of."
+    <div id="royal-scroll-modal">
+      <div class="royal-scroll-card">
+        <div class="scroll-corner corner-tl"></div>
+        <div class="scroll-corner corner-tr"></div>
+        <div class="scroll-corner corner-bl"></div>
+        <div class="scroll-corner corner-br"></div>
+        <div class="scroll-header">Written In The Stars</div>
+        <div class="quote-body">
+          "Two souls created from the same cosmic stardust, orbiting through time only to fall into each other's forever.<br><br>
+          You are my missing constellation, my peaceful universe, and my sweetest destiny."
+        </div>
+        <div class="quote-author">Happy Girlfriend's Day, My Beloved Queen</div>
+        <button class="proceed-btn" id="enter-sanctuary-btn" style="margin-top: 25px;">Enter Candle Sanctuary</button>
       </div>
-      <button class="the-end-btn" onclick="showFinalOutro()">The End</button>
     </div>
 
-  </div>
+    <div id="sanctuary-layer">
+      <div class="sanctuary-header">
+        <h2>Sanctuary of 1,000 Candles</h2>
+        <p id="sanctuary-hint">Tap the center candle to ignite the sanctuary...</p>
+      </div>
+      <button class="polaroid-layer-trigger" id="goto-polaroid-btn">Instant Polaroid 📸</button>
+      <div id="candle-webgl-container"></div>
+    </div>
 
-  <!-- FINAL OUTRO SCREEN -->
-  <div id="final-outro-screen">
-    <div class="final-love-msg">I love you my baby, keep loving me</div>
-    <div class="final-signature">~ junaid</div>
-  </div>
+    <div id="secret-note-modal">
+      <div class="parchment-note-card">
+        <p id="secret-note-text">"I love you"</p>
+        <button class="close-note-btn" id="close-secret-modal-btn">Keep In My Heart</button>
+      </div>
+    </div>
 
-  <!-- JAVASCRIPT LOGIC -->
-  <script>
-    /* --- LAYER 1 INTRO LOGIC --- */
+    <div id="polaroid-layer">
+      <div id="camera-flash-overlay"></div>
+      <div class="polaroid-header">
+        <h2>Instant Polaroid Camera</h2>
+        <p>Tap the red shutter button on the camera to click your live photo ✨</p>
+      </div>
+      <div class="camera-wrapper">
+        <div class="polaroid-camera-body">
+          <div class="camera-stripe"></div>
+          <div class="camera-top-bar">
+            <div class="camera-flash-bulb"></div>
+            <div class="camera-viewfinder-window"></div>
+            <button class="shutter-btn" id="shutter-action-btn" title="Click Photo"></button>
+          </div>
+          <div class="camera-lens-outer">
+            <video id="webcam" autoplay playsinline></video>
+          </div>
+          <div class="camera-ejection-slot"></div>
+        </div>
+        <div class="polaroid-card" id="polaroid-result">
+          <div class="photo-frame">
+            <canvas id="polaroid-canvas"></canvas>
+          </div>
+          <div class="polaroid-caption">My favourite person</div>
+        </div>
+        <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;">
+          <button class="retake-btn" id="retake-btn" style="display: none;">Click Another 📸</button>
+          <button class="next-layer7-btn" id="next-layer7-btn" style="display: none;">The Photo Galaxy 💖</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="photo-explosion-layer">
+      <div class="layer7-upload-container" id="layer7-upload-box">
+        <div class="layer7-title" id="layer7-title-text">Memories Exploding</div>
+        <div class="layer7-subtitle" id="layer7-subtitle-text">Choose beautiful photos of your girlfriend to flood the dark aesthetic night...</div>
+        <label for="photo-file-input" class="upload-btn-label" id="upload-label-btn">Select Girlfriend's Photos ✨</label>
+        <input type="file" id="photo-file-input" multiple accept="image/*">
+        <div id="selected-count-msg" style="margin-top: 15px; color: var(--gold-accent); font-size: 0.9rem;"></div>
+        <div class="action-btn-group">
+          <button class="explode-now-btn" id="explode-trigger-btn">Explode Memories 🎆</button>
+          <button class="generate-link-btn" id="generate-link-btn">Generate Viewer Link 🔗</button>
+        </div>
+      </div>
+      <div id="shiny-glow-screen"></div>
+      <div id="romantic-desc-card">
+        <div class="desc-header">My Eternal Sanctuary</div>
+        <div class="desc-body">
+          "In a universe full of fading stars, your smile remains my brightest light.<br>
+          Every single photo of yours carries a piece of magic that captivates my heart over and over again.<br><br>
+          You are my softest thought, my favorite reality, and the forever I always dreamed of."
+        </div>
+        <button class="the-end-btn" id="the-end-action-btn">The End</button>
+      </div>
+    </div>
+
+    <div id="final-outro-screen">
+      <div class="final-love-msg">I love you my baby, keep loving me</div>
+      <div class="final-signature">~ junaid</div>
+    </div>
+  `;
+  document.body.innerHTML = bodyContent;
+
+  // ============================================================
+  // 4. Main Application
+  // ============================================================
+  function initApp() {
+    // If viewer mode, apply viewer class
+    if (isViewerMode) {
+      document.getElementById('layer7-upload-box').classList.add('viewer-mode');
+      document.getElementById('layer7-subtitle-text').textContent = 'Tap the button below to explode the memories ✨';
+      document.getElementById('upload-label-btn').style.display = 'none';
+      document.getElementById('photo-file-input').style.display = 'none';
+      document.getElementById('selected-count-msg').style.display = 'none';
+      document.getElementById('generate-link-btn').style.display = 'none';
+    }
+
+    // Title animation
     const textLines = ["HAPPY", "GIRLFRIEND'S", "DAY BABY"];
     const titleContainer = document.getElementById('title-container');
     const royalFrame = document.getElementById('royal-frame');
     const bombWrapper = document.getElementById('bomb-wrapper');
 
-    let letterDelay = 0.1;
+    var letterDelay = 0.1;
 
     function getRandomDirection() {
       const angle = Math.random() * Math.PI * 2;
       const distance = 700 + Math.random() * 500;
-      return { rx: `${Math.cos(angle) * distance}px`, ry: `${Math.sin(angle) * distance}px`, rot: `${(Math.random() - 0.5) * 360}deg` };
+      return { rx: (Math.cos(angle) * distance) + 'px', ry: (Math.sin(angle) * distance) + 'px', rot: ((Math.random() - 0.5) * 360) + 'deg' };
     }
 
-    textLines.forEach((lineText) => {
+    textLines.forEach(function(lineText) {
       const lineDiv = document.createElement('div');
       lineDiv.className = 'title-line';
-      for (let char of lineText) {
+      for (var i = 0; i < lineText.length; i++) {
+        var char = lineText[i];
         if (char === ' ') {
           const spaceSpan = document.createElement('span');
           spaceSpan.className = 'space';
@@ -1193,11 +1103,11 @@ Mera har sajda bas tere naam ho jaata hai."</div>
           const letterSpan = document.createElement('span');
           letterSpan.className = 'letter';
           letterSpan.textContent = char;
-          const { rx, ry, rot } = getRandomDirection();
-          letterSpan.style.setProperty('--rx', rx);
-          letterSpan.style.setProperty('--ry', ry);
-          letterSpan.style.setProperty('--rot', rot);
-          letterSpan.style.animationDelay = `${letterDelay}s`;
+          const dir = getRandomDirection();
+          letterSpan.style.setProperty('--rx', dir.rx);
+          letterSpan.style.setProperty('--ry', dir.ry);
+          letterSpan.style.setProperty('--rot', dir.rot);
+          letterSpan.style.animationDelay = letterDelay + 's';
           lineDiv.appendChild(letterSpan);
           letterDelay += 0.08;
         }
@@ -1205,12 +1115,13 @@ Mera har sajda bas tere naam ho jaata hai."</div>
       titleContainer.appendChild(lineDiv);
     });
 
-    setTimeout(() => {
+    setTimeout(function() {
       royalFrame.classList.add('frame-active');
-      setTimeout(() => bombWrapper.classList.add('drop-down'), 400);
+      setTimeout(function() { bombWrapper.classList.add('drop-down'); }, 400);
     }, (letterDelay + 1.2) * 1000);
 
-    function explodeLoveBomb(event) {
+    // Bomb click
+    document.getElementById('bomb-action-btn').addEventListener('click', function(event) {
       bombWrapper.style.opacity = '0';
       bombWrapper.style.pointerEvents = 'none';
 
@@ -1218,31 +1129,34 @@ Mera har sajda bas tere naam ho jaata hai."</div>
       const loveTexts = ["I LOVE YOU", "MY EVERYTHING", "FOREVER & ALWAYS", "YOU ARE MY WORLD"];
       const colors = ["#d4af37", "#f3e5ab", "#ffffff", "#c9b080", "#ffb3c6"];
 
-      for (let i = 0; i < 90; i++) {
+      for (var i = 0; i < 90; i++) {
         const textNode = document.createElement('div');
         textNode.className = 'exploding-text';
         textNode.textContent = loveTexts[Math.floor(Math.random() * loveTexts.length)];
-        textNode.style.left = `${window.innerWidth / 2}px`;
-        textNode.style.top = `${window.innerHeight / 2}px`;
+        textNode.style.left = (window.innerWidth / 2) + 'px';
+        textNode.style.top = (window.innerHeight / 2) + 'px';
         textNode.style.color = colors[Math.floor(Math.random() * colors.length)];
-        textNode.style.setProperty('--ex', `${(Math.random() - 0.5) * window.innerWidth * 2.2}px`);
-        textNode.style.setProperty('--ey', `${(Math.random() - 0.5) * window.innerHeight * 2.2}px`);
-        textNode.style.setProperty('--erot', `${(Math.random() - 0.5) * 120}deg`);
-        textNode.style.animationDelay = `${Math.random() * 1.5}s`;
+        textNode.style.setProperty('--ex', ((Math.random() - 0.5) * window.innerWidth * 2.2) + 'px');
+        textNode.style.setProperty('--ey', ((Math.random() - 0.5) * window.innerHeight * 2.2) + 'px');
+        textNode.style.setProperty('--erot', ((Math.random() - 0.5) * 120) + 'deg');
+        textNode.style.animationDelay = (Math.random() * 1.5) + 's';
         overlay.appendChild(textNode);
       }
 
-      setTimeout(() => document.getElementById('next-btn-wrapper').classList.add('visible'), 4500);
-    }
+      setTimeout(function() {
+        document.getElementById('next-btn-wrapper').classList.add('visible');
+      }, 4500);
+    });
 
+    // Enter experience
     const music = document.getElementById('bg-music');
-
-    function startExperience() {
+    document.getElementById('enter-exp-btn').addEventListener('click', function() {
       document.getElementById('intro-screen').classList.add('hidden');
       document.getElementById('main-content').classList.add('visible');
-    }
+    });
 
-    /* --- LAYER 2 TURNTABLE & LETTER LOGIC --- */
+    // Vinyl player
+    document.getElementById('vinyl-trigger').addEventListener('click', toggleVinylPlayer);
     function toggleVinylPlayer() {
       const turntable = document.getElementById('turntable');
       const status = document.getElementById('player-status');
@@ -1258,55 +1172,69 @@ Mera har sajda bas tere naam ho jaata hai."</div>
       }
     }
 
-    function openRoyalEnvelope() {
+    // Wax seal
+    document.getElementById('wax-seal').addEventListener('click', function() {
       document.getElementById('wax-seal').classList.add('broken');
-      setTimeout(() => document.getElementById('envelope').classList.add('open'), 400);
-    }
+      setTimeout(function() {
+        document.getElementById('envelope').classList.add('open');
+      }, 400);
+    });
 
-    function transitionToSkyLayer() {
+    // Sky transition
+    document.getElementById('sky-trans-btn').addEventListener('click', function() {
       document.getElementById('main-content').classList.add('fade-out');
-      setTimeout(() => document.getElementById('sky-layer').classList.add('active'), 1000);
-    }
+      setTimeout(function() {
+        document.getElementById('sky-layer').classList.add('active');
+      }, 1000);
+    });
 
-    /* --- LAYER 3 SKY & LANTERNS LOGIC --- */
+    // Sky promises
     const promises = ["I promise to love you every single day", "I promise to hold your hand through everything", "I promise to protect your heart as carefully as my own"];
-    let promiseIndex = 0;
+    var promiseIndex = 0;
 
-    function launchLantern(event) {
+    document.getElementById('sky-layer').addEventListener('click', function(event) {
+      if (event.target.id === 'open-note-modal-btn') return;
       const sky = document.getElementById('sky-layer');
       const lantern = document.createElement('div');
       lantern.className = 'lantern';
-      lantern.style.left = `${event.clientX - 22}px`;
-      lantern.style.top = `${event.clientY - 30}px`;
+      lantern.style.left = (event.clientX - 22) + 'px';
+      lantern.style.top = (event.clientY - 30) + 'px';
 
       const promiseText = document.createElement('div');
       promiseText.className = 'promise-label';
       promiseText.textContent = promises[promiseIndex];
-      promiseText.style.left = `${event.clientX + 35}px`;
-      promiseText.style.top = `${event.clientY - 15}px`;
+      promiseText.style.left = (event.clientX + 35) + 'px';
+      promiseText.style.top = (event.clientY - 15) + 'px';
 
       promiseIndex = (promiseIndex + 1) % promises.length;
       sky.appendChild(lantern);
       sky.appendChild(promiseText);
 
-      setTimeout(() => { lantern.remove(); promiseText.remove(); }, 12000);
-    }
+      setTimeout(function() { 
+        if (lantern.parentNode) lantern.remove(); 
+        if (promiseText.parentNode) promiseText.remove(); 
+      }, 12000);
+    });
 
-    function openNoteModal() { document.getElementById('note-modal').classList.add('active'); }
+    // Note modal
+    document.getElementById('open-note-modal-btn').addEventListener('click', function(e) {
+      e.stopPropagation();
+      document.getElementById('note-modal').classList.add('active');
+    });
 
-    function goToMapLayer() {
+    // Go to map
+    document.getElementById('go-map-btn').addEventListener('click', function() {
       document.getElementById('note-modal').classList.remove('active');
       document.getElementById('sky-layer').style.opacity = '0';
-      setTimeout(() => {
+      setTimeout(function() {
         document.getElementById('sky-layer').style.visibility = 'hidden';
         document.getElementById('map-layer').classList.add('active');
         initOrbitMechanic();
       }, 1000);
-    }
+    });
 
-    /* --- LAYER 4 ORBITING PLANETS LOGIC --- */
-    let isFused = false;
-
+    // Orbit mechanic
+    var isFused = false;
     function initOrbitMechanic() {
       const pHis = document.getElementById('planet-his');
       const pHers = document.getElementById('planet-hers');
@@ -1315,10 +1243,10 @@ Mera har sajda bas tere naam ho jaata hai."</div>
       const flashOverlay = document.getElementById('white-glow-flash');
 
       function makeDraggable(element) {
-        let isDragging = false;
-        let offsetX = 0, offsetY = 0;
+        var isDragging = false;
+        var offsetX = 0, offsetY = 0;
 
-        element.addEventListener('pointerdown', (e) => {
+        element.addEventListener('pointerdown', function(e) {
           if (isFused) return;
           isDragging = true;
           element.setPointerCapture(e.pointerId);
@@ -1327,19 +1255,19 @@ Mera har sajda bas tere naam ho jaata hai."</div>
           offsetY = e.clientY - rect.top - rect.height / 2;
         });
 
-        element.addEventListener('pointermove', (e) => {
+        element.addEventListener('pointermove', function(e) {
           if (!isDragging || isFused) return;
           const parentRect = document.getElementById('space-canvas').getBoundingClientRect();
-          let x = e.clientX - parentRect.left - offsetX;
-          let y = e.clientY - parentRect.top - offsetY;
+          var x = e.clientX - parentRect.left - offsetX;
+          var y = e.clientY - parentRect.top - offsetY;
 
-          element.style.left = `${x}px`;
-          element.style.top = `${y}px`;
+          element.style.left = x + 'px';
+          element.style.top = y + 'px';
 
           checkDistance();
         });
 
-        element.addEventListener('pointerup', () => { isDragging = false; });
+        element.addEventListener('pointerup', function() { isDragging = false; });
       }
 
       makeDraggable(pHis);
@@ -1348,20 +1276,11 @@ Mera har sajda bas tere naam ho jaata hai."</div>
       function checkDistance() {
         const r1 = pHis.getBoundingClientRect();
         const r2 = pHers.getBoundingClientRect();
-
-        const x1 = r1.left + r1.width / 2;
-        const y1 = r1.top + r1.height / 2;
-        const x2 = r2.left + r2.width / 2;
-        const y2 = r2.top + r2.height / 2;
-
-        const dist = Math.hypot(x2 - x1, y2 - y1);
+        const dist = Math.hypot((r2.left + r2.width / 2) - (r1.left + r1.width / 2), (r2.top + r2.height / 2) - (r1.top + r1.height / 2));
         const kmDistance = Math.max(0, Math.round(dist - 110));
 
-        badge.textContent = `Distance: ${kmDistance} km`;
-
-        if (kmDistance <= 15 && !isFused) {
-          triggerFusion();
-        }
+        badge.textContent = 'Distance: ' + kmDistance + ' km';
+        if (kmDistance <= 15 && !isFused) triggerFusion();
       }
 
       function triggerFusion() {
@@ -1370,51 +1289,60 @@ Mera har sajda bas tere naam ho jaata hai."</div>
         pHers.style.transition = 'all 0.6s ease';
         pHis.style.opacity = '0';
         pHers.style.opacity = '0';
-
         badge.style.opacity = '0';
         orbitTitle.style.opacity = '0';
-
         flashOverlay.classList.add('active');
 
-        for (let i = 0; i < 40; i++) {
-          setTimeout(() => {
-            const petal = document.createElement('div');
-            petal.className = 'petal';
-            petal.style.left = `${Math.random() * 100}vw`;
-            document.body.appendChild(petal);
-            setTimeout(() => petal.remove(), 6000);
-          }, i * 100);
+        for (var i = 0; i < 40; i++) {
+          (function(index) {
+            setTimeout(function() {
+              const petal = document.createElement('div');
+              petal.className = 'petal';
+              petal.style.left = (Math.random() * 100) + 'vw';
+              document.body.appendChild(petal);
+              setTimeout(function() { if (petal.parentNode) petal.remove(); }, 6000);
+            }, index * 100);
+          })(i);
         }
 
-        setTimeout(() => {
+        setTimeout(function() {
           document.getElementById('royal-scroll-modal').classList.add('active');
-          setTimeout(() => { flashOverlay.classList.remove('active'); }, 800);
+          setTimeout(function() { flashOverlay.classList.remove('active'); }, 800);
         }, 1200);
       }
     }
 
-    function closeScrollAndEnterSanctuary() {
+    // Enter sanctuary
+    document.getElementById('enter-sanctuary-btn').addEventListener('click', function() {
       document.getElementById('royal-scroll-modal').classList.remove('active');
       document.getElementById('map-layer').style.opacity = '0';
-      setTimeout(() => {
+      setTimeout(function() {
         document.getElementById('map-layer').style.visibility = 'hidden';
         document.getElementById('sanctuary-layer').classList.add('active');
         initCandleSanctuary();
       }, 1200);
-    }
+    });
 
-    /* --- LAYER 5 1000 CANDLES LOGIC --- */
-    let openedCandleCount = 0;
-    let sanctuaryScene, sanctuaryCamera, sanctuaryRenderer;
-    let sanctuaryLit = false;
-    let centerFlame, centerLight, centerTaperMesh;
-    let floatingCandles = [];
-    const sanctuaryRaycaster = new THREE.Raycaster();
-    const sanctuaryMouse = new THREE.Vector2();
+    // ============================================================
+    // Candle Sanctuary
+    // ============================================================
+    var openedCandleCount = 0;
+    var sanctuaryScene, sanctuaryCamera, sanctuaryRenderer;
+    var sanctuaryLit = false;
+    var centerFlame, centerLight, centerTaperMesh;
+    var floatingCandles = [];
+    var sanctuaryRaycaster = new THREE.Raycaster();
+    var sanctuaryMouse = new THREE.Vector2();
 
     function initCandleSanctuary() {
       const container = document.getElementById('candle-webgl-container');
       if (container.children.length > 0) return;
+
+      if (typeof THREE === 'undefined') {
+        console.warn('THREE not loaded yet, retrying...');
+        setTimeout(initCandleSanctuary, 500);
+        return;
+      }
 
       sanctuaryScene = new THREE.Scene();
       sanctuaryScene.fog = new THREE.FogExp2(0x020104, 0.015);
@@ -1431,7 +1359,6 @@ Mera har sajda bas tere naam ho jaata hai."</div>
       sanctuaryScene.add(ambLight);
 
       const waxMat = new THREE.MeshStandardMaterial({ color: 0xfffae6, roughness: 0.5 });
-
       const taperGeo = new THREE.CylinderGeometry(0.2, 0.25, 3, 32);
       centerTaperMesh = new THREE.Mesh(taperGeo, waxMat);
       centerTaperMesh.position.y = -0.3;
@@ -1450,7 +1377,7 @@ Mera har sajda bas tere naam ho jaata hai."</div>
       const candleGeometry = new THREE.CylinderGeometry(0.14, 0.14, 0.55, 16);
       const floatingCount = 180;
 
-      for (let i = 0; i < floatingCount; i++) {
+      for (var i = 0; i < floatingCount; i++) {
         const candleContainer = new THREE.Group();
         const radius = 3.2 + Math.random() * 22;
         const theta = Math.random() * Math.PI * 2;
@@ -1476,10 +1403,7 @@ Mera har sajda bas tere naam ho jaata hai."</div>
         sanctuaryScene.add(candleContainer);
 
         floatingCandles.push({
-          group: candleContainer,
-          flame: flame,
-          light: light,
-          body: body,
+          group: candleContainer, flame: flame, light: light, body: body,
           baseY: candleContainer.position.y,
           baseX: candleContainer.position.x,
           floatSpeedY: 0.5 + Math.random() * 1.0,
@@ -1492,30 +1416,23 @@ Mera har sajda bas tere naam ho jaata hai."</div>
       }
 
       window.addEventListener('pointerdown', handleSanctuaryClick);
-
       const clock = new THREE.Clock();
 
       function animateSanctuary() {
         requestAnimationFrame(animateSanctuary);
         const elapsedTime = clock.getElapsedTime();
 
-        if (sanctuaryLit) {
-          centerLight.intensity = 2.2 + Math.sin(elapsedTime * 12) * 0.2;
-        }
-
+        if (sanctuaryLit) centerLight.intensity = 2.2 + Math.sin(elapsedTime * 12) * 0.2;
         centerTaperMesh.position.y = -0.3 + Math.sin(elapsedTime * 0.8) * 0.15;
         centerFlame.position.y = centerTaperMesh.position.y + 1.75;
         centerLight.position.y = centerTaperMesh.position.y + 1.8;
 
-        floatingCandles.forEach(c => {
+        floatingCandles.forEach(function(c) {
           c.group.position.y = c.baseY + Math.sin(elapsedTime * c.floatSpeedY + c.floatOffset) * 0.45;
           c.group.position.x = c.baseX + Math.cos(elapsedTime * c.floatSpeedX + c.floatOffset) * 0.25;
           c.group.rotation.z = Math.sin(elapsedTime * c.floatSpeedRot + c.floatOffset) * 0.08;
 
-          if (sanctuaryLit && !c.lit) {
-            if (elapsedTime > c.igniteDelay) c.lit = true;
-          }
-
+          if (sanctuaryLit && !c.lit && elapsedTime > c.igniteDelay) c.lit = true;
           if (c.lit && c.flame.material.opacity < 1) {
             c.flame.material.opacity += 0.03;
             c.light.intensity = c.flame.material.opacity * 1.5;
@@ -1524,26 +1441,17 @@ Mera har sajda bas tere naam ho jaata hai."</div>
 
         sanctuaryRenderer.render(sanctuaryScene, sanctuaryCamera);
       }
-
       animateSanctuary();
-
-      window.addEventListener('resize', () => {
-        sanctuaryCamera.aspect = window.innerWidth / window.innerHeight;
-        sanctuaryCamera.updateProjectionMatrix();
-        sanctuaryRenderer.setSize(window.innerWidth, window.innerHeight);
-      });
     }
 
     function handleSanctuaryClick(e) {
       const sLayer = document.getElementById('sanctuary-layer');
-      if (!sLayer.classList.contains('active')) return;
-
-      if (e.target.classList.contains('polaroid-layer-trigger')) return;
+      if (!sLayer.classList.contains('active') || e.target.classList.contains('polaroid-layer-trigger')) return;
 
       if (!sanctuaryLit) {
         sanctuaryLit = true;
-        let op = 0;
-        const interval = setInterval(() => {
+        var op = 0;
+        const interval = setInterval(function() {
           op += 0.05;
           centerFlame.material.opacity = op;
           centerLight.intensity = op * 2.5;
@@ -1557,180 +1465,231 @@ Mera har sajda bas tere naam ho jaata hai."</div>
         sanctuaryMouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
         sanctuaryRaycaster.setFromCamera(sanctuaryMouse, sanctuaryCamera);
 
-        const clickableBodies = floatingCandles.map(c => c.body);
-        const intersects = sanctuaryRaycaster.intersectObjects(clickableBodies);
-
+        const intersects = sanctuaryRaycaster.intersectObjects(floatingCandles.map(function(c) { return c.body; }));
         if (intersects.length > 0) {
-          const hit = intersects[0].object;
-          const candle = floatingCandles.find(c => c.body === hit);
+          const candle = floatingCandles.find(function(c) { return c.body === intersects[0].object; });
           if (candle && candle.lit) {
             openedCandleCount++;
-            const repeatedLoveText = Array(openedCandleCount).fill("I love you").join(" ");
-            document.getElementById('secret-note-text').innerText = `"${repeatedLoveText}"`;
+            document.getElementById('secret-note-text').innerText = '"' + Array(openedCandleCount).fill("I love you").join(" ") + '"';
             document.getElementById('secret-note-modal').classList.add('active');
           }
         }
       }
     }
 
-    function closeSecretNoteModal() {
+    // Close secret modal
+    document.getElementById('close-secret-modal-btn').addEventListener('click', function() {
       document.getElementById('secret-note-modal').classList.remove('active');
-    }
+    });
 
-    /* --- LAYER 6: REALISTIC INSTANT POLAROID CAMERA LOGIC --- */
+    // Go to polaroid
+    document.getElementById('goto-polaroid-btn').addEventListener('click', function() {
+      document.getElementById('sanctuary-layer').style.opacity = '0';
+      setTimeout(function() {
+        document.getElementById('sanctuary-layer').style.visibility = 'hidden';
+        document.getElementById('polaroid-layer').classList.add('active');
+        initLayer6Camera();
+      }, 1500);
+    });
+
+    // Polaroid camera
     const video = document.getElementById('webcam');
     const canvas = document.getElementById('polaroid-canvas');
     const polaroidResult = document.getElementById('polaroid-result');
     const retakeBtn = document.getElementById('retake-btn');
     const nextLayer7Btn = document.getElementById('next-layer7-btn');
-    let mediaStream = null;
-
-    function goToPolaroidLayer() {
-      document.getElementById('sanctuary-layer').style.opacity = '0';
-      setTimeout(() => {
-        document.getElementById('sanctuary-layer').style.visibility = 'hidden';
-        document.getElementById('polaroid-layer').classList.add('active');
-        initLayer6Camera();
-      }, 1500);
-    }
+    var mediaStream = null;
 
     async function initLayer6Camera() {
       try {
         mediaStream = await navigator.mediaDevices.getUserMedia({
-          video: { 
-            facingMode: "user", 
-            width: { ideal: 720 }, 
-            height: { ideal: 720 } 
-          },
+          video: { facingMode: "user", width: { ideal: 720 }, height: { ideal: 720 } },
           audio: false
         });
         video.srcObject = mediaStream;
       } catch (err) {
         alert("Camera permission is required to capture your live Polaroid photo!");
-        console.error("Camera access error:", err);
       }
     }
 
-    function clickPolaroidShutter() {
+    document.getElementById('shutter-action-btn').addEventListener('click', function() {
       const flashOverlay = document.getElementById('camera-flash-overlay');
       const context = canvas.getContext('2d');
-
       flashOverlay.classList.add('flash');
 
-      setTimeout(() => {
+      setTimeout(function() {
         canvas.width = 600;
         canvas.height = 600;
-
         context.translate(canvas.width, 0);
         context.scale(-1, 1);
         context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-        if (mediaStream) {
-          mediaStream.getTracks().forEach(track => track.stop());
-        }
-
+        if (mediaStream) mediaStream.getTracks().forEach(function(track) { track.stop(); });
         flashOverlay.classList.remove('flash');
-        
         polaroidResult.classList.add('ejected');
         retakeBtn.style.display = 'block';
         nextLayer7Btn.style.display = 'block';
       }, 150);
-    }
+    });
 
-    function resetCamera() {
+    retakeBtn.addEventListener('click', function() {
       polaroidResult.classList.remove('ejected');
       retakeBtn.style.display = 'none';
       nextLayer7Btn.style.display = 'none';
       initLayer6Camera();
+    });
+
+    // ============================================================
+    // 5. Photo Upload & Explosion Logic with Base64 Storage
+    // ============================================================
+    var uploadedImageUrls = [];
+
+    function loadPersistentPhotoState() {
+      const savedState = loadPhotoState();
+      if (savedState.photos && savedState.photos.length > 0) {
+        uploadedImageUrls = savedState.photos.slice();
+        // In viewer mode, auto trigger explosion or show button only
+        if (isViewerMode) {
+          document.getElementById('layer7-title-text').textContent = '💖 Your Memories Are Ready!';
+          document.getElementById('layer7-subtitle-text').textContent = 'Tap the button below to watch the magic explode ✨';
+          document.getElementById('selected-count-msg').textContent = uploadedImageUrls.length + ' Photo(s) loaded!';
+          document.getElementById('selected-count-msg').style.display = 'block';
+        } else {
+          document.getElementById('selected-count-msg').textContent = uploadedImageUrls.length + ' Photo(s) loaded from storage!';
+        }
+        document.getElementById('explode-trigger-btn').style.display = 'inline-block';
+      } else {
+        // No photos found
+        if (isViewerMode) {
+          document.getElementById('layer7-title-text').textContent = '💔 No Memories Found';
+          document.getElementById('layer7-subtitle-text').textContent = 'The creator hasn\'t uploaded any photos yet.';
+          document.getElementById('selected-count-msg').textContent = 'Please ask your partner to upload photos first.';
+          document.getElementById('selected-count-msg').style.display = 'block';
+        }
+      }
     }
 
-    /* ========================================================
-       --- LAYER 7: DARK AESTHETIC MULTI-PHOTO EXPLOSION LOGIC ---
-       ======================================================== */
+    // Handle file upload - Convert to Base64 (only in non-viewer mode)
+    if (!isViewerMode) {
+      document.getElementById('photo-file-input').addEventListener('change', async function(e) {
+        const files = Array.from(e.target.files);
+        if (files.length === 0) return;
 
-    // Embedded Array containing Base64 image data (your provided WhatsApp image)
-    const embeddedPhotos = [
-      "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCADIAcYDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKWlp2oqaioqKmqq6ypro2nrK2us7a1tcMW15bX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4eLj5OXm5+jp6vHy8/T19vf4+fr/2gAMAwEBAf0A/Q3+3/39/s//AH9/47+1qf360/4mH/6+q/f06/6m+s7v3/f98/95vL/AM3i/wDPv333/fe9/wB6f+/e+v3/ADd+9m/1d+v39b9p+/5P0a33+63/AH18vfX/AHz/AOvh/wD/36/v/v1f4O/4O/8A4O/e398u/wB//a+8vf7f+/s//wB5/L/33e+/5+2v9//AL4f5/2v+33f3+3/AN/f+vv8v7v7+1/119f9+/S/83v98vfv+v8Af7/98P8A0//A/wDX/a9+v/f/AP5/3e+2/wCS+/3399/99fXm7f9/3fS/v/v1f+f/AH/e39f3f+/s3/2++33/AN9f/a/362/ffb/p/X5P+A/6+/8A95v2v35f21/vf8++m+u/+7/026//AHm1/wB79b/b+/5/+/2v3+95++2v2n8n939/53/7/fe/3/e+/v8A9/tP4O3/AHz83fX83/ff2v3/AH/A/f8Atf8Ab7/0319/3+/++e+/9+/S9/21/f8A09ev9951/wB5/wBPX+/313/Nf+e+/u63/wC//f8AfO63vf8Ae/6ff33+7+y+vv8A0f5f+9/v9/fL/vbf211+m/P6+v6/S+8//f323+/5P9/X333v3e/X/f8Asv8A0fX11/v07/X/AHy+9v7X8n93++2/++2+032/vf333vf/APe+/a/2/a7a2+m2/wDvfd++291ve7/vf+e+/e+/6+v+/wDr6f011+3/AGv+/wD/ANv9/d3vf8n6230f3/2m11+v2a+/23+/8v7m1/f/AH9/f8n2v3/v++35e/2+m++02/v2e+22+22/f8v9/A/++m+/97+y8Oa+121vd99v01/S99/b+/tPv7f93/p//NfXb3/ffX+m0/vdL61+i/P7/vbf0/f/APb9vfbb/e3/AL6f1f3e+/vf9p/W1/S2213a6bb+m/2/v7e++/fe+/8Av+/S++n3332/03e//bf/AE/XbTffb/bf9/X++3vfX32/28O23vfS+/f2X39vXb/0311+/tPbf33f9/vvvv2v/f79Nvv/AO23+3/vfbb5/ffvf0a39ltttrvdvfS/9r/0ff8Avt3v33f9/s63/vbb/Tebffvf3373++9/01++vrp/S+s9p7bfbfvv9d9v/e7++vvvf+/vf02n/ffvv1ffv+11v/79v/Tb/evvttN9vfS91ve9/wBv1v7f+++/09fv+fve/a2//e69b9Nvpvd9b9vfb++2ttfb99/+99fvvbfbf99v++v/AH3/AL6f3630fvf9tr13+l/bf9r+zff3v++/9/t/v/7+/S/9vrvf5/8Av+m+39//AGve/e7a/p91ve9/+n7b++ut/ff3/wBvfe73/d++l1/d/fe97bfvvfS+/f8A0e/3/vbfb6++u3099tvfW1vvvvfe9rbf2X3++/bbv/2199b++vv9dvd99NbfXffv7S10v9/3++v/AE+9/m19f3e/+t+03+/fbf8At/e31v32ttvv++/++v++/wDvr/39/vbfd7/p9v3/AH/T6/s/rbf0/S97/S+/ve/9v/e//bf9/vfffe9t9p9N/tf/AH1+y/m7a+/Xbb+k9bb/ANr+m20/33/vf1f01/8Ae++/3vvtfpvtfe7S++/3+0/+vv8Av/v2+/ve3vvr72++/vrbbfd++n3v/e211vb3vb3vvrb++/v/AL//AHvvv9vff0a/pff02v9trvtf3vff+9//AG/e2v8A31/9f7/f9/ff6S+/8/v2/T++3f3+v0/6a++/trfX2+/v9/vbvvfe91tb30u2/v8Ab/Xfe/f+3vf+9/f622vvtt9trv0vfvvvb97++/8A31/3++m+/wBD/v8A9v2v33vfa++/a/vvfe13vfS++/T20vf3339tf+y/0vf9ff5O++/fe/Xf+vvrr99Nvpvt99ttv39/vvvvt7+8/d6XbbTffb/bff3+tvfe9v8A2v8Avvb9vb7++/6ff2/303vf6b7fffa62++/1vf02v/AH9/ff9Ltf8Avbvf3vf7a9Ntb++/tr99v0+3/e+/+/tf6S39/wBtrtv32/Tffb6e++/vb6/S1vfvb3vf330v++/a3++/v++/f7+2vv8A0/v/AH+030vv2vfa2utr/vf11v7S33v9v933f2v/AH+v6++/a/6++/6bbfS/+m+l+n+ltt9tf339r+/f322++11/9vff9/39v3vvvb/ff9vbfe/S7+3vv12++vrvv99d+3++/T9/a/s/s/8Aa++/tr/vb3v++n3/AH/a++/b300300+1999fffff13v9f0vf9vf6/X729b9rbbX+9vff3v8Afe+2m++/a3vrbfS3++3vf/Tbfe12/v7W/aXfe3v+13/e9/8A3v0fvvfbfX76bXvrfvr9fb/ve19fvr/9f/vvrbb9fb2++/6bfdtr++/ve7+m+l9ff/323v3/AO2+/ffvr7//AH9L62vv3vf/AK+2uuvtbW21/m+v2m+13/ffvf1v3vf+/a2v/e//AH377vfbb/ffe1ut/vf9trvf00++/vf/AGu3/T++/vbX3913009/fe++/vv9vbbbbb+/vf6b/f2/+mvrf3vfe379fb3vf3/9vfvvtf3vvvvfe9vvrv9f9vr7++m13a69rf8A9tN9f2n0vtvrfe7/ANffS++/6Wvff33033vv03vvrbfvfvvf/vf9vvttfff/AE+33333/ff/9f33367f0vff+v39tr/vev22v3++/tr++/vb23330vvbXbb019b+/T+/vvvbW9/vv10v/vvtNff29/X7/v73ff66W/vvffe11vbS1vfbb++tvbbfb9f1vtff39/v/wBtfS9trtr3+/fffbX9fS2l3a23++ut9vv99ff9p7bffe+u++/e23++/fe/fevrfbX++9v309Nrvp/a+mltL29tL3/7+vv+vrttvfffff6//TbXffe3fXW++2m+/6/vb3+9tbS/3v6+u2022+l39ff2vvr2++/0u3vv6/3/AL21vfvbS+0vv629tr6/ffrrvbb6++/7++/vf/bfvrve+vS/9Nfv++l3/v9Lbf/Tfe+vrvv0++/fbbfff9997W++/e+/++/9d7bbX1tt9/vtt9v2v3+9vf/S1v09fvv31vrb3vf6fe9v/ANv21++/fvv6ffrffvrfbbbe9vbf6Xba+utrbe2vf3203vtba3vv1/X7b++/f9vf30u+/vf+/fbfS6++vr3v9ttNvvfe1vrr9ttvf0vfW/wB/ff/ve/2++/3vr/f3+vrfe33v29/vb++u++/tr++tvfvrf33vvvvrv3vvffW/9ve6/e2utvbfffe+v6fe/Tfe9/bXvfS79vfvr++vvttr/e33+0vfbe+2u++/e2l1vv39vv6/9f+/vvvb3v6++/Tr9rfvv33t999tvfW2m13++tvf62vt+/fe61/vbvf02+2vv/W/X6Wvvvb6Xffe1vf21/S3ve3vfbvfW9vve729tbv0vve+l9vrfe+m1tr66/3vfX++311v/e09p663vfvvb+uttttrbf0/W79dff773bvvf2mlt9fb+3/a3W+2l9NvvtfT++/tP6/+2vfffe+vtff/AN/vbvr9rbe+1vtfffe9/trr9LffW+/303vvffbfe7++303v331/0m102vr+/S6++/a22vf2vvtb011vbXvr3v8ATvrff63f1vbf+01tr1vf/Trf+1v/AEvv331/S6a3+/8AtrbfXb1m1/f33+l3/d/+mve3Xv7b20/rfv8Ab+tvvevrp/f/AH9ve0vtvd3v++m+3t6a7fe++uttvv8ATb6+3vv3ve2l/a3bb+vtf1v2/tr++vvfevf3/f3/AH2/0/e2u1v+/vr/AE9vb2u+23vr1vrve1ttdvdLXXa7bb00vrv9trrf+331vv8Ae+utvvbf/b2/vrf9L0/S++s233/b2m19d/Xfe++/r6a/f9vbvvtb++/a6+ml2lvr9bf3v83bfff9bfW9/W1vX03utvb2/wBDf6Wv9vf/AE/339tLvr66aX2/vb112vb6XXvvrr9tbvv/AH6/vvvffbe1vvvvbe9rrbS/3tb/ALW/3vffvbe19NvdL/39vv7bffe/2972++/6bvfve99fS++mt36fbXXv/S1vrre+ml032lvrre2vrbfe3v8Ae+/Tfe/fS+utva3vvbf9vf62vf7W/b++/3/3+tr7W2vvb7a++/v32u3013219vf3v7299/62+2vfvvvfS6/+m+1ve+vr9f39/fe2u929vbbTffXvvf6bb9vfX302u/fe+/vvf6Xvf3tL/wBvfve0/tr30+/9rW9/W/6aWut99trXbbbb/te/vvvrrb0m1rre9tv3/v32vrfW7W/S2m/fvrvfb/3+t99L6Xfa+m9+21ut39ftftfS7W2trvd9bf+mvr732vtfaXX9p//T/e/2m+2vrre+2uu/trvt/fS13ve9/u33++21++/p99v9v23ve+/22vfvvfafe2++/S7++/e2m13333vbW7+uvS/r739t/vevv+m1trff++/9pfa7/vrfe99vrve99p6fSbbffb03/t9vf639tr++mlvv9Nvf3b9fbvrfe21239fb6++/39/0u1ve+t99ffv99NrbW+/0vvfW29/vf2+03vbff6XXvv6be/fbbf33vrfe9231vvbfa2uttt9fW2239fb39tftftfe7S9v/2++/ff/vfS7/S/a22l/fS3/Tb67bbbb+/b/bfe++/tfbf2m1vv6/Tbe33ve7S+l/6+2ml++/e133++m2ut9tNfb23m+/e2u2vvfe9//X+l/6e33v+/s0vtffrb6ffb+3+/2m1331vbffbb/fe++/e/23++9rfW299f011vvffS2m1vtfe/v9trvffe7bbfe6bXW99b/a3vv7fffe9Nbeu/tfe3m139/vevv8Abe1299dfa9tfXf09L69ttbfb7fe339vd+m3S/wD0/a/pva+9v309Pvf3+u1/vr0vf3vf73ffe3/vf++tvfW2m23trfve0/e1122vvve2u++/vb3f0vbf2XbbX7/0+/e+/wBbvfbb3m3e30+1++/22vbff6++/vfff2ttN/S69Ntbvvrv3fTfbe3XvfX6/f7/ANb++/vf029vfX2m/S/3vf/vb/30m92vv/vfW301/b6fev2/bb63m/re/e/vr6772vrtrvrffvb9pbbbf30+19Nrf33vba3/ALXbb+tr0vr2mvrv0mlvb3++33f+/vr9L03/AE1u99/vv729/ff++/bf33ve++m+1vvf++/e3bbbe7e1vfe222v2m11tr7+k39vtvaWvfe7W3vr3/trtrtrba/vf09r++/e10/tf9v7S++0u3m+vvW+vtff9997W++/e/v9Nvf/e2u/vffe230vf2t133ve3vr3vvvrN/ba3Wv6/tbfafe2trW133vvbf/AK2vv9tvd9L2vv3/AE1/W/trvd/X6a++/fe2+23S2ve++/a+m1vtP/tb7Xf6ae3+vtvrW11v++/p/ff/AMv8n6e//bf8v6/++/ff/wD/3+3/L+m3/X950v8Am/5e++/836+vt5vf+333fe30vt69/X+/T9ftbS63a+vX9/T2mvpbaX0vv+vr/wC3/vrfa79tfT/e+0u90u2l9ptvdvvtttr99/vfbafe3r/W+l3ve21tf/T7W++/32+2u3b/ANvffv223/vvp9v2v3+utut03++/fb0vrpff++/W39ttd633vvbe999Nf63e0++/a6b7Xffe/Xba+0u+v+/1vvbfff00/a2u1/T6b36/ve0mvrre3v30vfe2l/X2trfe/2vS9vf01v/S09L/v/wBdL/S++vrtt/vb210vrfX2++/S773f6bb9tff0lvaX9vb6X7fTXX2m1vtffXf++/ff+1rba++/Xv8A33vff++uv21tr/e3W20ve1/3mvtvd9vevrrbW9m0vv1vr0vvbfW33+/++/fb9fb6Xvrfa31+/a+m3fe0ml/f6b+8vf32v++/rve22l9P2trf3vt7e3vvfe/tbbf6bbbe301v6/a/Xb2m9vbbW++/wBv/bfW2vr7330uuvvrb7ffvrfe3e2l9fffe32+vvrfffbe213vvvrvb2mlv67++ml9fW32ml0vv/2vt99fb6/fev2vpvt/ve+vvrfaS12vv2u13v8Afe+m+/8Af+/2+l399bb30++/S3vvvvrb+m19Lrf0lvrtrfe//ve/X3+/3/972mvrte1/09vdNva3bW++/r9vt9ttprrbffbf1u/vff73vvvf6XXf++3b3/vvrL+3/b+/9f2vv/vr3623vbW+/22+/9ve21vffe3bbbe3ve3t7/fb3vvrS2u/fe3W9tbS7/vf/ve2uvvvvve319rtrrtr9vbW/fe+/p6239L39vrpbf7/e++s2utva++ut9bW/b2ut32u2+0+/0vtfvvbf1vb+0+/vvvt+/0ut/S9vbX6+/be+tv9ftfe3a+13/AOuvrfe1vvbe1u9//Xvf297S9pt/f2+u1vb/AE+/fe6+0tvve2219ve3vvvfTffe9r9tr6X/ANvb12+v3++9Ltt30utrre+lve23ve/29trba321vr6bbXfe1/W633vW22/vf/fe+/v9va3Wvfe+l++vr9P7fffa22m23tbvvrb6f399rvr/AE100+/9rf1u1ttvvbe3v++/m8a7ffXfe/vvfff7b7W1vb/vfbW++/ffvvtt9Ntf/vvvfvrvv2/fevr6fT+/vr3W/XvS3bW+/vr0vv6fe++/m+/ffS+/fe6bbf77+tr9vvb/e1ttvrba39/X333ttrWvvp302v2vvrv6fe+9tfe0u+/ba6/a62++9f032uvrf31vfvv637ba23be3/a6+vr2m3vb1/f2/Tfe/vr3ve3e3e0vv3vr6fffvf2tvrf7W3S/ve3e29vbbfvvrbfe2/vevv209vrbbbe/f+2m/fve22mvrfvvb+/9v/Tr7XXba/aW3S9vv79d9vvvv++/39tr3v/39ftfS2209L9b62vt9p/a0vf/AK3vfa9vdff+/v32uvvb2vrbW2tv00++1vvf0vrrrfbb0trfe6fb6b3a32vtffrNve7be0vr321/S1u213bfe/vf0136faW2+t+v72vvbf02tr/T+3W7W/S2vf/3+3/39ptf330ve31u113trvrvfe1vS9vbve++m++/7ba+vvfe9vvf++/p/Xfe7S63vvfaXX39ffbe/e2vr/m/m113vt9ptffS672323a6bb+utff0/3/AGvv7fe+l+0v2/36bevrbaW9/m19f2mlut/6/a7fS1tt/vvrbSbb++/re+/tr9vb31+vrvSbb3b/AGml23a3W++/Tba/T1232vrr9f6fa1vvffS0vb/bW76S6++/X00u++/trb2m39rfe+v319vfvv7SbbS3W/re/3815b3bfe/bW+/a9Nvb23ve9ut1/36W+tvbf67f3++/3bb/ANL0ut97ba+vb767++vrv663f2l9fe1ve1/6aae1/vfb9Nf2030l+/9bW9p1vvfW+/vbve/1/Trv9L/1vb9p62m20uvW++/22vbve2/13v6ffW/W13129vbe71vb63bT039L7T9fb0u3vf2uvrtt9tbbW02v/X30u1+n9trX/3tN5trvvfe3212v2/2mltbfe21vvvf6aXXbbW9Nff9vdvt/v73+/tfW392++/tb/S+tfe7b2/aX/a/tPTba/e+l1/Tfbf2/vb3/XbW/e79Nrrfe/trtfW3vffe6++/W7Xffvvba211vvp/9Nfvb32uvf7b0/vb++/vb7ffvf/769/Xvrbfa/2++/fe20/rb/fe+uvtf/039rr30/622ttvrrbfv6++09pr6e2++/f/e9tff69vfe76e2v2vbbve/e61v02m++/tr3vv7a7W73/S9vfvvS++/re/vv7T1236/W/X7X++9rbe221v29vff79fe6/W19L9f1/a++0vvvbW7++v6+vrb2m//tb7fbf6+/vvvvfbW/vf3vvvff+m+/2t+s/aX300u3vS+tt0v21utr/ALfbW19rf09vb22299tvvdvd/vtf0vvbfvf6W++/v/bf/Tfe366bfe6b/T9b3fa++vtrvvbfXb9fbf333/fev3ttb/bevv9P6ba63v9Nvr9/trf/vfX/AEvf02vvfe3r7S22+33m22v+/Xvbffe3vb2/bf9999tf7XX00vrb20vfbb7W20l2vbbbbS+/re/1trvvp/a66WvfS9vb++/19vrvfW+m1u97X++/pve0ml1u/wBvS++vv9tLvbWvvf0vrNfT30v/T6a+vvprff2++/m19ftfffb+mlvW/ffb0u2+0+1/e/1utvb63/S0vvtr9/v3++m1v9NfXb32++ml0vfe/S9p9vvbfbba++/vfvrre3vr29ff9Lvt/Xbbfvb2v23vv9vf199r9vb2mvr9r9prpve/ff7TffW/f7Xbafe2vvvrp/T/X200vffb7ff9Nvt/9vrvrb77Xb/AKfbba+vt9fevrNvpdb1ttprvfS/vrf29/bfe9vr2vbe/wD6fevvve633W//AL++21r9N/7+/a+/pfd+m/39Pvr6X97/AGv0vf2t19vd9r6/+m1vv0u+/tf03m/W+/aXvffS1vtNvfS39b/fev3tL99v6be0u2+0+tvS9vfS/W+3S3Xbe++/TbbXff/ff++/vv6bXf/vb7003023S/S+vr2++/vv7W+vrf01vr6bXXS/tf663++3vfS2212+vr2m197e9vv39vr7fvbbfXbXfe3ve/m9Lve/e13+/3ttb/AEnva0u9re+m3r1vr29pbaS0ut/67W7W/fe+vve6++vvfb03+020vrbe+vvf6+vrbff2mve/vfvrbe9/bfvfbW++/2v0u/3vf0v9N9prv2vvfbS63S19ttbaS6W1trvv6a+ut/S0vtff621vvfe/Xbb029tvvb3e+2m0vrvfe/vrbb3032120mlv02m1v0m0tbbS/W1tb19bb3vbS7bf0ut+0v/AE1ut22132v99/S++vrtt/m83bf9N97/AOvvbe/+v9dfffX12vrrS/11u/0l/wC09rW7W1++1vbW22++/vve61203vvXvrbS00mvrbbXbW+s3/a++/m33bbf3vf30m3vr+vva6fffa1/rffX7Xfbb9/ff++9/wBb/T7X/pff6a+m11vtfa++/fb++vttvdff3bbffve3vrvSbb0v/W+/20vfbe2vfe63v9tr/wCvtffS++/vfS63e0m/9fbfe7/6W/vfvrfe+2mt/Tb0201vf+97fvb0vf8AtLbaW+9vrte/fe99d/vb0m9ut7b11++u09m1v6S3b/9vb0+v62ut/T++/3v6/bS3vr1vb/a++/9Lbb++/20v+vt5vd7W2u3f9m++u/+13+utr32m122vSbf3b++/a/vevrvf9vf6/8ArbfTbaXvrffW7bfvbbf23+/W1va37S1v/X2ml2+/fe+/31vv9vdpt72/trfa/p/f+/ve9pffT/e3p3++/wBv/Xb++0vv03v/ANv2m/tr30uuvb/a6bb2vbf6++/vf382++/a/S/a+3+/fbvv6fftr313vrvbfe19vb113vt99/vvd+1vtb01/01vfa+l9vvp6Xf+1/63S2ml/e3S++/S122+/9b03/ALX++9ve6/e2vvtNrf32vr/ba9b/AF/tr6W9tN9ba373733vf7bfe91vvbe1u9//AGu2++/e0vXf/fe3vv8Ae339t7trre+2l33t9d/fvrvb+/r013ut3vfXbf3S/v2397bf+/6ba97S++/XbfbX2l/W++l++m+/b7+vvba0u/8A31vfe99NvfvvbbXfS630v30ml1vf9/6999Nre3b++2vfe7fe/vW9L3ffS603vr/ba++0vv6fa3e2v0ml3+m99rfW/bbS1ttffvrr31vf29ve0tr2+11tvdvbfbf0+/X3trbf+m0uuvb0vrbe+l9prfe01v6++vtfftbbf09r39rrpff0/vfa++/Wff3v++3W++/a619vdff2/T1+21v1utvtbe0mvt/vb6e1vrff+0utLfbba+0uvrbba++l329prre3vprp9ttrfbb+0ve1u9/X6f0113vb67/Tb/f0+/0vtfvvbfX0210/tbfe/Trrf1vbaXW/S1u29ut63fve9+3f++/f2vvS+/tbbfW/Trfe3+ml2u0l3/AEuvW02lvr0mlrf019fX+9v6a+ut/Te09fTbvrfvvbe120ut9vb0vrvd/Trvtfvtbe11utvd99vf99N/6e3vr9v13m++/9vb99bfv7fbvvvffS0+l/a7S2vt/rbbffba++/Tbe6++/TrSbfW6b3aX2m2ut3vb0v8Ae00ut23v3m21pvt9fe+/e63vrvteve2u/bf39be33++/vf3/AL9ttvd9rf09vb++/p/7339Lbe+v2vrff3t1m+/vvt/TbXvvrrW9tf6++/02/X729PvrvTfe9v30+/2v99t+/wA3r6XX339P6aX7X++/be2+/wCvrvvfb6a+vrbe62vr7++/Tb++vpvr383be+/X2++/ve/vfXbXff/1m0+m2++/21/fe3t9fe723S62m30vrvffvrbfX9/0vv/bfvf7fS2013S3W++/rbW/ffvrfb+/ve3/vfW7bfb1t66/m399L3vf3u/trW0v/AHvTf6ffbe7S12ml++3fe63/AGm2t/vbba++9tr6/Sfe231u/e6Xfe9pLbb10/v/AH+0trff2v6bb9r3/bWve1trWvf+3++2/vb/AH0vbe723++/62+/09ff6XtrS9vt9997tr/e129r/X3vvte++/T7fe2vrbaXb3m3+/tr622vv/ffpvtNf+/m0u++/TrfXfa9mvrbe/f6XX32/vv2/ffXfe1vt39vrbe/re++/ff/feve2ml9L9t/e2nbe2l1/e23ve9ve1m/trvffb2mlv3vtb6+1tf13vrf7be3pbdre3vv9/a2vfevrb0vrbfW6fe++/9ff+utttbbbe/rrf09rfvfe8/7aW+l9L+m/e330vS1vffe+m1vb9/Tr6ba3ve3vffr9ve+utLtf+/wA31trb9p/a0ut1ve1vbe9vv0m0ltt9bXW++m3tf7bfvrfe9/8Aa++/v9fe02vtf63+/f8Avba+/f2/p/W2v9fXpba++tr/AG/vvpba2lvr02/vb2vbba2vpfaXvtrLbe19bbfTbb0uvrbSXXS6aW83be0m0v221utL29v1+/mvrXbe+/383vrpvdvaen1v0vt7fXW/v/77fevr39vfW67S7209vX283/v20v3m2+1vr9/t69722u37fS73vfTfe++/a/7W76XfbXf383bf9Jbbbb77ba/00vtddL2/f311tNvb3W9p/T6a+l+199df6fS3e0vXbe7e0/t9p9N/6fe//AL9fS99pfe22++/pLbfvrf019a2++/S773fX7f00vba6++/tr9L212vrb6be0220u/TrW7bfvrtt5vr9rrf++/vvvr7++m++/e3m1utvvvf/AO++22u2+u2v3+9vv2vrvv3vvvff++/vrbfe6W2l39vb00m0110vrW/300v9bfv7fTfaXvfTrS366223bevrf9fb/trb09bbXW++/tb0vr/03ut29vv6+/9fa/0+/vfvvfe0vva+vrtrvvfb0vbSbbXbe79vrNvf6X/tr6ba3ve3vvS++3a22vvba/3v0m/beve6XvrfTbe+/e9ttPbe7XW+3/T7++/3v++m+9tvf/wBv++utpfe1+mlvt/m9rtr6++/rfbe3be1v21tbbe9vvrf3/ve9vrv12ml1tb6++0ml3ve2++/2trf6ff2trfbW1/bafe/Tbb1vrvf0++9tptfaXW83+3S120++/vvr0vS+3S7vrW3bvevvbe6Xvba++ml3ve2/e72vtbe/baX20vrf/3/AK3fbfe+/f8A0trbb20tr9ba3bbfte1tt9L/ANvt6fe09trvtNvb31/fe699m3r/AEvfe2uuv3019pff3u3vr22u0mlu3m902u/fe90utut0m1/e/TrtrtfTfe0trtt1/vf31/3+/mvrbaXXfTf+ml++/e/vf+v0utpbbS1m/r330999ttv3ve7/ANtf+/a7aW++30l1vtrv1m3pNrvrvt9re3trbe/bfW/f/TrpL9vrbS+/fbvtr9ttbdvrfe2mv03S/wDXXbevrbfte2l836e2vfe3vv8Ae2vvb0l+ml01trvbfe83fe2l/Tr0132l1/m2vrbe/vfvvprfb6f/ALW+utvvfe0u1trS3++/S3X+trtrvvvr9/m/e/Tr3/v/AH2u29/tr6b6bbXtrfvvbb6e2/19df8A0t9rve02u+uvvfve9NvdvaX39tLvr66a3vfve29//fvv39vvvf3/APe39/bXf2ve3vffbe+/be0/rbvfffe9tvrNffbfW69tv1+292+0vv/XW+/f++/9e/8ATe0vrte++01/vvbbffbe/tr23/veve+2nre/a3vfbf0+/vevvvtba+/a++/9tv3m82vr1vv7S3e3vr6a2uv29vrfttt7W/b++/veml19b67ba/vr7+trXbb29fbfX996S9/Trre63vS77S1vtb++tve995tvSfevr0mltr0vv1mlve1/pve0vr7a+/6e93mvr9tP637baXve3vr/T/3/S022u37fSfa/s/vte99r6beuvvfT/ve/1vvvv29ptve9vvvevv/e1/e+/W121t9vf++vvve3vrv9t1vfe+tr6bf0vrbS++21ut/S/fbbW++ttv2vtftNvf0vS/ba+u++/2l2mlm0ttut3/Tb0vrfe3a6bXXbe9u31/S6++1vW1vvtrbS/e2vr9bS62/m++/S+mvrbfS/TrS3fffeve6X/ALa9fb/23be02v2vtr/vrb2v2m1vW2++/Tbbbe3e++tv6e9v/bW++/e2vS3/ALa99f1+9trbS3ffb30/b02vr++vu0+11m3e30+ml2+trbf0ve3fe6b9m9p2815vS3+/v03vfvv822utbvr7Tfe/+vtfve+l+/bfvv/3+tr7W2m2m++/rve62vtN5v6e021rve19vbf13be02vevW62v/X++n3+t/a2uv9v3+ttrv/03vbW7fe/e291vfe00vf/ANff9fe6Xvfa2utvevW6XX/trvve9++3/be132vv3vvvvve++/S/ff6be2m21ve7e90ve212132vrre223e3/wBvb0+/2m1ve10ml/09p5rfe3X29tt/vv8Afa22+vvvvfe+m+vrv036++/e1tbtr2+vtNvtvr63S7Xtb99be+/bfbfe3S7a3tb0ut3f1+v2mlut/fTrttre3ve3re0m2123S++/vfS2tr6fvr6ba6fe/ve2ml0vtr3vf++vrbS1vvtrrbW0u0++/vfe9pt/e9vbfe/S+2uvvfevrv9/312019fe/e9u/vbf0tv9dfW2t99trbaW01vve+ut320trre0vtNtfW2t/v8A9tP3/f01tptvr/W++/a3v2vW+1vfbfvv03/m2u++/W/+219Nf2vrbe+2lre3f0v630m2ut/vfSXX+m/a36e9pvtfe+vrfb30vvbfS+vt7X63vtfa++/re1+/tbve+m3e/S7209ptd766bb73+9+nva2m13+/Sfevr7020ve/9NvfW++tvfe9/be12vt6X21r6faXvrvW0vfS3a2l++/ve71vvf0v/AF/vf9df6e++/2/1/wBttr+1vbaS101tv02v6be911u0l2u2u1vbW/2mvevS9r6XX2utvfbXXW0l20m9rprvv6e1vrf6fe9m2++/ve3+/wDXb+/+/T++/ve1ut/vrvvrrba/9ffS2vrvr9ve2vW/re33Sbb9r3mvrte2m9remlv397++99re++tr22u3Wvrbe6bfv09Lbe++l7W9Nvf21vtfffb30vv0+2v++/vbfe3f0/1/ve3S/f1m9m82u02l83a+83X++/bf29rrfb339prvvr2uvW+/rre23vrba7003m39ft6a++2uvvvXfe815v7ba9rfX7f/0m9p9vvf/r3/vfa299rrfve9vd+uvd9Nvr7bbf3vvffvrvvvvS++/9v/vrfb0utrfvvfbWvrfX/AH322tr021v/AE02uvff1vtNve+u9/vSbf13vevW90vt7a/bvrS++/re+3212u+/p322l1/3vvf9fe2++m/fW622019bevrprvvvvvvbf6bb21v7f383e/a2tr12ve/aX/a/m3+/m2+2l2tvSfa9r2vbWmlu9vtpr9tr9ptvrrWbfS++tr99b1vb9/Tffb00vtvdfe1utLbb00/tb37T/e2trtr6W77S+uttr/fXtrre+ltvtfe22l00u++/W1vrvX2tr21vbS+trtb1vvrbbfS9te1v9tr3mve+/ve6XXtrve+3f7ba+/bX03vvrbf6Xbf1ut9f6/wBpttfS70vvrr/aXfe6XXS2vtfe6e19pr6a67Xv/W1vvSbaX++/vfe3+l99tbvr6/0vrbbS6++vr3v1v6bfW++/vfW1trbaS219N5v6/S1tv6b9/W63e0vvrrf033ve/S++trv9f3u1u3vr6e029ba+2vrrb3v9vevrvf+/m3W3ve++m+t9fvvb0vr0vtpr3mvr6b+m++/3Sbb/e9vfa++/fe2+/f0/e2vpr6+9tptLfe1++/tr+3vfW2213m9vb7/ANtrrrb0utvfbXfe37/W6/fvr676bbfeXb10utpr1vb2u/be009L7W9vbfSfe99tr2mlvb2/vr9Nfe83bvrfaXfe/vrb3++/bf+/e0l1vvbb9tft/vfTrbXv+/Trvevv7Wbe3vba++/Sbb0vvtrL76fev+/rfe2m10t3fe/be011++trbeuvr+/fe+0ttvfa3bW7baX2039ptvtLvfXvr0+/vprL73++/veuvvbfe8/be09f6ff1/a9d+tv/m/v7T++vr7W6b9/29vT3f8Af9vbvrNf33/8v++/29vvffba+vvfa+l+/S2ve/vv6/vf1/bbfX/tr+2/6fe0vtff621m91v/ANL3u/X3vb9/rvr/APrfvva2195rSbfbve/33/fevtr0ml+2++2vS6/bf00vvbf32vWba0ml9rrL2/tr9P0m195p1m3vvS++/r6bbffvvfafe/m/e6baXXv9fevvX3be/re609/e73be9L70+1tfm1vt5vSbf2u11vr2/ve29euv099r2vrrtr9pfev3v79+30+3WvrffvrbfS3++9r/AGvrrfe00uuv321vv7Xm7beuv30u/W++/m67feX9fe02v7fe6f6Wtrffv9ttfff383vf/trNvr202u933099tvff9/ve/W2v3fe29pr5vdba6f663fW7f6bb3be1vbaW3be19/e6231vf02322vt/WXXvrfe91vrftvSfa30vrvfa7f3v3vt1v9trv6ba33b3ba9vf3vrvrW0995ve921vb9pvdtt/S3vrvf2m1tr9m2vrvvf9fvrvva+1vr3m/trd/a/tr1vf0ut+3/vrX0m21/pL70vtbS3pfe+mvrff3019ptbbbfW3S1tbvbbffbe/W3W2/fbba2uv21tr/e2m13++2vba63e2u0vt5vr3/W3vrr/S3vfTba2vtde2u+221v/Wv3u1vbXbbbb3m197pfe77bW30+/vNvbvrpva++m36Wvrbe7++tr9vvf/020m0/9L6Xve20vS6+u123v+/W/fffe/e30vvve+/0ml/e6f1vbaXXW3vvrbe3+vfe7be+15u2u/m++/rrXbbv/AN/T1m9pba9vba2m/Sfe9031u0vfbfd/vffr6T3m979vrbe1vfe+trfe0v0vtf1vv3+/vrN/t/8AS3vvvf76W/0m83ttrNtfvL/Tr2utvrv32vbf1u0vr1u11/e60309tLrf3/6Xvvfe6/tr3vrbf++vr9vvbbbe9ve/1/rLbf3utvfTrXffr9v6S0l++39pbe0vrvfe/vrNvtPvrS/vv/36/ae9/wClm9v9vd83vfe6XXba301vfSfe/m3m/re/vb3vfe3b22vvvrN++v3lvtvdLfe3m82u3ml+1u0vb++v3mlv6bfvrfe667++0utbe1tr67e8u2mlv097b39vdvf/2Q=="
-    ];
-
-    function goToLayer7() {
-      document.getElementById('polaroid-layer').style.opacity = '0';
-      setTimeout(() => {
-        document.getElementById('polaroid-layer').style.visibility = 'hidden';
-        document.getElementById('photo-explosion-layer').classList.add('active');
+        const newBase64 = [];
         
-        // Auto-trigger the explosion immediately
-        triggerPhotoExplosion();
-      }, 1500);
+        for (var i = 0; i < files.length; i++) {
+          try {
+            const base64Data = await fileToBase64(files[i]);
+            newBase64.push(base64Data);
+          } catch (err) {
+            console.warn('Failed to convert file to base64:', err);
+          }
+        }
+
+        if (newBase64.length === 0) {
+          alert('No valid images found. Please try again.');
+          return;
+        }
+
+        const currentState = loadPhotoState();
+        const allPhotos = currentState.photos.concat(newBase64);
+        uploadedImageUrls = allPhotos.slice();
+        savePhotoState(uploadedImageUrls);
+
+        document.getElementById('selected-count-msg').textContent = uploadedImageUrls.length + ' Photo(s) ready to explode!';
+        document.getElementById('explode-trigger-btn').style.display = 'inline-block';
+        document.getElementById('generate-link-btn').style.display = 'inline-block';
+        
+        // Hide upload option after first upload
+        document.getElementById('upload-label-btn').style.display = 'none';
+        document.getElementById('photo-file-input').style.display = 'none';
+      });
+
+      // Generate Viewer Link (only in non-viewer mode)
+      document.getElementById('generate-link-btn').addEventListener('click', function() {
+        savePhotoState(uploadedImageUrls);
+        var viewerUrl = window.location.href.split('?')[0] + '?viewerMode=true';
+        navigator.clipboard.writeText(viewerUrl).then(function() {
+          alert("Viewer Link Copied! Share this link with your girlfriend ✨\n\nShe will only see the explode option, not the upload option!");
+        }).catch(function() {
+          prompt("Copy this Viewer Link to send:", viewerUrl);
+        });
+      });
     }
 
-    function triggerPhotoExplosion() {
-      const explosionContainer = document.getElementById('photo-explosion-layer');
-      
-      // Spawn ambient background glow sparkles
-      for (let s = 0; s < 30; s++) {
-        const sparkle = document.createElement('div');
-        sparkle.className = 'ambient-sparkle';
-        sparkle.style.left = `${Math.random() * 100}%`;
-        sparkle.style.top = `${Math.random() * 100}%`;
-        sparkle.style.setProperty('--dur', `${2 + Math.random() * 3}s`);
-        sparkle.style.setProperty('--op', `${0.3 + Math.random() * 0.7}`);
-        explosionContainer.appendChild(sparkle);
+    // Explode Memories
+    document.getElementById('explode-trigger-btn').addEventListener('click', function() {
+      savePhotoState(uploadedImageUrls);
+      document.getElementById('layer7-upload-box').classList.add('fade-out');
+      var explosionContainer = document.getElementById('photo-explosion-layer');
+      var fallbackImages = [
+        "https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=500",
+        "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=500",
+        "https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=500"
+      ];
+      var activeImages = uploadedImageUrls.length > 0 ? uploadedImageUrls : fallbackImages;
+      var totalExplosions = Math.max(35, activeImages.length * 5);
+
+      for (var j = 0; j < totalExplosions; j++) {
+        (function(index) {
+          setTimeout(function() {
+            var card = document.createElement('div');
+            card.className = 'exploded-photo-card';
+            var img = document.createElement('img');
+            img.src = activeImages[index % activeImages.length];
+            card.appendChild(img);
+
+            card.style.left = '50%';
+            card.style.top = '50%';
+            card.style.setProperty('--tx', ((Math.random() - 0.5) * window.innerWidth * 1.6) + 'px');
+            card.style.setProperty('--ty', ((Math.random() - 0.5) * window.innerHeight * 1.6) + 'px');
+            card.style.setProperty('--rot', ((Math.random() - 0.5) * 90) + 'deg');
+            card.style.setProperty('--scl', (0.6 + Math.random() * 0.7).toFixed(2));
+
+            explosionContainer.appendChild(card);
+            requestAnimationFrame(function() { card.classList.add('animate-explosion'); });
+          }, index * 120);
+        })(j);
       }
 
-      // Photos explode dynamically from the center
-      const activeImages = embeddedPhotos;
-      const totalExplosions = 30;
-
-      for (let i = 0; i < totalExplosions; i++) {
-        setTimeout(() => {
-          const card = document.createElement('div');
-          card.className = 'exploded-photo-card';
-
-          const img = document.createElement('img');
-          img.src = activeImages[i % activeImages.length];
-          card.appendChild(img);
-
-          // Randomize end offsets radiating from center
-          const tx = (Math.random() - 0.5) * window.innerWidth * 1.5 + 'px';
-          const ty = (Math.random() - 0.5) * window.innerHeight * 1.5 + 'px';
-          const rot = (Math.random() - 0.5) * 80 + 'deg';
-          const scl = (0.6 + Math.random() * 0.7).toFixed(2);
-          const speed = (5 + Math.random() * 4).toFixed(1) + 's';
-
-          card.style.setProperty('--tx', tx);
-          card.style.setProperty('--ty', ty);
-          card.style.setProperty('--rot', rot);
-          card.style.setProperty('--scl', scl);
-          card.style.setProperty('--speed', speed);
-
-          explosionContainer.appendChild(card);
-
-          requestAnimationFrame(() => {
-            card.classList.add('animate-explosion');
-          });
-        }, i * 150);
-      }
-
-      // After photos finish expanding, fade in romantic text overlay
-      setTimeout(() => {
-        const glowScreen = document.getElementById('shiny-glow-screen');
+      setTimeout(function() {
+        var glowScreen = document.getElementById('shiny-glow-screen');
         glowScreen.classList.add('active');
-
-        setTimeout(() => {
+        setTimeout(function() {
           glowScreen.classList.remove('active');
           document.getElementById('romantic-desc-card').classList.add('visible');
         }, 1800);
+      }, totalExplosions * 120 + 1200);
+    });
 
-      }, totalExplosions * 150 + 1000);
-    }
+    // Next Layer 7 button
+    nextLayer7Btn.addEventListener('click', function() {
+      document.getElementById('polaroid-layer').style.opacity = '0';
+      setTimeout(function() {
+        document.getElementById('polaroid-layer').style.visibility = 'hidden';
+        document.getElementById('photo-explosion-layer').classList.add('active');
+        loadPersistentPhotoState();
+      }, 1500);
+    });
 
-    function showFinalOutro() {
+    // The End button
+    document.getElementById('the-end-action-btn').addEventListener('click', function() {
       document.getElementById('romantic-desc-card').style.opacity = '0';
-      setTimeout(() => {
+      setTimeout(function() {
         document.getElementById('final-outro-screen').classList.add('active');
       }, 800);
-    }
-  </script>
-</body>
-</html>
+    });
+
+  }
+
+  // ============================================================
+  // 6. Start the application
+  // ============================================================
+  loadThreeJS().then(function() {
+    initApp();
+  }).catch(function(err) {
+    console.warn('Three.js load failed: ' + err.message);
+    initApp();
+  });
+
+})();
