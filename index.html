@@ -649,7 +649,7 @@
       100% { transform: translateY(-90vh) scale(0.4); opacity: 0; }
     }
 
-    /* --- LAYER 5: SANCTUARY OF 1,000 FLOATING CANDLES --- */
+    /* --- LAYER 5: SANCTUARY OF FLOATING CANDLES --- */
     #sanctuary-layer {
       position: fixed; inset: 0; background: #020104; opacity: 0; visibility: hidden; transition: opacity 2s ease, visibility 2s; z-index: 5000; overflow: hidden;
     }
@@ -1162,10 +1162,10 @@ Mera har sajda bas tere naam ho jaata hai."</div>
     </div>
   </div>
 
-  <!-- LAYER 5: SANCTUARY OF 1,000 FLOATING CANDLES -->
+  <!-- LAYER 5: SANCTUARY OF FLOATING CANDLES -->
   <div id="sanctuary-layer">
     <div class="sanctuary-header">
-      <h2>Sanctuary of 1,000 Candles</h2>
+      <h2>Sanctuary of Candles</h2>
       <p id="sanctuary-hint">Tap the center candle to ignite the sanctuary...</p>
     </div>
     <button class="polaroid-layer-trigger" onclick="goToPolaroidLayer()">Instant Polaroid 📸</button>
@@ -1229,7 +1229,7 @@ Mera har sajda bas tere naam ho jaata hai."</div>
       <div class="layer7-title" id="layer7-title-text">Memories Exploding</div>
       <div class="layer7-subtitle" id="layer7-subtitle-text">Choose beautiful photos of your girlfriend to flood the dark aesthetic night...</div>
       
-      <!-- ONLY PHOTO UPLOAD OPTION ALLOWED (accept="image/*") -->
+      <!-- ONLY PHOTO UPLOAD OPTION ALLOWED -->
       <label for="photo-file-input" class="upload-btn-label" id="upload-label-btn">Select Girlfriend's Photos ✨</label>
       <input type="file" id="photo-file-input" multiple accept="image/*" onchange="handlePhotoUpload(event)">
       
@@ -1501,7 +1501,7 @@ Mera har sajda bas tere naam ho jaata hai."</div>
       }, 1200);
     }
 
-    /* --- LAYER 5 1000 CANDLES LOGIC --- */
+    /* --- LAYER 5: CANDLES LOGIC (MOBILE OPTIMIZED FOR LAG FIX) --- */
     let openedCandleCount = 0;
     let sanctuaryScene, sanctuaryCamera, sanctuaryRenderer;
     let sanctuaryLit = false;
@@ -1514,15 +1514,17 @@ Mera har sajda bas tere naam ho jaata hai."</div>
       const container = document.getElementById('candle-webgl-container');
       if (container.children.length > 0) return;
 
+      const isMobile = window.innerWidth <= 768 || /Mobi|Android/i.test(navigator.userAgent);
+
       sanctuaryScene = new THREE.Scene();
       sanctuaryScene.fog = new THREE.FogExp2(0x020104, 0.015);
 
       sanctuaryCamera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
       sanctuaryCamera.position.set(0, 0, 10);
 
-      sanctuaryRenderer = new THREE.WebGLRenderer({ antialias: true });
+      sanctuaryRenderer = new THREE.WebGLRenderer({ antialias: !isMobile });
       sanctuaryRenderer.setSize(window.innerWidth, window.innerHeight);
-      sanctuaryRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      sanctuaryRenderer.setPixelRatio(isMobile ? 1 : Math.min(window.devicePixelRatio, 2));
       container.appendChild(sanctuaryRenderer.domElement);
 
       const ambLight = new THREE.AmbientLight(0x221133, 0.6);
@@ -1530,12 +1532,12 @@ Mera har sajda bas tere naam ho jaata hai."</div>
 
       const waxMat = new THREE.MeshStandardMaterial({ color: 0xfffae6, roughness: 0.5 });
 
-      const taperGeo = new THREE.CylinderGeometry(0.2, 0.25, 3, 32);
+      const taperGeo = new THREE.CylinderGeometry(0.2, 0.25, 3, isMobile ? 16 : 32);
       centerTaperMesh = new THREE.Mesh(taperGeo, waxMat);
       centerTaperMesh.position.y = -0.3;
       sanctuaryScene.add(centerTaperMesh);
 
-      const flameGeo = new THREE.ConeGeometry(0.12, 0.4, 16);
+      const flameGeo = new THREE.ConeGeometry(0.12, 0.4, 12);
       const flameMat = new THREE.MeshBasicMaterial({ color: 0xffaa33, transparent: true, opacity: 0 });
       centerFlame = new THREE.Mesh(flameGeo, flameMat);
       centerFlame.position.y = 1.45;
@@ -1545,8 +1547,10 @@ Mera har sajda bas tere naam ho jaata hai."</div>
       centerLight.position.y = 1.5;
       sanctuaryScene.add(centerLight);
 
-      const candleGeometry = new THREE.CylinderGeometry(0.14, 0.14, 0.55, 16);
-      const floatingCount = 180;
+      const candleGeometry = new THREE.CylinderGeometry(0.14, 0.14, 0.55, isMobile ? 8 : 16);
+      
+      // LAG FIX: Reduce floating candles on mobile phones to prevent lag
+      const floatingCount = isMobile ? 45 : 160;
 
       for (let i = 0; i < floatingCount; i++) {
         const candleContainer = new THREE.Group();
@@ -1561,13 +1565,13 @@ Mera har sajda bas tere naam ho jaata hai."</div>
         const body = new THREE.Mesh(candleGeometry, waxMat);
         candleContainer.add(body);
 
-        const fGeo = new THREE.ConeGeometry(0.08, 0.25, 12);
+        const fGeo = new THREE.ConeGeometry(0.08, 0.25, 8);
         const fMat = new THREE.MeshBasicMaterial({ color: 0xffaa33, transparent: true, opacity: 0 });
         const flame = new THREE.Mesh(fGeo, fMat);
         flame.position.y = 0.38;
         candleContainer.add(flame);
 
-        const light = new THREE.PointLight(0xff8822, 0, 7);
+        const light = new THREE.PointLight(0xff8822, 0, 6);
         light.position.y = 0.4;
         candleContainer.add(light);
 
@@ -1615,8 +1619,8 @@ Mera har sajda bas tere naam ho jaata hai."</div>
           }
 
           if (c.lit && c.flame.material.opacity < 1) {
-            c.flame.material.opacity += 0.03;
-            c.light.intensity = c.flame.material.opacity * 1.5;
+            c.flame.material.opacity += 0.05;
+            c.light.intensity = c.flame.material.opacity * 1.2;
           }
         });
 
@@ -1743,18 +1747,32 @@ Mera har sajda bas tere naam ho jaata hai."</div>
     }
 
     /* ========================================================
-       --- LAYER 7: DARK AESTHETIC MULTI-PHOTO EXPLOSION LOGIC ---
+       --- LAYER 7: MULTI-PHOTO EXPLOSION & LINK PERSISTENCE ---
        ======================================================== */
     let uploadedImageUrls = [];
     let isViewerMode = false;
 
-    // Check URL parameters for Viewer Mode
+    // Check URL Hash parameters on page load to restore shared photos
     window.addEventListener('DOMContentLoaded', () => {
-      const urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.get('viewerMode') === 'true') {
-        isViewerMode = true;
-      }
+      checkSharedPhotosInUrl();
     });
+
+    function checkSharedPhotosInUrl() {
+      const hash = window.location.hash;
+      if (hash && hash.startsWith('#photos=')) {
+        try {
+          const base64String = hash.replace('#photos=', '');
+          const decodedJson = decodeURIComponent(escape(atob(base64String)));
+          const photosArray = JSON.parse(decodedJson);
+          if (Array.isArray(photosArray) && photosArray.length > 0) {
+            uploadedImageUrls = photosArray;
+            isViewerMode = true;
+          }
+        } catch(e) {
+          console.error("Error reading photos from URL Hash:", e);
+        }
+      }
+    }
 
     function goToLayer7() {
       document.getElementById('polaroid-layer').style.opacity = '0';
@@ -1762,7 +1780,7 @@ Mera har sajda bas tere naam ho jaata hai."</div>
         document.getElementById('polaroid-layer').style.visibility = 'hidden';
         document.getElementById('photo-explosion-layer').classList.add('active');
         
-        // If opened via generated link, hide upload options for the viewer
+        // Adjust interface if viewer opens link with embedded photos
         if (isViewerMode) {
           document.getElementById('upload-label-btn').style.display = 'none';
           document.getElementById('generate-link-btn').style.display = 'none';
@@ -1774,33 +1792,77 @@ Mera har sajda bas tere naam ho jaata hai."</div>
       }, 1500);
     }
 
-    // Handles ONLY image uploads
+    // Handles photo uploads & compresses them into Base64
     function handlePhotoUpload(e) {
       const files = Array.from(e.target.files);
       if (files.length === 0) return;
 
       uploadedImageUrls = [];
+      let loadedCount = 0;
+
       files.forEach(file => {
         if (file.type.startsWith('image/')) {
-          uploadedImageUrls.push(URL.createObjectURL(file));
+          const reader = new FileReader();
+          reader.onload = function(event) {
+            // Compress Image via canvas to ensure small URL payload
+            compressImage(event.target.result, 400, 0.7, (compressedDataUrl) => {
+              uploadedImageUrls.push(compressedDataUrl);
+              loadedCount++;
+              if (loadedCount === files.length) {
+                document.getElementById('selected-count-msg').textContent = `${uploadedImageUrls.length} Photo(s) ready!`;
+                document.getElementById('explode-trigger-btn').style.display = 'inline-block';
+                document.getElementById('generate-link-btn').style.display = 'inline-block';
+              }
+            });
+          };
+          reader.readAsDataURL(file);
         }
       });
-
-      document.getElementById('selected-count-msg').textContent = `${uploadedImageUrls.length} Photo(s) ready to explode!`;
-      document.getElementById('explode-trigger-btn').style.display = 'inline-block';
-      document.getElementById('generate-link-btn').style.display = 'inline-block';
     }
 
-    // Generates shareable URL with ?viewerMode=true
+    // Canvas image compression for fast loading over URL links
+    function compressImage(src, maxWidth, quality, callback) {
+      const img = new Image();
+      img.src = src;
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let width = img.width;
+        let height = img.height;
+
+        if (width > maxWidth) {
+          height = Math.round((height * maxWidth) / width);
+          width = maxWidth;
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        callback(canvas.toDataURL('image/jpeg', quality));
+      };
+    }
+
+    // Generates shareable URL embedding all uploaded image data
     function generateViewerLink() {
-      const currentUrl = window.location.href.split('?')[0];
-      const viewerUrl = `${currentUrl}?viewerMode=true`;
-      
-      navigator.clipboard.writeText(viewerUrl).then(() => {
-        alert("Viewer Link Copied to Clipboard!\n\nSend this link to a viewer. They won't see any upload options.");
-      }).catch(err => {
-        prompt("Copy this Viewer Link to send:", viewerUrl);
-      });
+      if (uploadedImageUrls.length === 0) {
+        alert("Pehle kch photos select toh kijiye!");
+        return;
+      }
+
+      try {
+        const jsonString = JSON.stringify(uploadedImageUrls);
+        const encodedData = btoa(unescape(encodeURIComponent(jsonString)));
+        const baseUrl = window.location.href.split('#')[0].split('?')[0];
+        const shareableUrl = `${baseUrl}#photos=${encodedData}`;
+
+        navigator.clipboard.writeText(shareableUrl).then(() => {
+          alert("Viewer Link Copied to Clipboard!\n\nSend this exact link to your girlfriend. When she opens it, her photos will explode automatically!");
+        }).catch(err => {
+          prompt("Copy this Viewer Link to send:", shareableUrl);
+        });
+      } catch(err) {
+        alert("Photos file size is too big. Please select fewer or smaller images.");
+      }
     }
 
     function triggerPhotoExplosion() {
@@ -1809,7 +1871,6 @@ Mera har sajda bas tere naam ho jaata hai."</div>
 
       const explosionContainer = document.getElementById('photo-explosion-layer');
       
-      // Fallback placeholder images if viewer opens mode without uploaded photos
       const fallbackImages = [
         "https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=500",
         "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=500",
