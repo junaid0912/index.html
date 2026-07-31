@@ -8,7 +8,7 @@
 <body>
     <div id="loading" style="position:fixed;inset:0;background:#0d0309;display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:99999;color:#d4af37;">
         <div style="width:50px;height:50px;border:3px solid #d4af37;border-top:3px solid transparent;border-radius:50%;animation:spin 1s linear infinite;"></div>
-        <p style="margin-top:20px;font-size:1.2rem;letter-spacing:2px;">✨ Loading Your Love Story ✨</p>
+        <p style="margin-top:20px;font-size:1.2rem;letter-spacing:2px;">✨ Loading... ✨</p>
         <style>@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}</style>
     </div>
     <div id="app"></div>
@@ -17,12 +17,12 @@
             "use strict";
 
             // ============================================================
-            // 1. PERMANENT STORAGE
+            // 1. PERMANENT STORAGE - localStorage with Base64
             // ============================================================
-            const STORAGE_KEY = 'gf_permanent_photos';
+            const STORAGE_KEY = 'gf_photos_permanent_v2';
             const isViewerMode = window.location.search.includes('viewerMode=true');
 
-            // Save photos permanently
+            // Save photos to localStorage
             function savePhotos(photosArray) {
                 try {
                     const data = {
@@ -34,23 +34,33 @@
                     console.log('✅ Saved:', photosArray.length, 'photos');
                     return true;
                 } catch(e) {
-                    console.warn('Save error:', e);
+                    console.error('Save error:', e);
                     return false;
                 }
             }
 
-            // Load photos
+            // Load photos from localStorage
             function loadPhotos() {
                 try {
                     const raw = localStorage.getItem(STORAGE_KEY);
-                    if (!raw) return { photos: [], uploaded: false };
+                    if (!raw) {
+                        console.log('📭 No photos found');
+                        return { photos: [], uploaded: false };
+                    }
                     const parsed = JSON.parse(raw);
                     if (!Array.isArray(parsed.photos)) parsed.photos = [];
                     console.log('📸 Loaded:', parsed.photos.length, 'photos');
                     return parsed;
                 } catch(e) {
+                    console.error('Load error:', e);
                     return { photos: [], uploaded: false };
                 }
+            }
+
+            // Check if photos exist
+            function hasPhotos() {
+                const data = loadPhotos();
+                return data.photos && data.photos.length > 0;
             }
 
             // File to Base64
@@ -63,10 +73,10 @@
                 });
             }
 
-            // Clear all
+            // Clear all photos
             function clearPhotos() {
                 localStorage.removeItem(STORAGE_KEY);
-                console.log('🗑️ Cleared');
+                console.log('🗑️ Cleared all photos');
             }
 
             // ============================================================
@@ -286,14 +296,21 @@
                     .layer7-upload-container.fade-out{opacity:0;transform:scale(0.8);pointer-events:none}
                     .layer7-title{font-family:'Playfair Display','Georgia',serif;font-size:2.2rem;color:var(--royal-gold);margin-bottom:10px;text-shadow:0 0 15px rgba(212,175,55,0.4)}
                     .layer7-subtitle{font-family:'Georgia',serif;font-size:0.95rem;color:#e0b0c0;font-style:italic;margin-bottom:25px}
-                    .upload-btn-label{display:inline-block;padding:14px 32px;background:linear-gradient(135deg,#580c1f 0%,#800f2f 100%);color:var(--royal-gold);border:1px solid var(--royal-gold);border-radius:30px;font-family:'Georgia',serif;font-size:1rem;cursor:pointer;box-shadow:0 0 20px rgba(128,15,47,0.6);transition:all 0.3s ease}
+                    
+                    /* Upload button - initially hidden, shown only if no photos */
+                    .upload-btn-label{display:none;padding:14px 32px;background:linear-gradient(135deg,#580c1f 0%,#800f2f 100%);color:var(--royal-gold);border:1px solid var(--royal-gold);border-radius:30px;font-family:'Georgia',serif;font-size:1rem;cursor:pointer;box-shadow:0 0 20px rgba(128,15,47,0.6);transition:all 0.3s ease}
                     .upload-btn-label:hover{transform:scale(1.05);box-shadow:0 0 25px rgba(212,175,55,0.5)}
+                    .upload-btn-label.show{display:inline-block}
+                    
                     #photo-file-input{display:none}
                     .action-btn-group{display:flex;flex-direction:column;gap:12px;align-items:center;margin-top:20px}
                     .explode-now-btn,.generate-link-btn{padding:12px 28px;border-radius:30px;font-family:'Georgia',serif;font-weight:bold;font-size:0.95rem;cursor:pointer;transition:transform 0.3s;width:100%;max-width:280px}
                     .explode-now-btn{display:none;background:linear-gradient(45deg,#d4af37,#f7d070);color:#2b0512;border:none;box-shadow:0 0 20px rgba(247,208,112,0.8)}
+                    .explode-now-btn.show{display:inline-block}
                     .generate-link-btn{display:none;background:transparent;color:var(--royal-gold);border:1px solid var(--royal-gold);box-shadow:0 0 15px rgba(212,175,55,0.3)}
+                    .generate-link-btn.show{display:inline-block}
                     .explode-now-btn:hover,.generate-link-btn:hover{transform:scale(1.05)}
+                    
                     .viewer-mode .upload-btn-label,.viewer-mode #photo-file-input,.viewer-mode #selected-count-msg,.viewer-mode .generate-link-btn{display:none !important}
                     
                     .exploded-photo-card{position:absolute;width:clamp(140px,18vw,220px);background:#120a10;padding:10px 10px 25px 10px;border-radius:6px;border:1px solid rgba(212,175,55,0.4);box-shadow:0 10px 30px rgba(0,0,0,0.9),0 0 20px rgba(255,77,109,0.2);pointer-events:none;opacity:0;transform:translate(-50%,-50%) scale(0.1) rotate(0deg);z-index:8100}
@@ -423,14 +440,19 @@
                     </div>
                     <div id="photo-explosion-layer">
                         <div class="layer7-upload-container" id="layer7-upload-box">
-                            <div class="layer7-title" id="layer7-title-text">Memories Exploding</div>
-                            <div class="layer7-subtitle" id="layer7-subtitle-text">Choose beautiful photos of your girlfriend to flood the dark aesthetic night...</div>
-                            <label for="photo-file-input" class="upload-btn-label" id="upload-label-btn">Select Girlfriend's Photos ✨</label>
-                            <input type="file" id="photo-file-input" multiple accept="image/*">
+                            <div class="layer7-title" id="layer7-title-text">💖 Memories Gallery</div>
+                            <div class="layer7-subtitle" id="layer7-subtitle-text">Upload your girlfriend's beautiful photos for a magical experience...</div>
+                            
+                            <!-- Upload Section - Hidden by default, shown only if no photos -->
+                            <div id="upload-section">
+                                <label for="photo-file-input" class="upload-btn-label" id="upload-label-btn">📸 Select Girlfriend's Photos</label>
+                                <input type="file" id="photo-file-input" multiple accept="image/*">
+                            </div>
+                            
                             <div id="selected-count-msg" style="margin-top:15px;color:var(--gold-accent);font-size:0.9rem;"></div>
                             <div class="action-btn-group">
-                                <button class="explode-now-btn" id="explode-trigger-btn">Explode Memories 🎆</button>
-                                <button class="generate-link-btn" id="generate-link-btn">Generate Viewer Link 🔗</button>
+                                <button class="explode-now-btn" id="explode-trigger-btn">🎆 Explode Memories</button>
+                                <button class="generate-link-btn" id="generate-link-btn">🔗 Generate Viewer Link</button>
                             </div>
                         </div>
                         <div id="shiny-glow-screen"></div>
@@ -451,20 +473,77 @@
                     const loading = document.getElementById('loading');
                     if(loading) { loading.style.display = 'none'; }
 
-                    // Viewer mode
-                    if(isViewerMode) {
-                        const ub = document.getElementById('layer7-upload-box');
-                        if(ub) ub.classList.add('viewer-mode');
-                        const sub = document.getElementById('layer7-subtitle-text');
-                        if(sub) sub.textContent = 'Tap the button below to explode the memories ✨';
-                        const ul = document.getElementById('upload-label-btn');
-                        if(ul) ul.style.display = 'none';
-                        const fi = document.getElementById('photo-file-input');
-                        if(fi) fi.style.display = 'none';
-                        const cm = document.getElementById('selected-count-msg');
-                        if(cm) cm.style.display = 'none';
-                        const gb = document.getElementById('generate-link-btn');
-                        if(gb) gb.style.display = 'none';
+                    // ============================================================
+                    // CHECK PHOTOS AND UPDATE UI
+                    // ============================================================
+                    let uploadedImageUrls = [];
+                    
+                    function updateUIForPhotos() {
+                        const saved = loadPhotos();
+                        const hasSavedPhotos = saved.photos && saved.photos.length > 0;
+                        
+                        const uploadLabel = document.getElementById('upload-label-btn');
+                        const fileInput = document.getElementById('photo-file-input');
+                        const explodeBtn = document.getElementById('explode-trigger-btn');
+                        const generateBtn = document.getElementById('generate-link-btn');
+                        const countMsg = document.getElementById('selected-count-msg');
+                        const subtitle = document.getElementById('layer7-subtitle-text');
+                        const title = document.getElementById('layer7-title-text');
+                        
+                        if (hasSavedPhotos) {
+                            uploadedImageUrls = saved.photos;
+                            
+                            // HIDE UPLOAD BUTTON FOREVER
+                            if (uploadLabel) uploadLabel.classList.remove('show');
+                            if (uploadLabel) uploadLabel.style.display = 'none';
+                            if (fileInput) fileInput.style.display = 'none';
+                            
+                            // SHOW EXPLODE BUTTON
+                            if (explodeBtn) explodeBtn.classList.add('show');
+                            if (explodeBtn) explodeBtn.style.display = 'inline-block';
+                            
+                            // SHOW GENERATE BUTTON (if not viewer mode)
+                            if (!isViewerMode && generateBtn) {
+                                generateBtn.classList.add('show');
+                                generateBtn.style.display = 'inline-block';
+                            }
+                            
+                            // Update messages
+                            if (countMsg) {
+                                countMsg.textContent = '📸 ' + uploadedImageUrls.length + ' photos saved permanently!';
+                                countMsg.style.display = 'block';
+                            }
+                            if (subtitle) subtitle.textContent = 'Your beautiful memories are ready to explode! ✨';
+                            if (title) title.textContent = '💖 Memories Gallery';
+                            
+                            console.log('✅ UI Updated: Photos loaded, upload hidden');
+                            return true;
+                        } else {
+                            // NO PHOTOS - Show upload button
+                            if (uploadLabel) {
+                                uploadLabel.classList.add('show');
+                                uploadLabel.style.display = 'inline-block';
+                            }
+                            if (fileInput) fileInput.style.display = 'inline-block';
+                            if (explodeBtn) explodeBtn.style.display = 'none';
+                            if (generateBtn) generateBtn.style.display = 'none';
+                            if (countMsg) {
+                                countMsg.textContent = '📸 No photos found. Please upload!';
+                                countMsg.style.display = 'block';
+                            }
+                            
+                            // Viewer mode with no photos
+                            if (isViewerMode) {
+                                if (title) title.textContent = '💔 No Memories Found';
+                                if (subtitle) subtitle.textContent = 'The creator hasn\'t uploaded any photos yet.';
+                                if (countMsg) countMsg.textContent = 'Please ask your partner to upload photos first.';
+                                if (uploadLabel) uploadLabel.style.display = 'none';
+                                if (fileInput) fileInput.style.display = 'none';
+                            }
+                            
+                            console.log('📭 No photos found, showing upload');
+                            return false;
+                        }
                     }
 
                     // ============================================================
@@ -982,127 +1061,115 @@
                     });
 
                     // ============================================================
-                    // PHOTO UPLOAD - PERMANENT STORAGE FIXED
+                    // PHOTO UPLOAD - FIXED PERMANENTLY
                     // ============================================================
-                    let uploadedImageUrls = [];
-                    let photosLoaded = false;
+                    
+                    // Handle file upload
+                    document.getElementById('photo-file-input').addEventListener('change', async function(e) {
+                        const files = Array.from(e.target.files);
+                        if (files.length === 0) return;
 
-                    function loadSavedPhotos() {
-                        const saved = loadPhotos();
-                        if (saved.photos && saved.photos.length > 0) {
-                            uploadedImageUrls = saved.photos;
-                            photosLoaded = true;
-                            
-                            // Hide upload button forever
+                        const newBase64 = [];
+
+                        for (let i = 0; i < files.length; i++) {
+                            try {
+                                const base64Data = await fileToBase64(files[i]);
+                                newBase64.push(base64Data);
+                            } catch (err) {
+                                console.warn('Failed to convert:', err);
+                            }
+                        }
+
+                        if (newBase64.length === 0) {
+                            alert('No valid images found. Please try again.');
+                            return;
+                        }
+
+                        // Merge with existing photos
+                        const current = loadPhotos();
+                        const allPhotos = current.photos.concat(newBase64);
+                        uploadedImageUrls = allPhotos;
+                        
+                        // SAVE PERMANENTLY TO LOCALSTORAGE
+                        const saved = savePhotos(allPhotos);
+                        
+                        if (saved) {
+                            // Update UI - HIDE UPLOAD, SHOW EXPLODE
                             const uploadLabel = document.getElementById('upload-label-btn');
                             const fileInput = document.getElementById('photo-file-input');
-                            if (uploadLabel) uploadLabel.style.display = 'none';
+                            const explodeBtn = document.getElementById('explode-trigger-btn');
+                            const generateBtn = document.getElementById('generate-link-btn');
+                            const countMsg = document.getElementById('selected-count-msg');
+                            const subtitle = document.getElementById('layer7-subtitle-text');
+                            const title = document.getElementById('layer7-title-text');
+                            
+                            // HIDE UPLOAD FOREVER
+                            if (uploadLabel) {
+                                uploadLabel.classList.remove('show');
+                                uploadLabel.style.display = 'none';
+                            }
                             if (fileInput) fileInput.style.display = 'none';
                             
-                            // Show explode button
-                            document.getElementById('explode-trigger-btn').style.display = 'inline-block';
-                            document.getElementById('selected-count-msg').textContent = '📸 ' + uploadedImageUrls.length + ' photos saved permanently!';
-                            
-                            // Show generate link button if not viewer mode
-                            if (!isViewerMode) {
-                                document.getElementById('generate-link-btn').style.display = 'inline-block';
+                            // SHOW EXPLODE BUTTON
+                            if (explodeBtn) {
+                                explodeBtn.classList.add('show');
+                                explodeBtn.style.display = 'inline-block';
                             }
                             
-                            console.log('✅ Loaded', uploadedImageUrls.length, 'photos from permanent storage');
-                            return true;
+                            // SHOW GENERATE BUTTON
+                            if (!isViewerMode && generateBtn) {
+                                generateBtn.classList.add('show');
+                                generateBtn.style.display = 'inline-block';
+                            }
+                            
+                            // Update messages
+                            if (countMsg) {
+                                countMsg.textContent = '✅ ' + uploadedImageUrls.length + ' photos saved permanently!';
+                                countMsg.style.display = 'block';
+                            }
+                            if (subtitle) subtitle.textContent = 'Your beautiful memories are ready! ✨';
+                            if (title) title.textContent = '💖 Memories Gallery';
+                            
+                            alert('✅ ' + uploadedImageUrls.length + ' photos saved permanently!\n\nRefresh karein toh bhi photos rahengi. Upload button wapas nahi aayega.');
+                            
+                            console.log('✅ Saved and UI updated');
+                        } else {
+                            alert('❌ Error saving photos. Please try again.');
                         }
-                        return false;
-                    }
+                    });
 
-                    // Load saved photos immediately
-                    const hasPhotos = loadSavedPhotos();
-
-                    // If no photos and not viewer mode, show upload
-                    if (!hasPhotos && !isViewerMode) {
-                        document.getElementById('upload-label-btn').style.display = 'inline-block';
-                        document.getElementById('photo-file-input').style.display = 'inline-block';
-                        document.getElementById('selected-count-msg').textContent = 'No photos found. Please upload!';
-                    }
-
-                    // If viewer mode and no photos
-                    if (isViewerMode && !hasPhotos) {
-                        document.getElementById('layer7-title-text').textContent = '💔 No Memories Found';
-                        document.getElementById('layer7-subtitle-text').textContent = 'The creator hasn\'t uploaded any photos yet.';
-                        document.getElementById('selected-count-msg').textContent = 'Please ask your partner to upload photos first.';
-                        document.getElementById('selected-count-msg').style.display = 'block';
-                    }
-
-                    // Handle file upload - SAVE PERMANENTLY
-                    if (!isViewerMode) {
-                        document.getElementById('photo-file-input').addEventListener('change', async function(e) {
-                            const files = Array.from(e.target.files);
-                            if (files.length === 0) return;
-
-                            const newBase64 = [];
-
-                            for (let i = 0; i < files.length; i++) {
-                                try {
-                                    const base64Data = await fileToBase64(files[i]);
-                                    newBase64.push(base64Data);
-                                } catch (err) {
-                                    console.warn('Failed to convert:', err);
-                                }
-                            }
-
-                            if (newBase64.length === 0) {
-                                alert('No valid images found. Please try again.');
-                                return;
-                            }
-
-                            // Merge with existing photos
-                            const current = loadPhotos();
-                            const allPhotos = current.photos.concat(newBase64);
-                            uploadedImageUrls = allPhotos;
-                            
-                            // SAVE PERMANENTLY
-                            savePhotos(allPhotos);
-
-                            // Hide upload button forever
-                            document.getElementById('upload-label-btn').style.display = 'none';
-                            document.getElementById('photo-file-input').style.display = 'none';
-                            
-                            // Show explode button
-                            document.getElementById('explode-trigger-btn').style.display = 'inline-block';
-                            document.getElementById('generate-link-btn').style.display = 'inline-block';
-                            document.getElementById('selected-count-msg').textContent = '✅ ' + uploadedImageUrls.length + ' photos saved permanently!';
-                            
-                            alert('✅ ' + uploadedImageUrls.length + ' photos saved permanently in your browser! Refresh karein toh bhi rahenge.');
+                    // ============================================================
+                    // GENERATE VIEWER LINK
+                    // ============================================================
+                    document.getElementById('generate-link-btn').addEventListener('click', function() {
+                        if (uploadedImageUrls.length === 0) {
+                            alert('Please upload photos first!');
+                            return;
+                        }
+                        savePhotos(uploadedImageUrls);
+                        const viewerUrl = window.location.href.split('?')[0] + '?viewerMode=true';
+                        navigator.clipboard.writeText(viewerUrl).then(function() {
+                            alert("✅ Viewer Link Copied!\n\nShare this link with your girlfriend ✨\n\nShe will only see the explode option, not upload!");
+                        }).catch(function() {
+                            prompt("Copy this Viewer Link to send:", viewerUrl);
                         });
-
-                        // Generate Viewer Link
-                        document.getElementById('generate-link-btn').addEventListener('click', function() {
-                            savePhotos(uploadedImageUrls);
-                            const viewerUrl = window.location.href.split('?')[0] + '?viewerMode=true';
-                            navigator.clipboard.writeText(viewerUrl).then(function() {
-                                alert("Viewer Link Copied! Share this link with your girlfriend ✨");
-                            }).catch(function() {
-                                prompt("Copy this Viewer Link to send:", viewerUrl);
-                            });
-                        });
-                    }
+                    });
 
                     // ============================================================
                     // EXPLODE MEMORIES
                     // ============================================================
                     document.getElementById('explode-trigger-btn').addEventListener('click', function() {
-                        // Save before exploding
-                        if (uploadedImageUrls.length > 0) {
-                            savePhotos(uploadedImageUrls);
+                        if (uploadedImageUrls.length === 0) {
+                            alert('Please upload photos first!');
+                            return;
                         }
+                        
+                        // Save before exploding
+                        savePhotos(uploadedImageUrls);
                         
                         document.getElementById('layer7-upload-box').classList.add('fade-out');
                         const explosionContainer = document.getElementById('photo-explosion-layer');
-                        const fallbackImages = [
-                            "https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=500",
-                            "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=500",
-                            "https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=500"
-                        ];
-                        const activeImages = uploadedImageUrls.length > 0 ? uploadedImageUrls : fallbackImages;
+                        const activeImages = uploadedImageUrls;
                         const totalExplosions = Math.max(35, activeImages.length * 5);
 
                         for (let j = 0; j < totalExplosions; j++) {
@@ -1145,8 +1212,8 @@
                         setTimeout(function() {
                             document.getElementById('polaroid-layer').style.visibility = 'hidden';
                             document.getElementById('photo-explosion-layer').classList.add('active');
-                            // Try to load saved photos again
-                            loadSavedPhotos();
+                            // Update UI based on saved photos
+                            updateUIForPhotos();
                         }, 1500);
                     });
 
@@ -1160,13 +1227,51 @@
                         }, 800);
                     });
 
+                    // ============================================================
+                    // INIT - LOAD PHOTOS AND UPDATE UI
+                    // ============================================================
+                    // First check for photos
+                    const hasSaved = updateUIForPhotos();
+                    
+                    // If viewer mode, update messages
+                    if (isViewerMode) {
+                        const title = document.getElementById('layer7-title-text');
+                        const subtitle = document.getElementById('layer7-subtitle-text');
+                        const countMsg = document.getElementById('selected-count-msg');
+                        const explodeBtn = document.getElementById('explode-trigger-btn');
+                        const generateBtn = document.getElementById('generate-link-btn');
+                        const uploadLabel = document.getElementById('upload-label-btn');
+                        const fileInput = document.getElementById('photo-file-input');
+                        
+                        if (uploadLabel) uploadLabel.style.display = 'none';
+                        if (fileInput) fileInput.style.display = 'none';
+                        if (generateBtn) generateBtn.style.display = 'none';
+                        
+                        if (!hasSaved) {
+                            if (title) title.textContent = '💔 No Memories Found';
+                            if (subtitle) subtitle.textContent = 'The creator hasn\'t uploaded any photos yet.';
+                            if (countMsg) countMsg.textContent = 'Please ask your partner to upload photos first.';
+                            if (countMsg) countMsg.style.display = 'block';
+                            if (explodeBtn) explodeBtn.style.display = 'none';
+                        } else {
+                            if (title) title.textContent = '💖 Your Memories Are Ready!';
+                            if (subtitle) subtitle.textContent = 'Tap the button below to watch the magic explode ✨';
+                            if (countMsg) countMsg.textContent = uploadedImageUrls.length + ' Photo(s) loaded!';
+                            if (countMsg) countMsg.style.display = 'block';
+                            if (explodeBtn) {
+                                explodeBtn.classList.add('show');
+                                explodeBtn.style.display = 'inline-block';
+                            }
+                        }
+                    }
+
                     console.log('💾 Storage Key:', STORAGE_KEY);
                     console.log('📸 Viewer Mode:', isViewerMode);
                     console.log('📸 Photos Loaded:', uploadedImageUrls.length);
                 }
 
                 // Start after a small delay
-                setTimeout(initApp, 200);
+                setTimeout(initApp, 300);
             }
 
             // ============================================================
