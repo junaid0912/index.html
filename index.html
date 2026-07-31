@@ -104,7 +104,7 @@
             }
 
             // ============================================================
-            // LOAD THREE.JS - FASTER WITH TIMEOUT
+            // LOAD THREE.JS
             // ============================================================
             function loadThreeJS() {
                 return new Promise(function(resolve, reject) {
@@ -347,7 +347,7 @@
                     #photo-explosion-layer{position:fixed;inset:0;background:radial-gradient(circle at center,#150510 0%,#050106 100%);opacity:0;visibility:hidden;transition:opacity 2s ease,visibility 2s;z-index:8000;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center}
                     #photo-explosion-layer.active{opacity:1;visibility:visible}
                     
-                    .layer7-upload-container{position:absolute;z-index:8200;text-align:center;background:rgba(15,5,12,0.75);padding:25px 20px;border-radius:20px;border:1px solid rgba(212,175,55,0.3);backdrop-filter:blur(15px);box-shadow:0 20px 50px rgba(0,0,0,0.8),0 0 30px rgba(212,175,55,0.15);max-width:480px;width:92%;transition:all 0.8s ease;max-height:92vh;overflow-y:auto}
+                    .layer7-upload-container{position:relative;z-index:8200;text-align:center;background:rgba(15,5,12,0.75);padding:25px 20px;border-radius:20px;border:1px solid rgba(212,175,55,0.3);backdrop-filter:blur(15px);box-shadow:0 20px 50px rgba(0,0,0,0.8),0 0 30px rgba(212,175,55,0.15);max-width:480px;width:92%;transition:all 0.8s ease;max-height:92vh;overflow-y:auto;margin:20px auto;}
                     .layer7-upload-container.fade-out{opacity:0;transform:scale(0.8);pointer-events:none}
                     .layer7-title{font-family:'Playfair Display','Georgia',serif;font-size:1.8rem;color:var(--royal-gold);margin-bottom:8px;text-shadow:0 0 15px rgba(212,175,55,0.4)}
                     .layer7-subtitle{font-family:'Georgia',serif;font-size:0.85rem;color:#e0b0c0;font-style:italic;margin-bottom:20px}
@@ -362,13 +362,14 @@
                     #song-file-input{display:none}
                     
                     .action-btn-group{display:flex;flex-direction:column;gap:12px;align-items:center;margin-top:15px}
-                    .explode-now-btn{padding:12px 24px;border-radius:30px;font-family:'Georgia',serif;font-weight:bold;font-size:0.9rem;cursor:pointer;transition:transform 0.3s;width:100%;max-width:280px;display:none;background:linear-gradient(45deg,#d4af37,#f7d070);color:#2b0512;border:none;box-shadow:0 0 20px rgba(247,208,112,0.8)}
+                    .explode-now-btn{padding:14px 28px;border-radius:30px;font-family:'Georgia',serif;font-weight:bold;font-size:1rem;cursor:pointer;transition:all 0.3s ease;width:100%;max-width:280px;display:none;background:linear-gradient(45deg,#d4af37,#f7d070);color:#2b0512;border:none;box-shadow:0 0 20px rgba(247,208,112,0.8)}
                     .explode-now-btn.show{display:inline-block !important}
+                    .explode-now-btn:hover{transform:scale(1.05);box-shadow:0 0 30px rgba(247,208,112,0.9)}
                     
                     .generate-link-btn{padding:12px 24px;border-radius:30px;font-family:'Georgia',serif;font-weight:bold;font-size:0.9rem;cursor:pointer;transition:transform 0.3s;width:100%;max-width:280px;display:none;background:transparent;color:var(--royal-gold);border:1px solid var(--royal-gold);box-shadow:0 0 15px rgba(212,175,55,0.3)}
                     .generate-link-btn.show{display:inline-block !important}
                     
-                    .explode-now-btn:hover,.generate-link-btn:hover{transform:scale(1.05)}
+                    .generate-link-btn:hover{transform:scale(1.05)}
                     
                     .exploded-photo-card{position:absolute;width:clamp(120px,16vw,200px);background:#120a10;padding:8px 8px 20px 8px;border-radius:6px;border:1px solid rgba(212,175,55,0.4);box-shadow:0 10px 30px rgba(0,0,0,0.9),0 0 20px rgba(255,77,109,0.2);pointer-events:none;opacity:0;transform:translate(-50%,-50%) scale(0.1) rotate(0deg);z-index:8100}
                     .exploded-photo-card img{width:100%;height:clamp(120px,16vw,200px);object-fit:cover;border-radius:4px;filter:contrast(1.05) brightness(0.95)}
@@ -555,6 +556,8 @@
 
                 // ✅ FIXED: updateUI function - properly shows explode button
                 function updateUI() {
+                    console.log('🔄 updateUI called, photos count:', uploadedImageUrls.length);
+                    
                     const gridContainer = document.getElementById('photo-grid-container');
                     const countMsg = document.getElementById('selected-count-msg');
                     const explodeBtn = document.getElementById('explode-trigger-btn');
@@ -570,6 +573,8 @@
                     gridContainer.innerHTML = '';
                     
                     if (uploadedImageUrls.length > 0) {
+                        console.log('✅ Photos found, showing grid and buttons');
+                        
                         // Show photos in grid
                         const grid = document.createElement('div');
                         grid.className = 'photo-grid';
@@ -584,16 +589,25 @@
                         countMsg.textContent = '📸 ' + uploadedImageUrls.length + ' photos loaded!';
                         
                         // ✅ HIDE upload options
-                        if (uploadLabel) uploadLabel.style.display = 'none';
-                        if (fileInput) fileInput.style.display = 'none';
+                        if (uploadLabel) { uploadLabel.style.display = 'none'; }
+                        if (fileInput) { fileInput.style.display = 'none'; }
                         
-                        // ✅ SHOW explode button
-                        explodeBtn.classList.add('show');
-                        explodeBtn.style.display = 'inline-block';
+                        // ✅ SHOW explode button - CRITICAL FIX
+                        if (explodeBtn) {
+                            explodeBtn.classList.add('show');
+                            explodeBtn.style.display = 'inline-block';
+                            explodeBtn.style.visibility = 'visible';
+                            explodeBtn.style.opacity = '1';
+                            console.log('✅ Explode button shown');
+                        }
                         
                         // ✅ SHOW generate link button
-                        generateBtn.classList.add('show');
-                        generateBtn.style.display = 'inline-block';
+                        if (generateBtn) {
+                            generateBtn.classList.add('show');
+                            generateBtn.style.display = 'inline-block';
+                            generateBtn.style.visibility = 'visible';
+                            generateBtn.style.opacity = '1';
+                        }
                         
                         if (subtitle) subtitle.textContent = 'Your beautiful memories are ready! ✨';
                         if (title) title.textContent = '💖 Memories Gallery';
@@ -603,11 +617,19 @@
                             if (songInput) songInput.style.display = 'none';
                         }
                     } else {
+                        console.log('❌ No photos, hiding buttons');
                         countMsg.textContent = '📸 No photos uploaded yet. Upload to begin!';
-                        explodeBtn.classList.remove('show');
-                        explodeBtn.style.display = 'none';
-                        generateBtn.classList.remove('show');
-                        generateBtn.style.display = 'none';
+                        
+                        if (explodeBtn) {
+                            explodeBtn.classList.remove('show');
+                            explodeBtn.style.display = 'none';
+                            explodeBtn.style.visibility = 'hidden';
+                        }
+                        if (generateBtn) {
+                            generateBtn.classList.remove('show');
+                            generateBtn.style.display = 'none';
+                            generateBtn.style.visibility = 'hidden';
+                        }
                         
                         if (uploadLabel) uploadLabel.style.display = 'inline-block';
                         if (fileInput) fileInput.style.display = 'inline-block';
@@ -1178,7 +1200,7 @@
                 });
 
                 // ============================================================
-                // ✅ PHOTO UPLOAD - FIXED
+                // ✅ PHOTO UPLOAD - FIXED: Shows explode button after upload
                 // ============================================================
                 document.getElementById('photo-file-input').addEventListener('change', async function(e) {
                     const files = Array.from(e.target.files);
@@ -1213,18 +1235,26 @@
                         return;
                     }
 
+                    // Add new photos to the array
                     uploadedImageUrls = uploadedImageUrls.concat(newPhotos);
                     
+                    // Save to localStorage
                     localStorage.setItem('gf_photos_share', JSON.stringify({ 
                         photos: uploadedImageUrls, 
                         uploaded: true, 
                         timestamp: Date.now() 
                     }));
                     
+                    // ✅ UPDATE UI - This will show the explode button
                     updateUI();
+                    
                     document.getElementById('selected-count-msg').textContent = 
                         '✅ ' + uploadedImageUrls.length + ' photos saved!';
+                    
                     alert('✅ ' + uploadedImageUrls.length + ' photos saved!\n\nClick "Explode Memories" to see magic!');
+                    
+                    // Clear the input so user can upload more
+                    this.value = '';
                 });
 
                 // ============================================================
@@ -1298,7 +1328,7 @@
                 });
 
                 // ============================================================
-                // ✅ EXPLODE MEMORIES - FIXED: Properly shows photos
+                // ✅ EXPLODE MEMORIES - FIXED
                 // ============================================================
                 document.getElementById('explode-trigger-btn').addEventListener('click', function() {
                     if (uploadedImageUrls.length === 0) {
@@ -1306,12 +1336,15 @@
                         return;
                     }
                     
+                    console.log('💥 Exploding ' + uploadedImageUrls.length + ' photos!');
+                    
                     // Make the explosion layer visible
                     const explosionLayer = document.getElementById('photo-explosion-layer');
                     explosionLayer.classList.add('active');
                     
                     // Fade out the upload box
-                    document.getElementById('layer7-upload-box').classList.add('fade-out');
+                    const uploadBox = document.getElementById('layer7-upload-box');
+                    uploadBox.classList.add('fade-out');
                     
                     // Create exploding photo cards
                     const activeImages = uploadedImageUrls;
@@ -1324,6 +1357,7 @@
                                 card.className = 'exploded-photo-card';
                                 const img = document.createElement('img');
                                 img.src = activeImages[index % activeImages.length];
+                                img.loading = 'lazy';
                                 card.appendChild(img);
 
                                 const screenWidth = window.innerWidth;
