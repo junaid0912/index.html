@@ -104,28 +104,66 @@
             }
 
             // ============================================================
-            // LOAD THREE.JS
+            // LOAD THREE.JS - FASTER WITH TIMEOUT
             // ============================================================
             function loadThreeJS() {
                 return new Promise(function(resolve, reject) {
+                    // Check if already loaded
                     if (typeof THREE !== 'undefined') { resolve(); return; }
-                    const sources = [
-                        'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js',
-                        'https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js'
-                    ];
-                    let idx = 0;
-                    function tryNext() {
-                        if (idx >= sources.length) { reject(new Error('Failed')); return; }
-                        const script = document.createElement('script');
-                        script.src = sources[idx];
-                        script.onload = function() {
-                            if (typeof THREE !== 'undefined') resolve();
-                            else { idx++; tryNext(); }
-                        };
-                        script.onerror = function() { idx++; tryNext(); };
-                        document.head.appendChild(script);
+                    
+                    let loaded = false;
+                    let timeoutId = null;
+                    
+                    function onSuccess() {
+                        if (loaded) return;
+                        loaded = true;
+                        if (timeoutId) clearTimeout(timeoutId);
+                        resolve();
                     }
-                    tryNext();
+                    
+                    function onError() {
+                        if (loaded) return;
+                        loaded = true;
+                        if (timeoutId) clearTimeout(timeoutId);
+                        // Don't reject - just resolve without Three.js
+                        console.warn('Three.js failed to load, continuing without it');
+                        resolve();
+                    }
+                    
+                    // Try loading from CDN
+                    const script = document.createElement('script');
+                    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
+                    script.onload = function() {
+                        if (typeof THREE !== 'undefined') {
+                            onSuccess();
+                        } else {
+                            onError();
+                        }
+                    };
+                    script.onerror = function() {
+                        // Try second source
+                        const script2 = document.createElement('script');
+                        script2.src = 'https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js';
+                        script2.onload = function() {
+                            if (typeof THREE !== 'undefined') {
+                                onSuccess();
+                            } else {
+                                onError();
+                            }
+                        };
+                        script2.onerror = onError;
+                        document.head.appendChild(script2);
+                    };
+                    document.head.appendChild(script);
+                    
+                    // Timeout after 3 seconds - don't keep user waiting
+                    timeoutId = setTimeout(function() {
+                        if (!loaded) {
+                            loaded = true;
+                            console.warn('Three.js load timeout, continuing without it');
+                            resolve();
+                        }
+                    }, 3000);
                 });
             }
 
@@ -687,6 +725,10 @@
                     document.getElementById('intro-screen').classList.add('hidden');
                     document.getElementById('main-content').classList.add('visible');
                     
+                    // ✅ Hide loading screen when entering experience
+                    const loading = document.getElementById('loading');
+                    if (loading) loading.style.display = 'none';
+                    
                     loadAllPhotos();
                     
                     const savedSong = localStorage.getItem('gf_song_share');
@@ -909,6 +951,7 @@
                     const container = document.getElementById('candle-webgl-container');
                     if (container.children.length > 0) return;
 
+                    // ✅ Check if THREE is available
                     if (typeof THREE === 'undefined') {
                         container.innerHTML = `
                             <div style="display:flex;justify-content:center;align-items:center;height:100%;color:#d4af37;font-family:Georgia,serif;font-size:1.2rem;text-align:center;padding:20px;">
@@ -1062,6 +1105,15 @@
                         animateSanctuary();
                     } catch (e) {
                         console.warn('Three.js error:', e);
+                        container.innerHTML = `
+                            <div style="display:flex;justify-content:center;align-items:center;height:100%;color:#d4af37;font-family:Georgia,serif;font-size:1.2rem;text-align:center;padding:20px;">
+                                <div>
+                                    <p style="font-size:3rem;">🕯️</p>
+                                    <p style="margin-top:10px;">Candle Sanctuary</p>
+                                    <p style="font-size:0.9rem;color:#f7d070;margin-top:5px;">Tap the center to ignite magical candles</p>
+                                </div>
+                            </div>
+                        `;
                     }
                 }
 
@@ -1349,12 +1401,24 @@
                 console.log('💖 App Loaded!');
                 console.log('📸 Photos:', uploadedImageUrls.length);
                 console.log('🎵 Song:', !!uploadedSongData);
+                
+                // ✅ Hide loading screen after app is built (max 2 seconds)
+                setTimeout(function() {
+                    const loading = document.getElementById('loading');
+                    if (loading) loading.style.display = 'none';
+                }, 2000);
             }
 
             // ============================================================
             // START
             // ============================================================
             function startEverything() {
+                // Hide loading after max 2.5 seconds regardless
+                setTimeout(function() {
+                    const loading = document.getElementById('loading');
+                    if (loading) loading.style.display = 'none';
+                }, 2500);
+                
                 loadThreeJS().then(function() {
                     console.log('✅ Three.js loaded');
                     buildApp();
