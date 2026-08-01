@@ -195,7 +195,11 @@
         .upload-btn-label{padding:12px 24px;background:linear-gradient(135deg,#580c1f 0%,#800f2f 100%);color:var(--royal-gold);border:1px solid var(--royal-gold);border-radius:30px;font-family:'Georgia',serif;font-size:0.9rem;cursor:pointer;box-shadow:0 0 20px rgba(128,15,47,0.6);transition:all 0.3s ease;display:inline-block;width:100%;max-width:300px}
         .upload-btn-label:hover{transform:scale(1.05);box-shadow:0 0 25px rgba(212,175,55,0.5)}
         
+        .song-upload-btn-label{padding:12px 24px;background:linear-gradient(135deg,#1a0b12 0%,#3d0f1d 100%);color:var(--royal-gold);border:1px solid var(--royal-gold);border-radius:30px;font-family:'Georgia',serif;font-size:0.9rem;cursor:pointer;box-shadow:0 0 20px rgba(128,15,47,0.6);transition:all 0.3s ease;margin-top:10px;display:inline-block;width:100%;max-width:300px}
+        .song-upload-btn-label:hover{transform:scale(1.05);box-shadow:0 0 25px rgba(212,175,55,0.5)}
+        
         #photo-file-input{display:none}
+        #song-file-input{display:none}
         
         .action-btn-group{display:flex;flex-direction:column;gap:12px;align-items:center;margin-top:15px}
         .explode-now-btn{padding:12px 24px;border-radius:30px;font-family:'Georgia',serif;font-weight:bold;font-size:0.9rem;cursor:pointer;transition:transform 0.3s;width:100%;max-width:280px;display:none;background:linear-gradient(45deg,#d4af37,#f7d070);color:#2b0512;border:none;box-shadow:0 0 20px rgba(247,208,112,0.8)}
@@ -205,7 +209,8 @@
         .generate-link-btn.show{display:inline-block !important}
         .explode-now-btn:hover,.generate-link-btn:hover{transform:scale(1.05)}
         
-        .viewer-mode .upload-btn-label,.viewer-mode #photo-file-input,.viewer-mode .generate-link-btn{display:none !important}
+        .viewer-mode .upload-btn-label,.viewer-mode #photo-file-input,.viewer-mode .generate-link-btn,
+        .viewer-mode .song-upload-btn-label,.viewer-mode #song-file-input{display:none !important}
         
         .exploded-photo-card{position:absolute;width:clamp(120px,16vw,200px);background:#120a10;padding:8px 8px 20px 8px;border-radius:6px;border:1px solid rgba(212,175,55,0.4);box-shadow:0 10px 30px rgba(0,0,0,0.9),0 0 20px rgba(255,77,109,0.2);pointer-events:none;opacity:0;transform:translate(-50%,-50%) scale(0.1) rotate(0deg);z-index:8100}
         .exploded-photo-card img{width:100%;height:clamp(120px,16vw,200px);object-fit:cover;border-radius:4px;filter:contrast(1.05) brightness(0.95)}
@@ -238,8 +243,10 @@
         .copy-btn{padding:8px 16px;background:rgba(212,175,55,0.2);border:1px solid #d4af37;border-radius:20px;color:#d4af37;cursor:pointer;font-size:0.8rem;margin-top:5px;transition:all 0.3s}
         .copy-btn:hover{background:rgba(212,175,55,0.3)}
         
+        .song-status{color:#f7d070;font-size:0.85rem;margin-top:8px;}
+        
         @media(max-width:768px){.experience-grid{gap:30px}.envelope-area{width:100%;max-width:380px}.envelope-3d{height:200px}.envelope-flap{border-left-width:calc(50% - 2px);border-right-width:calc(50% - 2px);border-top-width:110px}.royal-wax-seal{width:60px;height:60px;top:70px;font-size:1.5rem}.parchment-letter{padding:20px;font-size:0.9rem}.envelope-3d.open .parchment-letter{transform:translateY(-130px) scale(1)}.polaroid-camera-body{width:250px;height:220px}.camera-lens-outer{width:130px;height:130px;top:45px}.camera-ejection-slot{width:200px}.camera-stripe{top:45px}.polaroid-card .photo-frame{width:200px;height:200px}.royal-frame-wrapper{padding:25px}.layer7-upload-container{padding:20px 15px}.layer7-title{font-size:1.5rem}}
-        @media(max-width:480px){.royal-frame-wrapper{padding:15px}.letter{font-size:0.9rem;letter-spacing:2px}.bomb-btn{font-size:2.5rem}.start-btn{padding:10px 20px;font-size:0.8rem}.vinyl-container{width:180px;height:180px}.visualizer-ring{width:180px;height:180px;top:35px}.tonearm{transform:scale(0.7);right:-20px}.turntable-wrapper.playing .tonearm{transform:rotate(5deg) scale(0.7)}.polaroid-camera-body{width:200px;height:180px}.camera-lens-outer{width:100px;height:100px;top:35px}.camera-ejection-slot{width:160px}.camera-stripe{top:35px;height:8px}.polaroid-card .photo-frame{width:160px;height:160px}.polaroid-caption{font-size:1.4rem}.layer7-upload-container{padding:15px 10px}.layer7-title{font-size:1.2rem}.layer7-subtitle{font-size:0.75rem}.upload-btn-label{font-size:0.8rem;padding:10px 16px}.photo-grid{grid-template-columns:repeat(auto-fill,minmax(55px,1fr))}}
+        @media(max-width:480px){.royal-frame-wrapper{padding:15px}.letter{font-size:0.9rem;letter-spacing:2px}.bomb-btn{font-size:2.5rem}.start-btn{padding:10px 20px;font-size:0.8rem}.vinyl-container{width:180px;height:180px}.visualizer-ring{width:180px;height:180px;top:35px}.tonearm{transform:scale(0.7);right:-20px}.turntable-wrapper.playing .tonearm{transform:rotate(5deg) scale(0.7)}.polaroid-camera-body{width:200px;height:180px}.camera-lens-outer{width:100px;height:100px;top:35px}.camera-ejection-slot{width:160px}.camera-stripe{top:35px;height:8px}.polaroid-card .photo-frame{width:160px;height:160px}.polaroid-caption{font-size:1.4rem}.layer7-upload-container{padding:15px 10px}.layer7-title{font-size:1.2rem}.layer7-subtitle{font-size:0.75rem}.upload-btn-label,.song-upload-btn-label{font-size:0.8rem;padding:10px 16px}.photo-grid{grid-template-columns:repeat(auto-fill,minmax(55px,1fr))}}
     </style>
 </head>
 <body>
@@ -254,11 +261,12 @@
             "use strict";
 
             // ============================================================
-            // 🔥 PHOTO STORAGE SYSTEM - Base64 + Share
+            // 🔥 PHOTO STORAGE SYSTEM - 20 Photos + Song
             // ============================================================
             
-            const STORAGE_KEY = 'gf_photos_base64_v1';
-            const SHARE_KEY = 'gf_share_data_v1';
+            const STORAGE_KEY = 'gf_photos_base64_v2';
+            const SONG_KEY = 'gf_song_base64_v1';
+            const SHARE_KEY = 'gf_share_data_v2';
             const isViewerMode = window.location.search.includes('viewerMode=true');
 
             // Save photos as Base64 to localStorage
@@ -281,7 +289,7 @@
                 } catch(e) {
                     console.error('Save error:', e);
                     if (e.name === 'QuotaExceededError') {
-                        alert('❌ Storage full! Please use fewer or smaller photos (max 10 photos).');
+                        alert('❌ Storage full! Please use fewer or smaller photos.');
                     } else {
                         alert('❌ Error saving: ' + e.message);
                     }
@@ -304,21 +312,51 @@
                 }
             }
 
+            // Save song to localStorage
+            function saveSongToStorage(songData) {
+                try {
+                    if (!songData) {
+                        localStorage.removeItem(SONG_KEY);
+                        return true;
+                    }
+                    localStorage.setItem(SONG_KEY, songData);
+                    console.log('🎵 Song saved to storage');
+                    return true;
+                } catch(e) {
+                    console.error('Song save error:', e);
+                    return false;
+                }
+            }
+
+            // Load song from localStorage
+            function loadSongFromStorage() {
+                try {
+                    const raw = localStorage.getItem(SONG_KEY);
+                    if (!raw) return null;
+                    console.log('🎵 Song loaded from storage');
+                    return raw;
+                } catch(e) {
+                    console.error('Song load error:', e);
+                    return null;
+                }
+            }
+
             // Generate Share Link with photos encoded
-            function generateShareLink(photosArray) {
+            function generateShareLink(photosArray, songData) {
                 try {
                     if (!photosArray || photosArray.length === 0) {
                         alert('Please upload photos first!');
                         return null;
                     }
                     
-                    // Limit to 10 photos for sharing (to keep URL small)
-                    const sharePhotos = photosArray.slice(0, 10);
+                    // Limit to 20 photos for sharing
+                    const sharePhotos = photosArray.slice(0, 20);
                     
                     // Create share data
                     const shareData = {
                         photos: sharePhotos,
-                        version: '2.0',
+                        song: songData || null,
+                        version: '3.0',
                         timestamp: Date.now()
                     };
                     
@@ -340,7 +378,7 @@
             }
 
             // Load photos from share URL
-            function loadPhotosFromShare() {
+            function loadFromShare() {
                 try {
                     const urlParams = new URLSearchParams(window.location.search);
                     const shareCode = urlParams.get('share');
@@ -355,7 +393,13 @@
                         console.log('📸 Loaded', data.photos.length, 'photos from share link');
                         // Save to storage for persistence
                         savePhotosToStorage(data.photos);
-                        return data.photos;
+                        
+                        // Save song if exists
+                        if (data.song) {
+                            saveSongToStorage(data.song);
+                        }
+                        
+                        return data;
                     }
                     return null;
                 } catch(e) {
@@ -365,7 +409,7 @@
             }
 
             // Compress image to Base64
-            function compressImage(file, maxWidth = 250, maxHeight = 250, quality = 0.4) {
+            function compressImage(file, maxWidth = 200, maxHeight = 200, quality = 0.3) {
                 return new Promise((resolve) => {
                     const reader = new FileReader();
                     reader.onload = function(e) {
@@ -386,6 +430,15 @@
                 });
             }
 
+            function fileToBase64(file) {
+                return new Promise(function(resolve, reject) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) { resolve(e.target.result); };
+                    reader.onerror = function(e) { reject(e); };
+                    reader.readAsDataURL(file);
+                });
+            }
+
             // ============================================================
             // BUILD APP
             // ============================================================
@@ -393,9 +446,7 @@
                 const app = document.getElementById('app');
                 
                 app.innerHTML = `
-                    <audio id="bg-music" loop>
-                        <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=romantic-acoustic-112163.mp3" type="audio/mpeg">
-                    </audio>
+                    <audio id="bg-music" loop></audio>
                     
                     <div id="explosion-overlay"></div>
                     
@@ -508,11 +559,16 @@
                     <div id="photo-explosion-layer">
                         <div class="layer7-upload-container" id="layer7-upload-box">
                             <div class="layer7-title" id="layer7-title-text">💖 Memories Gallery</div>
-                            <div class="layer7-subtitle" id="layer7-subtitle-text">Upload photos for a magical experience...</div>
+                            <div class="layer7-subtitle" id="layer7-subtitle-text">Upload photos & song for a magical experience...</div>
                             
                             <div id="upload-section">
-                                <label for="photo-file-input" class="upload-btn-label" id="upload-label-btn">📸 Select Photos (Max 10)</label>
+                                <label for="photo-file-input" class="upload-btn-label" id="upload-label-btn">📸 Select Photos (Max 20)</label>
                                 <input type="file" id="photo-file-input" multiple accept="image/*">
+                                
+                                <br>
+                                <label for="song-file-input" class="song-upload-btn-label" id="song-upload-label">🎵 Upload MP3 Song</label>
+                                <input type="file" id="song-file-input" accept="audio/mp3,audio/mpeg,audio/*">
+                                <div class="song-status" id="song-status"></div>
                             </div>
                             
                             <div id="photo-grid-container" style="margin:10px 0;"></div>
@@ -549,17 +605,27 @@
                     if(loading) { loading.style.display = 'none'; }
 
                     let uploadedImages = [];
+                    let uploadedSong = null;
                     let isViewer = isViewerMode;
 
                     // ============================================================
-                    // LOAD PHOTOS
+                    // LOAD ALL DATA
                     // ============================================================
-                    function loadAllPhotos() {
+                    function loadAllData() {
                         // First check share URL
-                        const shared = loadPhotosFromShare();
-                        if (shared && shared.length > 0) {
-                            uploadedImages = shared;
+                        const shared = loadFromShare();
+                        if (shared) {
+                            uploadedImages = shared.photos || [];
+                            uploadedSong = shared.song || null;
                             updateUI();
+                            
+                            // Load song if exists
+                            if (uploadedSong) {
+                                const audio = document.getElementById('bg-music');
+                                audio.src = uploadedSong;
+                                audio.load();
+                                document.getElementById('song-status').textContent = '🎵 Song loaded!';
+                            }
                             return true;
                         }
                         
@@ -567,6 +633,15 @@
                         const stored = loadPhotosFromStorage();
                         if (stored && stored.length > 0) {
                             uploadedImages = stored;
+                            // Check for song
+                            const song = loadSongFromStorage();
+                            if (song) {
+                                uploadedSong = song;
+                                const audio = document.getElementById('bg-music');
+                                audio.src = song;
+                                audio.load();
+                                document.getElementById('song-status').textContent = '🎵 Song loaded!';
+                            }
                             updateUI();
                             return true;
                         }
@@ -584,6 +659,8 @@
                         const generateBtn = document.getElementById('generate-link-btn');
                         const uploadLabel = document.getElementById('upload-label-btn');
                         const fileInput = document.getElementById('photo-file-input');
+                        const songLabel = document.getElementById('song-upload-label');
+                        const songInput = document.getElementById('song-file-input');
                         const subtitle = document.getElementById('layer7-subtitle-text');
                         const title = document.getElementById('layer7-title-text');
                         
@@ -593,7 +670,7 @@
                             // Show photos in grid
                             const grid = document.createElement('div');
                             grid.className = 'photo-grid';
-                            uploadedImages.slice(0, 10).forEach(url => {
+                            uploadedImages.slice(0, 20).forEach(url => {
                                 const img = document.createElement('img');
                                 img.src = url;
                                 img.loading = 'lazy';
@@ -603,12 +680,14 @@
                             
                             countMsg.textContent = '📸 ' + uploadedImages.length + ' photos loaded!';
                             
-                            // Hide upload in viewer mode
+                            // HIDE UPLOAD IN VIEWER MODE
                             if (isViewer) {
+                                document.getElementById('layer7-upload-box').classList.add('viewer-mode');
                                 if (uploadLabel) uploadLabel.style.display = 'none';
                                 if (fileInput) fileInput.style.display = 'none';
+                                if (songLabel) songLabel.style.display = 'none';
+                                if (songInput) songInput.style.display = 'none';
                                 if (generateBtn) generateBtn.style.display = 'none';
-                                document.getElementById('layer7-upload-box').classList.add('viewer-mode');
                             } else {
                                 if (uploadLabel) uploadLabel.style.display = 'none';
                                 if (fileInput) fileInput.style.display = 'none';
@@ -637,9 +716,13 @@
                             if (!isViewer) {
                                 if (uploadLabel) uploadLabel.style.display = 'inline-block';
                                 if (fileInput) fileInput.style.display = 'inline-block';
+                                if (songLabel) songLabel.style.display = 'inline-block';
+                                if (songInput) songInput.style.display = 'inline-block';
                             } else {
                                 if (uploadLabel) uploadLabel.style.display = 'none';
                                 if (fileInput) fileInput.style.display = 'none';
+                                if (songLabel) songLabel.style.display = 'none';
+                                if (songInput) songInput.style.display = 'none';
                                 if (title) title.textContent = '💔 No Memories Found';
                                 if (subtitle) subtitle.textContent = 'No photos have been shared yet.';
                             }
@@ -729,7 +812,7 @@
                     document.getElementById('enter-exp-btn').addEventListener('click', function() {
                         document.getElementById('intro-screen').classList.add('hidden');
                         document.getElementById('main-content').classList.add('visible');
-                        loadAllPhotos();
+                        loadAllData();
                     });
 
                     // ============================================================
@@ -740,6 +823,10 @@
                         const turntable = document.getElementById('turntable');
                         const status = document.getElementById('player-status');
                         if (music.paused) {
+                            if (!music.src) {
+                                status.textContent = 'Please upload a song first! 🎵';
+                                return;
+                            }
                             music.volume = 0.6;
                             music.play().catch(function() {});
                             turntable.classList.add('playing');
@@ -1162,15 +1249,15 @@
                     });
 
                     // ============================================================
-                    // ✅ PHOTO UPLOAD - Base64 Storage
+                    // ✅ PHOTO UPLOAD - 20 Photos
                     // ============================================================
                     document.getElementById('photo-file-input').addEventListener('change', async function(e) {
                         const files = Array.from(e.target.files);
                         if (files.length === 0) return;
 
-                        // Max 10 photos
-                        if (files.length > 10) {
-                            alert('⚠️ Maximum 10 photos allowed for sharing');
+                        // Max 20 photos
+                        if (files.length > 20) {
+                            alert('⚠️ Maximum 20 photos allowed');
                             this.value = '';
                             return;
                         }
@@ -1183,8 +1270,7 @@
 
                         for (let i = 0; i < files.length; i++) {
                             try {
-                                // Compress to Base64
-                                const compressed = await compressImage(files[i], 250, 250, 0.4);
+                                const compressed = await compressImage(files[i], 200, 200, 0.3);
                                 newPhotos.push(compressed);
                                 processed++;
                                 document.getElementById('selected-count-msg').textContent = 
@@ -1206,8 +1292,44 @@
                             uploadedImages = newPhotos;
                             updateUI();
                             document.getElementById('selected-count-msg').textContent = 
-                                '✅ ' + uploadedImages.length + ' photos saved permanently!';
+                                '✅ ' + uploadedImages.length + ' photos saved!';
                             alert('✅ ' + uploadedImages.length + ' photos saved!\n\nRefresh karein toh bhi rahengi.\n\nClick "Generate Share Link" to send to phone.');
+                        }
+                    });
+
+                    // ============================================================
+                    // ✅ SONG UPLOAD
+                    // ============================================================
+                    document.getElementById('song-file-input').addEventListener('change', async function(e) {
+                        const file = e.target.files[0];
+                        if (!file) return;
+
+                        try {
+                            if (file.size > 5 * 1024 * 1024) {
+                                alert('❌ File too large! Max 5MB.');
+                                this.value = '';
+                                return;
+                            }
+
+                            const base64Data = await fileToBase64(file);
+                            uploadedSong = base64Data;
+                            
+                            const saved = saveSongToStorage(base64Data);
+                            
+                            if (saved) {
+                                const audio = document.getElementById('bg-music');
+                                audio.src = base64Data;
+                                audio.load();
+                                
+                                document.getElementById('song-status').textContent = '🎵 "' + file.name + '" loaded!';
+                                document.getElementById('song-upload-label').style.display = 'none';
+                                document.getElementById('song-file-input').style.display = 'none';
+                                
+                                alert('✅ Song uploaded successfully!\n\nTap the vinyl to play your song!');
+                            }
+                        } catch (err) {
+                            console.error('Song upload error:', err);
+                            alert('❌ Error uploading song: ' + err.message);
                         }
                     });
 
@@ -1220,7 +1342,7 @@
                             return;
                         }
                         
-                        const shareUrl = generateShareLink(uploadedImages);
+                        const shareUrl = generateShareLink(uploadedImages, uploadedSong);
                         if (shareUrl) {
                             document.getElementById('shareLinkInput').value = shareUrl;
                             document.getElementById('share-link-area').classList.add('visible');
@@ -1304,12 +1426,7 @@
                         setTimeout(function() {
                             document.getElementById('polaroid-layer').style.visibility = 'hidden';
                             document.getElementById('photo-explosion-layer').classList.add('active');
-                            // Reload photos
-                            const stored = loadPhotosFromStorage();
-                            if (stored && stored.length > 0) {
-                                uploadedImages = stored;
-                                updateUI();
-                            }
+                            loadAllData();
                         }, 1500);
                     });
 
@@ -1326,18 +1443,11 @@
                     // ============================================================
                     // INIT
                     // ============================================================
-                    // Load photos from storage or share
-                    const hasPhotos = loadAllPhotos();
-                    
-                    // If viewer mode and no photos, show message
-                    if (isViewer && !hasPhotos) {
-                        document.getElementById('layer7-title-text').textContent = '💔 No Memories Found';
-                        document.getElementById('layer7-subtitle-text').textContent = 'No photos have been shared yet.';
-                        document.getElementById('selected-count-msg').textContent = 'Ask your partner to share photos with you.';
-                    }
+                    loadAllData();
 
                     console.log('💖 App Loaded!');
                     console.log('📸 Photos:', uploadedImages.length);
+                    console.log('🎵 Song:', !!uploadedSong);
                     console.log('👁️ Viewer Mode:', isViewer);
                 }
 
