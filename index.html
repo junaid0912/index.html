@@ -816,11 +816,58 @@
       cursor: pointer;
       box-shadow: 0 0 20px rgba(247, 208, 112, 0.8);
       transition: transform 0.3s ease;
-      display: inline-block;
+      display: none;
     }
 
     .explode-now-btn:hover {
       transform: scale(1.05);
+    }
+
+    .generate-link-btn {
+      padding: 14px 32px;
+      background: transparent;
+      color: var(--royal-gold);
+      border: 1px solid var(--royal-gold);
+      border-radius: 30px;
+      font-family: 'Georgia', serif;
+      font-weight: bold;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: none;
+      box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+    }
+
+    .generate-link-btn:hover {
+      transform: scale(1.05);
+      background: rgba(212, 175, 55, 0.2);
+      box-shadow: 0 0 25px rgba(212, 175, 55, 0.5);
+    }
+
+    .upload-btn-label {
+      display: inline-block;
+      padding: 14px 32px;
+      background: linear-gradient(135deg, #580c1f 0%, #800f2f 100%);
+      color: var(--royal-gold);
+      border: 1px solid var(--royal-gold);
+      border-radius: 30px;
+      font-family: 'Georgia', serif;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 0 0 20px rgba(128, 15, 47, 0.6);
+      transition: all 0.3s ease;
+    }
+
+    .upload-btn-label:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 25px rgba(212, 175, 55, 0.5);
+    }
+
+    .selected-count-msg {
+      margin-top: 15px;
+      color: var(--gold-accent);
+      font-size: 0.9rem;
+      min-height: 24px;
     }
 
     /* EXPLODING PHOTO CARDS */
@@ -1226,7 +1273,7 @@ Mera har sajda bas tere naam ho jaata hai."</div>
        ======================================================== -->
   <div id="photo-explosion-layer">
     
-    <!-- Upload Initial Screen - Upload option removed, only surprise explode -->
+    <!-- Upload Initial Screen -->
     <div class="layer7-upload-container" id="layer7-upload-box">
       <div class="layer7-title" id="layer7-title-text">A Beautiful Surprise</div>
       <div class="layer7-subtitle" id="layer7-subtitle-text">A flood of our precious memories...</div>
@@ -1236,6 +1283,8 @@ Mera har sajda bas tere naam ho jaata hai."</div>
         <button class="explode-now-btn" id="explode-trigger-btn" onclick="triggerPhotoExplosion()">Explode Memories 🎆</button>
         <button class="generate-link-btn" id="generate-link-btn" onclick="generateViewerLink()">Generate Viewer Link 🔗</button>
       </div>
+      
+      <div class="selected-count-msg" id="selected-count-msg"></div>
     </div>
 
     <!-- Shiny Glow Effect Overlay -->
@@ -1768,7 +1817,10 @@ Mera har sajda bas tere naam ho jaata hai."</div>
             const decodedImages = JSON.parse(decodeURIComponent(imagesParam));
             if (Array.isArray(decodedImages) && decodedImages.length > 0) {
               uploadedImageUrls = decodedImages;
-              document.getElementById('explode-trigger-btn').style.display = 'inline-block';
+              // Auto-trigger explosion after a moment
+              setTimeout(() => {
+                triggerPhotoExplosion();
+              }, 2500);
             }
           } catch (e) {
             console.error('Failed to parse images from URL', e);
@@ -1778,12 +1830,20 @@ Mera har sajda bas tere naam ho jaata hai."</div>
     });
 
     // Cloudinary Upload Function
+    let widgetInstance = null;
+
     function uploadToCloudinary() {
       const cloudName = 'shadiya'; // Your Cloudinary cloud name
-      const uploadPreset = 'unsigned_upload'; // Replace with your unsigned upload preset
-      
+      const uploadPreset = 'shadiya'; // ⚠️ REPLACE with your actual unsigned upload preset name
+
+      // Close existing widget if open
+      if (widgetInstance) {
+        widgetInstance.close();
+        widgetInstance = null;
+      }
+
       // Initialize Cloudinary Upload Widget
-      const widget = cloudinary.createUploadWidget(
+      widgetInstance = cloudinary.createUploadWidget(
         {
           cloudName: cloudName,
           uploadPreset: uploadPreset,
@@ -1816,7 +1876,12 @@ Mera har sajda bas tere naam ho jaata hai."</div>
           }
         },
         (error, result) => {
-          if (!error && result && result.event === "success") {
+          if (error) {
+            console.error('Upload error:', error);
+            return;
+          }
+
+          if (result && result.event === "success") {
             // Get the uploaded image URL
             const imageUrl = result.info.secure_url;
             uploadedImageUrls.push(imageUrl);
@@ -1828,14 +1893,26 @@ Mera har sajda bas tere naam ho jaata hai."</div>
             
             // Auto-generate viewer link after first upload
             if (uploadedImageUrls.length === 1) {
-              // Generate link silently
               generateViewerLinkSilent();
             }
+            
+            // Close the widget after upload is complete
+            if (widgetInstance) {
+              setTimeout(() => {
+                widgetInstance.close();
+                widgetInstance = null;
+              }, 500);
+            }
+          }
+          
+          // If user closes widget manually
+          if (result && result.event === "close") {
+            widgetInstance = null;
           }
         }
       );
       
-      widget.open();
+      widgetInstance.open();
     }
 
     // Generates shareable URL with images encoded
@@ -1852,7 +1929,6 @@ Mera har sajda bas tere naam ho jaata hai."</div>
       navigator.clipboard.writeText(viewerUrl).then(() => {
         alert("✨ Viewer Link Copied! ✨\n\nSend this link to your girlfriend. The photos you selected will explode beautifully.");
       }).catch(err => {
-        // Fallback: show prompt with the link
         prompt("Copy this Viewer Link to share:", viewerUrl);
       });
     }
