@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Happy Girlfriend's Day 🌸</title>
   
+  <!-- Cursive Fonts for Aesthetic Polaroid Caption & Notes -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
@@ -36,7 +37,6 @@
       overflow-x: hidden;
       user-select: none;
       -webkit-user-select: none;
-      background: #0d0309;
     }
 
     /* --- LAYER 1: AESTHETIC DARK INTRO SCREEN --- */
@@ -686,9 +686,7 @@
 
     /* --- LAYER 6: REALISTIC VINTAGE INSTANT POLAROID CAMERA --- */
     #polaroid-layer {
-      position: fixed; inset: 0; background: radial-gradient(circle at center, #23121f 0%, #080309 100%);
-      opacity: 0; visibility: hidden; transition: opacity 1.8s ease, visibility 1.8s;
-      z-index: 6000; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow-y: auto; padding: 30px 20px;
+      position: fixed; inset: 0; background: radial-gradient(circle at center, #23121f 0%, #080309 100%); opacity: 0; visibility: hidden; transition: opacity 1.8s ease, visibility 1.8s; z-index: 6000; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow-y: auto; padding: 30px 20px;
     }
     #polaroid-layer.active { opacity: 1; visibility: visible; }
 
@@ -698,10 +696,7 @@
 
     .camera-wrapper { position: relative; width: 320px; display: flex; flex-direction: column; align-items: center; }
     .polaroid-camera-body {
-      width: 300px; height: 250px; background: linear-gradient(145deg, #f3ede2 0%, #e1d5c1 100%);
-      border-radius: 36px 36px 20px 20px; border: 4px solid var(--royal-gold);
-      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.8), 0 0 25px rgba(212, 175, 55, 0.3);
-      position: relative; z-index: 20; display: flex; flex-direction: column; align-items: center;
+      width: 300px; height: 250px; background: linear-gradient(145deg, #f3ede2 0%, #e1d5c1 100%); border-radius: 36px 36px 20px 20px; border: 4px solid var(--royal-gold); box-shadow: 0 20px 45px rgba(0, 0, 0, 0.8), 0 0 25px rgba(212, 175, 55, 0.3); position: relative; z-index: 20; display: flex; flex-direction: column; align-items: center;
     }
 
     .camera-stripe { position: absolute; top: 55px; width: 100%; height: 12px; background: linear-gradient(to right, #ff4d6d, #ffb703, #d4af37, #4ea8de); opacity: 0.85; }
@@ -710,43 +705,27 @@
     .camera-viewfinder-window { width: 32px; height: 32px; background: #111; border: 3px solid #888; border-radius: 6px; box-shadow: inset 0 0 6px rgba(0,0,0,0.8); }
 
     .shutter-btn {
-      width: 44px; height: 44px; background: radial-gradient(circle, #ff4d6d 0%, #c9184a 100%);
-      border: 3px solid var(--royal-gold); border-radius: 50%;
-      cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-      transition: transform 0.1s, box-shadow 0.1s; outline: none;
+      width: 44px; height: 44px; background: radial-gradient(circle, #ff4d6d 0%, #c9184a 100%); border: 3px solid var(--royal-gold); border-radius: 50%; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.4); transition: transform 0.1s, box-shadow 0.1s; outline: none;
     }
     .shutter-btn:active { transform: scale(0.92); box-shadow: 0 2px 4px rgba(0,0,0,0.6); }
 
     .camera-lens-outer {
-      width: 160px; height: 160px; background: radial-gradient(circle, #333 30%, #111 70%, #000 100%);
-      border-radius: 50%; border: 6px solid #d4af37;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.6);
-      display: flex; justify-content: center; align-items: center;
-      position: absolute; top: 55px; z-index: 5; overflow: hidden;
+      width: 160px; height: 160px; background: radial-gradient(circle, #333 30%, #111 70%, #000 100%); border-radius: 50%; border: 6px solid #d4af37; box-shadow: 0 8px 20px rgba(0,0,0,0.6); display: flex; justify-content: center; align-items: center; position: absolute; top: 55px; z-index: 5; overflow: hidden;
     }
     #webcam { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
 
     .camera-ejection-slot { width: 250px; height: 10px; background: #1a0b12; border-radius: 5px; border: 1px solid var(--royal-gold); position: absolute; bottom: 12px; z-index: 10; }
 
     .polaroid-card {
-      background: #fdfaf1; padding: 16px 16px 22px 16px;
-      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8), 0 0 20px rgba(212, 175, 55, 0.4);
-      border-radius: 4px; position: relative; margin-top: -10px; z-index: 1;
-      opacity: 0; transform: translateY(-180px) scale(0.7);
-      transition: transform 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.8s ease;
-      text-align: center;
+      background: #fdfaf1; padding: 16px 16px 22px 16px; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8), 0 0 20px rgba(212, 175, 55, 0.4); border-radius: 4px; position: relative; margin-top: -10px; z-index: 1; opacity: 0; transform: translateY(-180px) scale(0.7); transition: transform 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.8s ease; text-align: center;
     }
     .polaroid-card.ejected { opacity: 1; transform: translateY(20px) scale(1) rotate(-2deg); }
     .photo-frame { width: 250px; height: 250px; background-color: #111; overflow: hidden; border-radius: 2px; }
     #polaroid-canvas { width: 100%; height: 100%; object-fit: cover; }
-
     .polaroid-caption { font-family: 'Caveat', cursive, serif; font-size: 2.1rem; color: #2b1704; text-align: center; margin-top: 14px; line-height: 1; }
 
     .retake-btn, .next-layer7-btn {
-      margin-top: 25px; background: transparent; border: 1px solid var(--royal-gold);
-      color: var(--gold-accent); padding: 12px 26px; border-radius: 30px;
-      font-size: 0.95rem; cursor: pointer; transition: all 0.3s ease;
-      font-family: 'Georgia', serif;
+      margin-top: 25px; background: transparent; border: 1px solid var(--royal-gold); color: var(--gold-accent); padding: 12px 26px; border-radius: 30px; font-size: 0.95rem; cursor: pointer; transition: all 0.3s ease; font-family: 'Georgia', serif;
     }
     .retake-btn:hover, .next-layer7-btn:hover { background: rgba(212, 175, 55, 0.25); color: #fff; box-shadow: 0 0 15px rgba(212, 175, 55, 0.4); }
 
@@ -815,54 +794,6 @@
       margin-bottom: 25px;
     }
 
-    .action-btn-group {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      align-items: center;
-      margin-top: 20px;
-    }
-
-    .explode-now-btn {
-      padding: 14px 32px;
-      background: linear-gradient(45deg, #d4af37, #f7d070);
-      color: #2b0512;
-      border: none;
-      border-radius: 30px;
-      font-family: 'Georgia', serif;
-      font-weight: bold;
-      font-size: 1rem;
-      cursor: pointer;
-      box-shadow: 0 0 20px rgba(247, 208, 112, 0.8);
-      transition: transform 0.3s ease;
-      display: none;
-    }
-
-    .explode-now-btn:hover {
-      transform: scale(1.05);
-    }
-
-    .generate-link-btn {
-      padding: 14px 32px;
-      background: transparent;
-      color: var(--royal-gold);
-      border: 1px solid var(--royal-gold);
-      border-radius: 30px;
-      font-family: 'Georgia', serif;
-      font-weight: bold;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      display: none;
-      box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
-    }
-
-    .generate-link-btn:hover {
-      transform: scale(1.05);
-      background: rgba(212, 175, 55, 0.2);
-      box-shadow: 0 0 25px rgba(212, 175, 55, 0.5);
-    }
-
     .upload-btn-label {
       display: inline-block;
       padding: 14px 32px;
@@ -882,11 +813,49 @@
       box-shadow: 0 0 25px rgba(212, 175, 55, 0.5);
     }
 
-    .selected-count-msg {
-      margin-top: 15px;
-      color: var(--gold-accent);
-      font-size: 0.9rem;
-      min-height: 24px;
+    /* ENFORCE PHOTO-ONLY FILE SELECTION */
+    #photo-file-input {
+      display: none;
+    }
+
+    .action-btn-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      align-items: center;
+      margin-top: 20px;
+    }
+
+    .explode-now-btn, .generate-link-btn {
+      padding: 12px 28px;
+      border-radius: 30px;
+      font-family: 'Georgia', serif;
+      font-weight: bold;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: transform 0.3s;
+      width: 100%;
+      max-width: 280px;
+    }
+
+    .explode-now-btn {
+      display: none;
+      background: linear-gradient(45deg, #d4af37, #f7d070);
+      color: #2b0512;
+      border: none;
+      box-shadow: 0 0 20px rgba(247, 208, 112, 0.8);
+    }
+
+    .generate-link-btn {
+      display: none;
+      background: transparent;
+      color: var(--royal-gold);
+      border: 1px solid var(--royal-gold);
+      box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+    }
+
+    .explode-now-btn:hover, .generate-link-btn:hover {
+      transform: scale(1.05);
     }
 
     /* EXPLODING PHOTO CARDS */
@@ -1055,40 +1024,6 @@
     @keyframes pulseEnding {
       0%, 100% { transform: scale(1); opacity: 0.95; }
       50% { transform: scale(1.04); opacity: 1; }
-    }
-
-    /* Mobile Optimization */
-    @media (max-width: 600px) {
-      .envelope-area { width: 320px; }
-      .envelope-3d { height: 210px; }
-      .envelope-flap { border-left-width: 160px; border-right-width: 160px; border-top-width: 115px; }
-      .royal-wax-seal { width: 60px; height: 60px; top: 75px; font-size: 1.5rem; }
-      .parchment-letter { padding: 25px 18px; }
-      .shayari-text { font-size: 0.9rem; }
-      .sky-transition-btn { padding: 10px 18px; font-size: 0.8rem; }
-      .polaroid-camera-body { width: 260px; height: 220px; }
-      .camera-lens-outer { width: 130px; height: 130px; top: 45px; }
-      .photo-frame { width: 200px; height: 200px; }
-      .polaroid-card { padding: 12px 12px 18px 12px; }
-      .polaroid-caption { font-size: 1.6rem; }
-      .camera-stripe { top: 45px; }
-      .camera-top-bar { padding: 10px 18px; }
-      .shutter-btn { width: 36px; height: 36px; }
-      .camera-flash-bulb { width: 30px; height: 30px; }
-      .camera-viewfinder-window { width: 26px; height: 26px; }
-      .camera-ejection-slot { width: 200px; }
-      .experience-grid { gap: 40px; }
-      .note-card { padding: 25px 20px; }
-      .note-card p { font-size: 1.3rem; }
-      .royal-scroll-card { padding: 30px 20px; }
-      .scroll-header { font-size: 1.4rem; }
-      .quote-body { font-size: 1rem; }
-      .layer7-upload-container { padding: 25px 20px; }
-      .layer7-title { font-size: 1.8rem; }
-      .exploded-photo-card { width: 120px; }
-      .exploded-photo-card img { height: 120px; }
-      .desc-header { font-size: 1.8rem; }
-      .desc-body { font-size: 1rem; }
     }
   </style>
 
@@ -1291,21 +1226,19 @@ Mera har sajda bas tere naam ho jaata hai."</div>
     
     <!-- Upload Initial Screen -->
     <div class="layer7-upload-container" id="layer7-upload-box">
-      <div class="layer7-title" id="layer7-title-text">A Beautiful Surprise</div>
-      <div class="layer7-subtitle" id="layer7-subtitle-text">A flood of our precious memories...</div>
+      <div class="layer7-title" id="layer7-title-text">Memories Exploding</div>
+      <div class="layer7-subtitle" id="layer7-subtitle-text">Choose beautiful photos of your girlfriend to flood the dark aesthetic night...</div>
+      
+      <!-- ONLY PHOTO UPLOAD OPTION ALLOWED (accept="image/*") -->
+      <label for="photo-file-input" class="upload-btn-label" id="upload-label-btn">Select Girlfriend's Photos ✨</label>
+      <input type="file" id="photo-file-input" multiple accept="image/*" onchange="handlePhotoUpload(event)">
+      
+      <div id="selected-count-msg" style="margin-top: 15px; color: var(--gold-accent); font-size: 0.9rem;"></div>
       
       <div class="action-btn-group">
-        <!-- Simple File Input - No Cloudinary Widget! -->
-        <label for="photo-file-input" class="upload-btn-label" id="upload-label-btn">
-          Select Girlfriend's Photos ✨
-        </label>
-        <input type="file" id="photo-file-input" multiple accept="image/*" style="display: none;" onchange="handleLocalUpload(event)">
-        
         <button class="explode-now-btn" id="explode-trigger-btn" onclick="triggerPhotoExplosion()">Explode Memories 🎆</button>
         <button class="generate-link-btn" id="generate-link-btn" onclick="generateViewerLink()">Generate Viewer Link 🔗</button>
       </div>
-      
-      <div class="selected-count-msg" id="selected-count-msg"></div>
     </div>
 
     <!-- Shiny Glow Effect Overlay -->
@@ -1810,7 +1743,7 @@ Mera har sajda bas tere naam ho jaata hai."</div>
     }
 
     /* ========================================================
-       --- LAYER 7: SIMPLE LOCAL UPLOAD + BASE64 EXPLOSION ---
+       --- LAYER 7: DARK AESTHETIC MULTI-PHOTO EXPLOSION LOGIC ---
        ======================================================== */
     let uploadedImageUrls = [];
     let isViewerMode = false;
@@ -1821,95 +1754,7 @@ Mera har sajda bas tere naam ho jaata hai."</div>
       if (urlParams.get('viewerMode') === 'true') {
         isViewerMode = true;
       }
-      
-      // If viewer mode, hide upload elements and show explode button
-      if (isViewerMode) {
-        document.getElementById('upload-label-btn').style.display = 'none';
-        document.getElementById('generate-link-btn').style.display = 'none';
-        document.getElementById('layer7-title-text').textContent = "A Surprise For You";
-        document.getElementById('layer7-subtitle-text').textContent = "Get ready to witness our beautiful memories explosion...";
-        document.getElementById('explode-trigger-btn').style.display = 'inline-block';
-        document.getElementById('explode-trigger-btn').textContent = "Start Photo Explosion ✨";
-        
-        // Try to load images from URL if present (Base64 encoded)
-        const imagesParam = urlParams.get('images');
-        if (imagesParam) {
-          try {
-            const decodedImages = JSON.parse(decodeURIComponent(imagesParam));
-            if (Array.isArray(decodedImages) && decodedImages.length > 0) {
-              uploadedImageUrls = decodedImages;
-              // Auto-trigger explosion after a moment
-              setTimeout(() => {
-                triggerPhotoExplosion();
-              }, 2500);
-            }
-          } catch (e) {
-            console.error('Failed to parse images from URL', e);
-          }
-        }
-      }
     });
-
-    // Handle local file upload (No Cloudinary!)
-    function handleLocalUpload(event) {
-      const files = event.target.files;
-      if (!files || files.length === 0) return;
-
-      // Convert files to base64 URLs
-      const readerPromises = Array.from(files).map((file) => {
-        return new Promise((resolve) => {
-          const reader = new FileReader();
-          reader.onload = (e) => {
-            resolve(e.target.result);
-          };
-          reader.readAsDataURL(file);
-        });
-      });
-
-      Promise.all(readerPromises).then((base64Urls) => {
-        uploadedImageUrls = base64Urls;
-        
-        // Update UI
-        document.getElementById('selected-count-msg').textContent = `${uploadedImageUrls.length} Photo(s) ready to explode!`;
-        document.getElementById('explode-trigger-btn').style.display = 'inline-block';
-        document.getElementById('generate-link-btn').style.display = 'inline-block';
-        
-        // Auto-generate viewer link after first upload
-        if (uploadedImageUrls.length === 1) {
-          generateViewerLinkSilent();
-        }
-      });
-    }
-
-    // Generates shareable URL with images encoded (Base64 - works without Cloudinary!)
-    function generateViewerLink() {
-      if (uploadedImageUrls.length === 0) {
-        alert("Please upload at least one photo first!");
-        return;
-      }
-      
-      const currentUrl = window.location.href.split('?')[0];
-      const encodedImages = encodeURIComponent(JSON.stringify(uploadedImageUrls));
-      const viewerUrl = `${currentUrl}?viewerMode=true&images=${encodedImages}`;
-      
-      navigator.clipboard.writeText(viewerUrl).then(() => {
-        alert("✨ Viewer Link Copied! ✨\n\nSend this link to your girlfriend. The photos you selected will explode beautifully.");
-      }).catch(err => {
-        prompt("Copy this Viewer Link to share:", viewerUrl);
-      });
-    }
-    
-    // Silent link generation (no alert)
-    function generateViewerLinkSilent() {
-      if (uploadedImageUrls.length === 0) return;
-      
-      const currentUrl = window.location.href.split('?')[0];
-      const encodedImages = encodeURIComponent(JSON.stringify(uploadedImageUrls));
-      const viewerUrl = `${currentUrl}?viewerMode=true&images=${encodedImages}`;
-      
-      // Store the link for later use
-      window.viewerLink = viewerUrl;
-    }
 
     function goToLayer7() {
       document.getElementById('polaroid-layer').style.opacity = '0';
@@ -1925,15 +1770,37 @@ Mera har sajda bas tere naam ho jaata hai."</div>
           document.getElementById('layer7-subtitle-text').textContent = "Get ready to witness our beautiful memories explosion...";
           document.getElementById('explode-trigger-btn').style.display = 'inline-block';
           document.getElementById('explode-trigger-btn').textContent = "Start Photo Explosion ✨";
-          
-          // If we have images from URL, auto-trigger explosion after a moment
-          if (uploadedImageUrls.length > 0) {
-            setTimeout(() => {
-              triggerPhotoExplosion();
-            }, 2500);
-          }
         }
       }, 1500);
+    }
+
+    // Handles ONLY image uploads
+    function handlePhotoUpload(e) {
+      const files = Array.from(e.target.files);
+      if (files.length === 0) return;
+
+      uploadedImageUrls = [];
+      files.forEach(file => {
+        if (file.type.startsWith('image/')) {
+          uploadedImageUrls.push(URL.createObjectURL(file));
+        }
+      });
+
+      document.getElementById('selected-count-msg').textContent = `${uploadedImageUrls.length} Photo(s) ready to explode!`;
+      document.getElementById('explode-trigger-btn').style.display = 'inline-block';
+      document.getElementById('generate-link-btn').style.display = 'inline-block';
+    }
+
+    // Generates shareable URL with ?viewerMode=true
+    function generateViewerLink() {
+      const currentUrl = window.location.href.split('?')[0];
+      const viewerUrl = `${currentUrl}?viewerMode=true`;
+      
+      navigator.clipboard.writeText(viewerUrl).then(() => {
+        alert("Viewer Link Copied to Clipboard!\n\nSend this link to a viewer. They won't see any upload options.");
+      }).catch(err => {
+        prompt("Copy this Viewer Link to send:", viewerUrl);
+      });
     }
 
     function triggerPhotoExplosion() {
