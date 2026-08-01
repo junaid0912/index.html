@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Happy Girlfriend's Day 🌸</title>
   
-  <!-- Cursive Fonts for Aesthetic Polaroid Caption & Notes -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
@@ -1834,7 +1833,7 @@ Mera har sajda bas tere naam ho jaata hai."</div>
 
     function uploadToCloudinary() {
       const cloudName = 'shadiya'; // Your Cloudinary cloud name
-      const uploadPreset = 'shadiya'; // ⚠️ REPLACE with your actual unsigned upload preset name
+      const uploadPreset = 'shadiya'; // ✅ UPDATED: Your actual unsigned upload preset name
 
       // Close existing widget if open
       if (widgetInstance) {
@@ -1886,7 +1885,7 @@ Mera har sajda bas tere naam ho jaata hai."</div>
             const imageUrl = result.info.secure_url;
             uploadedImageUrls.push(imageUrl);
             
-            // Update UI
+            // Update UI - SHOW THE EXPLODE BUTTON
             document.getElementById('selected-count-msg').textContent = `${uploadedImageUrls.length} Photo(s) ready to explode!`;
             document.getElementById('explode-trigger-btn').style.display = 'inline-block';
             document.getElementById('generate-link-btn').style.display = 'inline-block';
